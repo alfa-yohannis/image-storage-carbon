@@ -132,9 +132,35 @@ class DockerCompose:
             self._run("down", "-v", "--remove-orphans")
 
 
+def _measure_cell(engine, payload, engine_name: str, profile: str,
+                  carbon_enabled: bool, data_dir: Path) -> dict:
+    """Run all four dimensions for one (engine, resolution) cell and return the
+    in-memory results. Nothing is persisted here: an exception raised by any
+    dimension (e.g. a payload the engine cannot store) aborts the whole cell so
+    the caller can retry without leaving partial CSV rows behind."""
+    def step(label, fn, carbon_name=None):
+        started = time.perf_counter()
+        print(f"   - {label} ...", flush=True)
+        if carbon_name:
+            with CarbonTracker(carbon_name, data_dir, carbon_enabled):
+                result = fn()
+        else:
+            result = fn()
+        print(f"   - {label} done in {_fmt(time.perf_counter() - started)}")
+        return result
+
+    return {
+        "driver": step("driver overhead", engine.run_driver),
+        "insert": step("insert", lambda: engine.run_insert(payload), f"{engine_name}_insert_{profile}"),
+        "retrieval": step("retrieval", engine.run_retrieval, f"{engine_name}_retrieve_{profile}"),
+        "point_read": step("point-read", lambda: engine.run_point_read(payload),
+                           f"{engine_name}_point_read_{profile}"),
+    }
+
+
 def run_engine(engine_name: str, profiles: list[str], compose: DockerCompose,
                writer: ResultWriter, carbon_enabled: bool, data_dir: Path,
-               run_start: float, progress: dict) -> None:
+               run_start: float, progress: dict, max_attempts: int) -> None:
     cls = ENGINE_REGISTRY[engine_name]
     phase_start = time.perf_counter()
     print(f"\n############ PHASE: {engine_name}  "
@@ -148,40 +174,47 @@ def run_engine(engine_name: str, profiles: list[str], compose: DockerCompose,
 
     for profile in profiles:
         settings = Settings.load(profile)
-        engine = cls(settings)
         payload = PayloadFactory(settings.locations.source_image_path).build(settings.workload)
         gidx = progress["done"] + 1
         profile_start = time.perf_counter()
         print(f"\n==== [{gidx}/{progress['total']}] {engine_name} :: {profile}  "
               f"({payload.payload_size_mb:.2f} MB/sample) ====")
 
-        def step(label, fn, carbon_name=None):
-            started = time.perf_counter()
-            print(f"   - {label} ...", flush=True)
-            if carbon_name:
-                with CarbonTracker(carbon_name, data_dir, carbon_enabled):
-                    result = fn()
-            else:
-                result = fn()
-            print(f"   - {label} done in {_fmt(time.perf_counter() - started)}")
-            return result
-
-        try:
-            writer.write_driver(engine, settings, step("driver overhead", engine.run_driver))
-            writer.write_insert(engine, settings, payload, step(
-                "insert", lambda: engine.run_insert(payload), f"{engine_name}_insert_{profile}"))
-            writer.write_retrieval(engine, settings, payload, step(
-                "retrieval", engine.run_retrieval, f"{engine_name}_retrieve_{profile}"))
-            writer.write_point_read(engine, settings, payload, step(
-                "point-read", lambda: engine.run_point_read(payload), f"{engine_name}_point_read_{profile}"))
-        finally:
-            engine.close()
+        # Retry-then-skip: measure into memory, persist only on a fully clean
+        # attempt. After `max_attempts` failures, record the skip and move on so
+        # one unstorable cell never aborts the sweep.
+        engine = cls(settings)
+        error = None
+        for attempt in range(1, max_attempts + 1):
+            try:
+                results = _measure_cell(engine, payload, engine_name, profile, carbon_enabled, data_dir)
+                writer.write_driver(engine, settings, results["driver"])
+                writer.write_insert(engine, settings, payload, results["insert"])
+                writer.write_retrieval(engine, settings, payload, results["retrieval"])
+                writer.write_point_read(engine, settings, payload, results["point_read"])
+                error = None
+                break
+            except Exception as exc:  # any engine/measurement failure
+                error = exc
+                print(f"   ! {engine_name}:{profile} attempt {attempt}/{max_attempts} failed: "
+                      f"{type(exc).__name__}: {str(exc)[:160]}")
+                engine.close()
+                if attempt < max_attempts:
+                    engine = cls(settings)  # fresh connection for the next attempt
+        engine.close()
 
         progress["done"] = gidx
         elapsed = time.perf_counter() - run_start
         eta = (elapsed / gidx) * (progress["total"] - gidx) if gidx else 0.0
-        print(f"   [{gidx}/{progress['total']}] {engine_name}:{profile} done in "
-              f"{_fmt(time.perf_counter() - profile_start)}  |  elapsed {_fmt(elapsed)}  |  ETA {_fmt(eta)}")
+        if error is not None:
+            writer.write_skip(engine, settings, payload, max_attempts, error)
+            print(f"   [{gidx}/{progress['total']}] {engine_name}:{profile} SKIPPED after "
+                  f"{max_attempts} attempt(s) ({type(error).__name__})  |  elapsed {_fmt(elapsed)}  "
+                  f"|  ETA {_fmt(eta)}")
+        else:
+            print(f"   [{gidx}/{progress['total']}] {engine_name}:{profile} done in "
+                  f"{_fmt(time.perf_counter() - profile_start)}  |  elapsed {_fmt(elapsed)}  "
+                  f"|  ETA {_fmt(eta)}")
 
     compose.down()
     print(f"############ PHASE {engine_name} finished in {_fmt(time.perf_counter() - phase_start)} ############")
@@ -201,9 +234,12 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--no-docker", action="store_true",
                         help="assume services already running; do not manage docker compose")
     parser.add_argument("--no-carbon", action="store_true", help="disable CodeCarbon tracking")
+    parser.add_argument("--max-attempts", type=int, default=int(os.getenv("BENCHMARK_MAX_ATTEMPTS", "2")),
+                        help="attempts per (engine, resolution) before skipping it (default 2)")
     parser.add_argument("--report", action="store_true", help="build the three-way report afterwards")
     parser.add_argument("--dry-run", action="store_true", help="print the resolved plan and exit")
     args = parser.parse_args(argv)
+    max_attempts = max(1, args.max_attempts)
 
     engines = [e.strip() for e in args.engines.split(",") if e.strip()]
     unknown = [e for e in engines if e not in ENGINE_REGISTRY]
@@ -243,7 +279,7 @@ def main(argv: list[str] | None = None) -> None:
     for engine_name in engines:
         run_engine(engine_name, profiles, compose, writer,
                    carbon_enabled=not args.no_carbon, data_dir=locations.data_dir,
-                   run_start=run_start, progress=progress)
+                   run_start=run_start, progress=progress, max_attempts=max_attempts)
 
     if args.report:
         from report import Reporter

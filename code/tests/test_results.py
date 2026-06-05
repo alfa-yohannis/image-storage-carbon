@@ -66,6 +66,18 @@ class TestResultWriter(unittest.TestCase):
         self.assertEqual(int(row["n_runs"]), 2)
         self.assertEqual(row["profile"], "360p")
 
+    def test_write_skip_records_failure(self):
+        err = ValueError("payload exceeds 16 MiB BSON document limit")
+        self.writer.write_skip(self.engine, self.settings, self.payload, attempts=2, error=err)
+        skip_csv = self.tmp / "skipped.csv"
+        self.assertTrue(skip_csv.exists())
+        row = list(csv.DictReader(skip_csv.open()))[0]
+        self.assertEqual(row["engine"], "fake")          # registry tag, not engine_label
+        self.assertEqual(row["profile"], "360p")
+        self.assertEqual(int(row["attempts"]), 2)
+        self.assertEqual(row["error_type"], "ValueError")
+        self.assertIn("BSON", row["error"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -61,6 +61,10 @@ _POINT_READ_SUMMARY_FIELDS = [
 _DRIVER_SUMMARY_FIELDS = [
     "timestamp", "engine", "profile", "query_id", "mean_latency_ms", "std_latency_ms", "n_runs",
 ]
+_SKIP_FIELDS = [
+    "timestamp", "engine", "profile", "payload_kind", "payload_size_bytes", "payload_size_mb",
+    "attempts", "error_type", "error",
+]
 
 
 class ResultWriter:
@@ -173,6 +177,21 @@ class ResultWriter:
         summary.update(extra_summary())
         _append(summary_csv, summary_fields, summary)
         print(f"  [{engine.name}] {stem.split('_')[-1]} summary: {m:.3f} +/- {s:.3f} ms")
+
+    # ---- skipped cell --------------------------------------------------- #
+    def write_skip(self, engine: StorageEngine, settings: Settings, payload: MediaPayload,
+                   attempts: int, error: BaseException) -> None:
+        """Record an (engine, resolution) cell that was skipped after repeated
+        measurement failures. `engine` is the registry tag (e.g. "mongodb") so
+        the reporter can exclude it; the error string is truncated for tidiness."""
+        _append(self.data_dir / "skipped.csv", _SKIP_FIELDS, {
+            "timestamp": _now(), "engine": engine.name, "profile": settings.profile_slug,
+            "payload_kind": payload.payload_kind, "payload_size_bytes": payload.payload_size_bytes,
+            "payload_size_mb": round(payload.payload_size_mb, 6), "attempts": attempts,
+            "error_type": type(error).__name__, "error": str(error)[:500],
+        })
+        print(f"  [{engine.name}] {settings.profile_slug} skipped after {attempts} attempt(s): "
+              f"{type(error).__name__}")
 
     # ---- driver overhead ------------------------------------------------ #
     def write_driver(self, engine: StorageEngine, settings: Settings, result: LatencyResult) -> None:

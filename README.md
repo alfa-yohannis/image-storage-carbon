@@ -50,33 +50,36 @@ Risiko #1 = **desk-reject karena dianggap paper computing**. Maka:
 
 ### Fase 1 — Eksperimen & data
 > Beban benchmarking di sini lebih ringan daripada track IT/SE; fokus ke kualitas pengukuran carbon.
-- [ ] **Ukur carbon per-resolusi secara LANGSUNG** dengan CodeCarbon (fase ter-tracking terpisah per resolusi) — **ganti model estimasi konstan-daya** yang sekarang dipakai
+- [x] **Ukur carbon per-resolusi secara LANGSUNG** dengan CodeCarbon — **sudah diimplementasikan** di [`code/`](code): satu tracker CodeCarbon per *engine × dimensi × resolusi* → `data/emissions.csv`, **bukan lagi** model estimasi konstan-daya. ⚠️ Sisa: pastikan **RAPL terbaca** (`setup_rapl.sh`) supaya energi benar-benar terukur hardware, bukan fallback estimasi TDP CodeCarbon.
 - [ ] Lengkapi **three-way**: pastikan MongoDB, PG-BYTEA, dan PG+MinIO diuji pada resolusi yang sama
+  - ⚠️ **Batas MongoDB di 6K**: payload 6K (inline BSON) melampaui batas **16 MiB** per-dokumen BSON → MongoDB **gagal & otomatis di-skip** di titik ini (harness: *retry-lalu-skip*, dicatat di [`code/`](code) → `data/skipped.csv`). PG-BYTEA & PG+MinIO tetap jalan di 6K. Perlakukan ini sebagai **temuan arsitektural**, bukan sekadar limitasi (lihat [Fase 2](#fase-2--analisis--kontribusi-lingkungan-pembeda-q2) & [Risiko](#-risiko--catatan)).
 - [ ] Ukur **baseline idle power** tiap engine (untuk energy proportionality)
 - [ ] (Opsional, nilai tambah) ulang dengan **dataset citra nyata**, bukan hanya JPEG sintetis
 - [ ] Catat konfigurasi lengkap (shared_buffers, WAL, WiredTiger cache, dll.) untuk reprodusibilitas
 - [ ] Naikkan jumlah run & laporkan **confidence interval** (bukan sekadar "variance low")
 
 ### Fase 2 — Analisis & kontribusi lingkungan (pembeda Q2)
-- [ ] **Sensitivitas grid multi-region**: hitung ulang emisi untuk beberapa intensitas grid (mis. Indonesia, India batubara-berat, EU, Nordik terbarukan)
-- [ ] Nyatakan hasil dalam unit **SCI (Software Carbon Intensity, Green Software Foundation)** — mis. gCO₂eq per 1000 frame
-- [ ] **LCA ringan / embodied carbon**: amplifikasi storage 3× MongoDB → lebih banyak SSD → emisi embodied + wear/endurance
-- [ ] Sertakan faktor **PUE** data center (operasional vs total)
-- [ ] **Proyeksi skala fleet**: mis. kota dengan N kamera × 1 tahun → kg/ton CO₂eq + ekuivalen relatable (km mobil / pohon)
-- [ ] Bangun **decision framework / decision tree** carbon-aware (ini kait utama ke "...and Decisions")
-- [ ] Petakan kontribusi ke **SDG** (7, 9, 11, 12, 13)
+- [x] **Sensitivitas grid multi-region**: tabel emisi kumulatif untuk 7 grid (Swedia 41 → India 713 gCO₂/kWh); ranking PM<PG<MG invarian (energi-determined)
+- [x] Nyatakan hasil dalam unit **SCI (Software Carbon Intensity, ISO/IEC 21031:2024)** — mg CO₂eq per 1000 frame (Tabel SCI)
+- [x] **LCA ringan / embodied carbon**: amplifikasi 3× MongoDB @5K → ~3.2 kg embodied ekstra vs PM (faktor 0.16 kgCO₂/GB, ref Tannu&Nair/Gupta)
+- [x] Sertakan faktor **PUE** data center (proyeksi fleet ×1.5)
+- [x] **Proyeksi skala fleet**: 1000 kamera × 1 frame/menit × 1 thn @4K → PM hemat ~440 kg/thn vs PG (~2600 km mobil / ~21 pohon-tahun)
+- [x] Bangun **decision framework / decision tree** carbon-aware (ini kait utama ke "...and Decisions")
+  - Cabang **ukuran payload**: bila payload/sample mendekati/melebihi **16 MiB**, MongoDB inline-BSON **tidak layak** (lihat skip 6K di Fase 1) → arahkan ke arsitektur eksternalisasi objek (PG+MinIO). Constraint keras ini = titik keputusan konkret, bukan sekadar trade-off karbon.
+- [x] Petakan kontribusi ke **SDG** (7, 9, 11, 12, 13)
 
 ### Fase 3 — Penulisan
-- [ ] **Abstract** (terstruktur, tonjolkan carbon + keputusan)
-- [ ] **Introduction** (motivasi karbon IoT, gap, kontribusi eksplisit — buat daftar bullet kontribusi)
-- [ ] **Related Work** dgn sub-bagian + **tabel pembanding** (payload size, metrik, energi ya/tidak) → tunjukkan gap visual
-- [ ] Kurangi sitasi blog vendor → ganti sumber peer-reviewed (LCA, green computing, energy-aware systems)
-- [ ] **Methodology** (hardware, CodeCarbon/RAPL, grid intensity, three-way schema)
-- [ ] **Results** (energi, emisi per-resolusi *terukur*, grid sensitivity, storage→embodied)
-- [ ] **Decision framework** (section tersendiri)
-- [ ] **Discussion** (implikasi green building/IoT, trade-off, threats to validity)
-- [ ] **Conclusion** + future work
-- [ ] Tambah **Data/Code Availability Statement**
+> Naskah lengkap di [`paper/main.tex`](paper/main.tex) — kompilasi bersih (`sn-jnl`, 20 hlm, 6 gambar, 8 tabel, 35 sitasi).
+- [x] **Abstract** (terstruktur, tonjolkan carbon + keputusan + temuan 6K)
+- [x] **Introduction** (motivasi karbon IoT, gap, 4 bullet kontribusi eksplisit)
+- [x] **Related Work** dgn sub-bagian + **tabel pembanding** (payload size, metrik, energi ya/tidak) → gap visual
+- [x] Kurangi sitasi blog vendor → tambah 4 ref peer-reviewed lingkungan (Masanet *Science*, Gupta *HPCA*, Tannu&Nair SSD-embodied, Shehabi/LBNL); doc engine tetap untuk detail internal
+- [x] **Methodology** (hardware/repro table, CodeCarbon/RAPL **pengukuran langsung**, grid intensity, schema three-way, failover retry-skip)
+- [x] **Results** (energi, emisi per-resolusi **terukur**, grid sensitivity, storage→embodied, retrieval terpadu, temuan 6K)
+- [x] **Decision framework** (section tersendiri + tabel pemilihan)
+- [x] **Discussion** (implikasi green building/IoT, mekanisme crossover, trade-off, threats to validity)
+- [x] **Conclusion** + future work
+- [x] Tambah **Data/Code Availability Statement**
 
 ### Fase 4 — Reprodusibilitas
 - [ ] Rapikan kode benchmark + `docker-compose` + generator data
@@ -84,7 +87,7 @@ Risiko #1 = **desk-reject karena dianggap paper computing**. Maka:
 - [ ] Publikasikan artifact ke **Zenodo** → dapatkan **DOI**, tautkan di paper
 
 ### Fase 5 — Submission
-- [ ] Reformat ke **template Springer Nature** (`sn-jnl.cls`)
+- [x] Reformat ke **template Springer Nature** (`sn-jnl.cls`) — naskah sudah memakai `sn-jnl` (sn-basic), kompilasi bersih
 - [ ] Tulis **cover letter** (tekankan kontribusi lingkungan + ungkap *companion paper* track IT/SE untuk transparansi)
 - [ ] Cek **similarity** (hindari overlap teks dengan draf konferensi / Paper A)
 - [ ] Siapkan **daftar reviewer** yang disarankan
@@ -116,10 +119,11 @@ Risiko #1 = **desk-reject karena dianggap paper computing**. Maka:
 ---
 
 ## ⚠️ Risiko & catatan
-- Titik lemah utama saat ini = **carbon per-resolusi masih diestimasi** → wajib diukur langsung (Fase 1).
+- **Batas dokumen MongoDB (16 MiB BSON)**: MongoDB inline-BSON tidak dapat menyimpan payload 6K → harness otomatis **retry-lalu-skip** dan mencatatnya di `data/skipped.csv`; three-way menjadi *two-way* **hanya di titik 6K**. Laporkan eksplisit (jangan disembunyikan) sebagai constraint arsitektural + jadikan input decision framework (Fase 2).
+- **Akurasi energi bergantung pada RAPL**: carbon per-resolusi kini diukur **langsung** (CodeCarbon per resolusi, bukan estimasi konstan-daya), namun bila RAPL tak terbaca CodeCarbon jatuh ke estimasi TDP → jalankan `setup_rapl.sh` dan verifikasi sebelum run final.
 - Tanpa kontribusi lingkungan yang kuat (Fase 2), editor lingkungan akan menilai ini "paper computing".
 - Jaga konsistensi antar paper (companion): sitasi silang dengan Paper A, ungkap di cover letter.
 
 ---
 
-*Status:* `belum mulai` · *Terakhir diperbarui:* 2026-06-04
+*Status:* `draft lengkap — data three-way riil & terukur terintegrasi (Fase 1–3 selesai); berikutnya Fase 4 (artifact/Zenodo DOI) & Fase 5 (cover letter, similarity, submission)` · *Terakhir diperbarui:* 2026-06-05

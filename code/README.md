@@ -110,9 +110,30 @@ the old long keys (`6k_uhd_image`, `360p_sd_image`, …) still resolve.
 Per-resolution carbon is measured **directly** (one tracker per engine/dimension/resolution),
 not estimated. Filenames are namespaced, e.g. `results_mongo_insert_summary_4k.csv`.
 
+## Failover (retry-then-skip)
+
+Some `(engine, resolution)` cells legitimately fail — most notably **MongoDB at
+6K**, because each sample is one BSON document and BSON caps a document at
+**16 MiB**, which a 6K JPEG can exceed. The harness does **not** try to predict
+this; it lets the write fail and handles it generically for *every* engine:
+
+- Each cell is measured into memory first and **persisted only after a fully
+  clean attempt**, so a failure never leaves partial or duplicated CSV rows.
+- On failure the cell is retried (default **2 attempts**, `--max-attempts N` or
+  `BENCHMARK_MAX_ATTEMPTS`). MongoDB rejects an oversized document **client-side
+  before sending**, so a doomed attempt fails in milliseconds — retries are cheap.
+- After the attempts are exhausted the cell is recorded in **`../data/skipped.csv`**
+  (engine, profile, attempts, error) and the sweep **continues to the next
+  resolution and the next engine** — one unstorable cell never aborts the run.
+- The reporter leaves skipped cells blank in `threeway_summary.csv` and the
+  figures (and excludes any stray carbon row a failed attempt may have emitted).
+
+So `python run.py 4k 5k 6k` runs every engine at 4k and 5k, skips only
+`mongodb:6k`, and still completes `postgres:6k` and `postgres_minio:6k`.
+
 ## CLI flags
 
-`[resolutions ...]` · `--engines a,b,c` · `--no-docker` · `--no-carbon` · `--report` · `--dry-run`
+`[resolutions ...]` · `--engines a,b,c` · `--no-docker` · `--no-carbon` · `--max-attempts N` · `--report` · `--dry-run`
 
 Each engine phase brings up only the services it needs (isolation for fair carbon), wipes
 the DB volume between phases, and tears down afterwards. The compose project is named

@@ -64,11 +64,15 @@ class MongoEngine(StorageEngine):
             [("meta.device_id", 1), ("ts", -1)], name="idx_device_ts_desc")
 
     def _insert_rows(self, payload: MediaPayload, n_rows: int, batch_size: int) -> tuple[int, float]:
+        # Inserts are NOT swallowed: a failure (e.g. a 6K payload exceeding the
+        # 16 MiB BSON document limit) propagates so the orchestrator can retry
+        # and, if it keeps failing, skip this cell. `inserted` counts only rows
+        # the server actually accepted, so throughput stays honest.
         coll = self._collection()
         inserted = 0
         t0 = time.perf_counter()
         batch = []
-        while inserted < n_rows:
+        for _ in range(n_rows):
             batch.append({
                 "meta": {"device_id": self.settings.device_id, "profile": payload.profile_name,
                          "payload_kind": payload.payload_kind},
@@ -80,18 +84,10 @@ class MongoEngine(StorageEngine):
                 "duration_ms": payload.duration_ms,
             })
             if len(batch) >= batch_size:
-                try:
-                    coll.insert_many(batch, ordered=False)
-                except Exception as exc:
-                    print(f"[mongo] batch insert failed: {type(exc).__name__}: {str(exc)[:100]}")
-                inserted += len(batch)
+                inserted += len(coll.insert_many(batch, ordered=False).inserted_ids)
                 batch.clear()
         if batch:
-            try:
-                coll.insert_many(batch, ordered=False)
-            except Exception as exc:
-                print(f"[mongo] remainder insert failed: {type(exc).__name__}: {str(exc)[:100]}")
-            inserted += len(batch)
+            inserted += len(coll.insert_many(batch, ordered=False).inserted_ids)
         return inserted, time.perf_counter() - t0
 
     def _storage_sizes(self) -> StorageSizes:

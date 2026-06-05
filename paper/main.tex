@@ -1,27 +1,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Paper B -- Target: Environment Systems and Decisions (Springer), Q2
-%% Working title: Carbon-aware storage architecture selection for image-based
-%% time-series in green IoT (three-way: MongoDB vs PostgreSQL-BYTEA vs PG+MinIO)
+%% Carbon-aware storage-architecture selection for image-based time-series in
+%% green IoT (three-way: MongoDB vs PostgreSQL-BYTEA vs PostgreSQL+MinIO).
 %%
-%% This manuscript MERGES two conference drafts into one three-way study:
-%%   - alfa_yohannis_3.tex  (PG vs MongoDB, carbon, 1080p-5K)
-%%   - alfa_yohannis_4.tex  (PG vs PG+MinIO, carbon, 360p-5K)
-%%
-%% >>> DATA RECONCILIATION TODOs (see ../README.md, Fase 1) <<<
-%%  (1) Per-resolution carbon is currently ESTIMATED via a constant power-rate
-%%      model. REPLACE with directly measured per-resolution CodeCarbon phases.
-%%  (2) RETRIEVAL is NOT yet unified: _3 measured 2000-row full materialisation;
-%%      _4 measured single latest-payload point-reads. RE-RUN one common
-%%      retrieval workload across all THREE engines.
-%%  (3) MongoDB column at 360p-720p is missing (not in _3). Re-run full sweep.
-%%  (4) Regenerate three-way figures (insert throughput, carbon, energy breakdown).
-%%
-%% >>> GREEN-CONTRIBUTION TODOs (Fase 2) to lift this to Q2 at ESD <<<
-%%  - Multi-region grid-intensity sensitivity (Sec. results: marked TODO)
-%%  - Software Carbon Intensity (SCI, ISO/IEC 21031:2024) units
-%%  - Embodied/LCA of extra storage; PUE
-%%  - Fleet-scale annual projection
-%%  - SDG linkage
+%% This manuscript consolidates two conference drafts (PG-vs-MongoDB and
+%% PG-vs-PG+MinIO) into ONE three-way study and is now backed by a unified,
+%% object-oriented benchmark harness that measures per-resolution carbon
+%% DIRECTLY (one CodeCarbon tracker per engine x dimension x resolution) over a
+%% single 360p->6K sweep with a common retrieval workload across all engines.
+%% Data: ../data/  Figures: ../figures/  Harness: ../code/
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[pdflatex,sn-basic]{sn-jnl}% Basic Springer Nature reference style (name-year). Add ",Numbered" if ESD requires numbered citations.
@@ -34,6 +21,8 @@
 \usepackage{textcomp}%
 \usepackage{manyfoot}% required by sn-jnl (table footnotes / \SetFootnoteHook)
 \usepackage{listings}%
+
+\graphicspath{{figures/}{../figures/}}
 
 \lstset{basicstyle=\ttfamily\scriptsize,breaklines=true,frame=single,
   backgroundcolor=\color{black!3},showstringspaces=false,columns=fullflexible}
@@ -58,9 +47,9 @@
 
 \affil[2]{\orgname{Universitas Multimedia Nusantara}, \orgaddress{\city{Tangerang}, \state{Banten}, \country{Indonesia}}}
 
-\abstract{Smart-building and facility-monitoring deployments increasingly retain high-resolution image streams alongside timestamped metadata in a data tier that runs continuously, so the choice of storage backend is now a sustainability decision as much as a performance one. This paper measures and compares the carbon footprint of three storage architectures for image-based time-series workloads: document-oriented MongoDB native Time-Series Collections, relational PostgreSQL/TimescaleDB with inline \texttt{BYTEA}, and a hybrid that keeps metadata in PostgreSQL while externalising binaries to MinIO object storage. Using isolated Dockerised deployments and hardware-level energy tracking via CodeCarbon (Intel RAPL), we benchmark JPEG resolutions from 360p to 5K and convert energy to CO\textsubscript{2}-equivalent emissions. The results reveal a resolution-dependent crossover with no universal winner: MongoDB emits the least at standard resolutions (1080p--1440p) because its faster completion dominates, whereas the PostgreSQL+MinIO hybrid emits the least at high resolutions (4K--5K) by decoupling the multi-megabyte payload from the database write path, with inline PostgreSQL acting as the robust middle option. We translate these measurements into a carbon-aware decision framework that maps camera resolution and workload emphasis to the lowest-emission architecture for green IoT infrastructure. These findings provide actionable, resolution-dependent guidance for carbon-conscious storage selection in sustainable building monitoring.}
+\abstract{Smart-building and facility-monitoring deployments increasingly retain high-resolution image streams alongside timestamped metadata in a data tier that runs continuously, so the choice of storage backend is now a sustainability decision as much as a performance one. This paper measures and compares the carbon footprint of three storage architectures for image-based time-series workloads: document-oriented MongoDB native Time-Series Collections (inline BSON), relational PostgreSQL/TimescaleDB with inline \texttt{BYTEA}, and a hybrid that keeps metadata in PostgreSQL while externalising binaries to MinIO object storage. Using isolated Dockerised deployments and hardware-level energy tracking via CodeCarbon (Intel RAPL), we benchmark JPEG resolutions from 360p to 6K and convert energy to CO\textsubscript{2}-equivalent emissions. Carbon is measured \emph{directly} for every architecture, resolution, and operation, and a common retrieval workload is applied across all three engines. The results reveal a resolution-dependent \emph{emission crossover with no universal winner}: MongoDB is the greenest backend up to 1440p---emitting as little as one-twentieth of the alternatives at 360p because tiny compressed buckets ingest extremely fast---whereas the PostgreSQL+MinIO hybrid is the greenest at 4K and above, roughly halving the emissions of inline storage by decoupling the multi-megabyte payload from the database write path. MongoDB and the hybrid behave as mirror images, with inline PostgreSQL the robust pivot that operates across the entire range. We further show that MongoDB cannot store 6K frames at all: time-series bucketing aggregates multi-megabyte payloads into a bucket document that breaches the 16~MB BSON limit, a hard architectural ceiling. We translate the measurements into a carbon-aware decision framework, report Software Carbon Intensity, multi-region grid-intensity sensitivity, embodied-carbon implications of storage amplification, and a fleet-scale annual projection, providing actionable guidance for carbon-conscious storage selection in sustainable building monitoring.}
 
-\keywords{carbon footprint, green computing, sustainable IoT, time-series databases, image-based storage, decision support, life-cycle assessment, PostgreSQL, MongoDB, MinIO}
+\keywords{carbon footprint, green computing, sustainable IoT, time-series databases, image-based storage, decision support, life-cycle assessment, software carbon intensity, PostgreSQL, MongoDB, MinIO}
 
 \maketitle
 
@@ -68,17 +57,18 @@
 \section{Introduction}\label{sec:introduction}
 %%=====================================================================%%
 
-Smart-building and facility-monitoring systems increasingly combine conventional telemetry with image streams from embedded cameras, smart doorbells, inspection devices, and other edge systems~\citep{bajera_iot_smart_buildings,alfuqaha_iot_survey}. These applications retain binary media together with timestamps, device identifiers, and other metadata so that operators can inspect the latest frame, replay recent events, or query activity over time~\citep{ceec_tsdb_review,jensen_tsms_survey}. Because the data tier runs continuously---24/7 at the edge or in an on-premises facility---its energy use contributes directly to the operational carbon footprint of the building or infrastructure~\citep{nerc_tsdb_survey}. As green-building standards increasingly account for the operational carbon cost of IT infrastructure, the choice of storage backend is no longer a purely technical decision: it is an environmental and infrastructure-management decision.
+Smart-building and facility-monitoring systems increasingly combine conventional telemetry with image streams from embedded cameras, smart doorbells, inspection devices, and other edge systems~\citep{bajera_iot_smart_buildings,alfuqaha_iot_survey}. These applications retain binary media together with timestamps, device identifiers, and other metadata so that operators can inspect the latest frame, replay recent events, or query activity over time~\citep{ceec_tsdb_review,jensen_tsms_survey}. Because the data tier runs continuously---24/7 at the edge or in an on-premises facility---its energy use contributes directly to the operational carbon footprint of the building or infrastructure~\citep{nerc_tsdb_survey}. Data centres and on-premises IT already account for a globally significant and growing share of electricity demand~\citep{masanet_datacenter_energy,shehabi_us_datacenter}, and as green-building standards increasingly account for the operational carbon cost of IT infrastructure, the choice of storage backend is no longer a purely technical decision: it is an environmental and infrastructure-management decision~\citep{ieee_ce_definition}.
 
-Organisations commonly reuse general-purpose databases for this role rather than adopting specialised stacks. Three architectures dominate practice. First, document-oriented \emph{MongoDB}~\citep{mongodb_official} offers native Time-Series Collections backed by the WiredTiger~\citep{mongodb_wiredtiger_storage} engine with Snappy~\citep{google_snappy} block compression, storing image binaries inline as BSON binary values~\citep{mongodb_bson_spec}. Second, relational \emph{PostgreSQL}~\citep{postgresql_official} with TimescaleDB~\citep{timescaledb_official} extends a proven engine with hypertable chunking and uses TOAST~\citep{postgresql_toast_docs} to relocate large binary payloads out-of-line. Third, a widely used \emph{hybrid} pattern keeps only queryable metadata in PostgreSQL and offloads the bulk payload to an S3-compatible object store such as MinIO~\citep{minio_official} or Amazon~S3~\citep{aws_s3_official}. These designs imply different write amplification, memory behaviour, and retrieval paths, and therefore potentially very different energy profiles as image resolution grows.
+Organisations commonly reuse general-purpose databases for this role rather than adopting specialised stacks~\citep{intuz_iot_databases}. Three architectures dominate practice. First, document-oriented \emph{MongoDB}~\citep{mongodb_official} offers native Time-Series Collections backed by the WiredTiger~\citep{mongodb_wiredtiger_storage} engine with Snappy~\citep{google_snappy} block compression, storing image binaries inline as BSON binary values~\citep{mongodb_bson_spec}. Second, relational \emph{PostgreSQL}~\citep{postgresql_official} with TimescaleDB~\citep{timescaledb_official} extends a proven engine with hypertable chunking and uses TOAST~\citep{postgresql_toast_docs} to relocate large binary payloads out-of-line. Third, a widely used \emph{hybrid} pattern keeps only queryable metadata in PostgreSQL and offloads the bulk payload to an S3-compatible object store such as MinIO~\citep{minio_official} or Amazon~S3~\citep{aws_s3_official}. These designs imply different write amplification, memory behaviour, and retrieval paths, and therefore potentially very different energy profiles as image resolution grows.
 
 Existing time-series benchmarks target lightweight numeric events~\citep{tsbs,cratedb_ts_benchmark,diva_timescaledb_mongodb_eval} and rarely evaluate multi-megabyte image payloads; even more rarely do they report energy or CO\textsubscript{2}-equivalent emissions. This leaves a practical gap for image-heavy IoT deployments that must decide which storage architecture minimises both execution time and carbon, and under which operating conditions. The gap is consequential because storage-engine behaviour changes fundamentally with payload size, so a conclusion drawn at one resolution need not hold at another.
 
-This paper addresses the following research question: \emph{What is the carbon footprint of document-oriented, relational, and hybrid object-relational storage for image-based time-series workloads across increasing camera resolutions, and how should an operator choose among them to minimise emissions in green IoT infrastructure?} To answer it, we benchmark the three architectures across seven JPEG resolutions (360p--5K) in isolated Docker~\citep{docker_official} containers, measure energy and emissions with CodeCarbon~\citep{codecarbon} using Intel RAPL hardware counters, and analyse insertion throughput, retrieval, storage amplification, and per-resolution carbon. The contributions are:
+This paper addresses the following research question: \emph{What is the carbon footprint of document-oriented, relational, and hybrid object-relational storage for image-based time-series workloads across increasing camera resolutions, and how should an operator choose among them to minimise emissions in green IoT infrastructure?} To answer it, we benchmark the three architectures across eight JPEG resolutions (360p--6K) in isolated Docker~\citep{docker_official} containers, measure energy and emissions with CodeCarbon~\citep{codecarbon} using Intel RAPL hardware counters, and analyse insertion throughput, full-materialisation retrieval, latest-payload point-reads, storage amplification, and \emph{directly measured} per-resolution carbon. Unlike our earlier conference studies, every resolution is measured under its own energy tracker (eliminating power-rate estimation) and a single common retrieval workload is applied to all three engines. The contributions are:
 
 \begin{itemize}
-  \item A three-way carbon-footprint comparison of MongoDB, PostgreSQL-BYTEA, and PostgreSQL+MinIO under identical image-based time-series workloads, quantifying CO\textsubscript{2}-equivalent emissions with RAPL-based hardware energy measurement.
-  \item Evidence of a \emph{resolution-dependent emission crossover}: MongoDB is greenest at standard resolutions, the hybrid is greenest at high resolutions, and inline PostgreSQL is the robust middle option.
+  \item A three-way, directly measured carbon-footprint comparison of MongoDB, PostgreSQL-BYTEA, and PostgreSQL+MinIO under identical image-based time-series workloads from 360p to 6K, quantifying CO\textsubscript{2}-equivalent emissions with RAPL-based hardware energy measurement.
+  \item Evidence of a \emph{resolution-dependent emission crossover} in which MongoDB and the hybrid are mirror images---MongoDB greenest at standard resolutions, the hybrid greenest at high resolutions, inline PostgreSQL the robust pivot---together with the finding that MongoDB cannot store 6K frames at all because time-series bucketing breaches the 16~MB BSON document limit.
+  \item An environmental analysis lifting the result beyond a benchmark: Software Carbon Intensity (SCI, ISO/IEC~21031:2024)~\citep{gsf_sci} per functional unit, multi-region grid-intensity sensitivity, the embodied-carbon implication of storage amplification~\citep{tannu_ssd_embodied,gupta_chasing_carbon}, and a fleet-scale annual projection.
   \item A \emph{carbon-aware decision framework} that maps resolution and workload emphasis to the lowest-emission architecture, intended as decision support for sustainable building-monitoring infrastructure.
 \end{itemize}
 
@@ -88,27 +78,57 @@ This paper addresses the following research question: \emph{What is the carbon f
 
 \textbf{Time-series storage.} Time-series databases sustain append-oriented ingestion through time-based partitioning, compression, and storage layouts that reduce the write amplification of traditional B-tree update paths~\citep{dewaal_timeseries_survey,jensen_tsms_survey}. TimescaleDB~\citep{timescaledb_official} extends PostgreSQL with hypertable chunking while preserving SQL semantics, and MongoDB~\citep{mongodb_official} introduced native Time-Series Collections that bucket measurements into compacted documents~\citep{mongodb_timeseries_collections_guide,mongodb_ts_best_practices}.
 
-\textbf{Benchmarks and the binary-payload gap.} Most comparative benchmarks target lightweight scalar data: TSBS~\citep{tsbs} uses small DevOps/telemetry records, CrateDB's benchmark~\citep{cratedb_ts_benchmark} focuses on numeric IoT metrics, and the evaluation by \citet{diva_timescaledb_mongodb_eval} studies numerical sensor workloads. None characterise multi-megabyte image payloads, where storage-engine internals become decisive. PostgreSQL's TOAST~\citep{postgresql_toast_docs} relocates oversized values out-of-line but keeps them within the database's transactional and retrieval machinery; MongoDB serialises binaries inline in BSON documents~\citep{mongodb_bson_spec}, and its alternative for large binaries, GridFS~\citep{mongodb_gridfs}, is incompatible with native Time-Series Collections~\citep{mongodb_ts_limitations}. Object stores such as MinIO~\citep{minio_official} instead stream large immutable objects directly while the relational system manages only lightweight metadata. The architectural trade-off is therefore ``one transactional path for everything'' versus ``separating metadata management from binary transport.''
+\textbf{Benchmarks and the binary-payload gap.} Most comparative benchmarks target lightweight scalar data: TSBS~\citep{tsbs} uses small DevOps/telemetry records, CrateDB's benchmark~\citep{cratedb_ts_benchmark} focuses on numeric IoT metrics, and the evaluation by \citet{diva_timescaledb_mongodb_eval} studies numerical sensor workloads. None characterise multi-megabyte image payloads, where storage-engine internals become decisive, and none report energy or emissions (Table~\ref{tab:relwork}). PostgreSQL's TOAST~\citep{postgresql_toast_docs} relocates oversized values out-of-line but keeps them within the database's transactional and retrieval machinery; MongoDB serialises binaries inline in BSON documents~\citep{mongodb_bson_spec}, and its alternative for large binaries, GridFS~\citep{mongodb_gridfs}, is incompatible with native Time-Series Collections~\citep{mongodb_ts_limitations}. Object stores such as MinIO~\citep{minio_official} instead stream large immutable objects directly while the relational system manages only lightweight metadata. The architectural trade-off is therefore not simply ``one system versus two'' but \emph{one transactional path for everything} versus \emph{separating metadata management from binary transport}.
 
-\textbf{Carbon footprint of computing.} \citet{lannelongue_green_algorithms} formalised the Green Algorithms approach to quantifying the carbon footprint of computation, and \citet{strubell_energy_nlp} highlighted the energy cost of large-scale computation; CodeCarbon~\citep{codecarbon} provides a practical implementation that estimates energy and emissions from machine-level measurements and regional grid intensity. Within database systems, however, little work applies per-operation carbon accounting to binary time-series storage. This study addresses that gap for document-oriented, relational, and hybrid object-relational image storage.
+\textbf{Carbon footprint of computing.} \citet{lannelongue_green_algorithms} formalised the Green Algorithms approach to quantifying the carbon footprint of computation, and \citet{strubell_energy_nlp} highlighted the energy cost of large-scale computation; CodeCarbon~\citep{codecarbon} provides a practical implementation that estimates energy and emissions from machine-level measurements and regional grid intensity. Beyond operational energy, a growing literature stresses \emph{embodied} carbon---the manufacturing footprint of the hardware itself---as a first-class concern for sustainable systems~\citep{gupta_chasing_carbon}, with flash storage a notable contributor~\citep{tannu_ssd_embodied}; data-centre--level accounting further multiplies IT energy by a Power Usage Effectiveness (PUE) factor~\citep{shehabi_us_datacenter,masanet_datacenter_energy}. The Software Carbon Intensity specification~\citep{gsf_sci} standardises per-functional-unit reporting. Within database systems, however, little work applies per-operation carbon accounting to binary time-series storage. This study addresses that gap for document-oriented, relational, and hybrid object-relational image storage, and connects it to embodied carbon, PUE, grid intensity, and SCI.
 
-% TODO (Fase 3): add a comparison TABLE of prior benchmarks
-%   columns: study | payload type | max payload size | metrics | energy/CO2 reported?
-%   to make the gap visually explicit. Add peer-reviewed green-computing/LCA refs;
-%   reduce reliance on vendor documentation.
+\begin{table}[t]
+\caption{Representative time-series benchmarks versus this work. We are unaware of prior work that benchmarks multi-megabyte image payloads \emph{and} reports energy/CO\textsubscript{2}.}\label{tab:relwork}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}p{0.23\textwidth}p{0.17\textwidth}p{0.10\textwidth}p{0.14\textwidth}p{0.12\textwidth}@{}}
+\toprule
+Study & Payload type & Max payload & Engines & Energy / CO\textsubscript{2}? \\
+\midrule
+TSBS~\citep{tsbs} & numeric/scalar & $\sim$KB & multiple TSDBs & No \\
+CrateDB benchmark~\citep{cratedb_ts_benchmark} & numeric IoT metrics & $\sim$KB & CrateDB et al. & No \\
+\citet{diva_timescaledb_mongodb_eval} & numeric sensor & $\sim$KB & Timescale, Mongo & No \\
+\textbf{This work} & \textbf{JPEG images} & \textbf{7.1~MB (6K)} & \textbf{PG, Mongo, PM} & \textbf{Yes (RAPL)} \\
+\botrule
+\end{tabular}
+\end{table}
 
 %%=====================================================================%%
 \section{Methodology}\label{sec:methodology}
 %%=====================================================================%%
 
 \subsection{Hardware and software environment}\label{subsec:env}
-All experiments execute on a single host running Ubuntu~24.04.4~LTS (Linux 6.8.0-107-generic) with an 11th~Gen Intel Core i9-11900H (8~cores / 16~threads, 2.50~GHz base, 4.90~GHz max), 30.99~GB RAM, and a 1.9~TB Samsung MZVL22T0HBLB-00BH1 NVMe SSD. The host is located in Indonesia (Banten grid region); CodeCarbon uses the corresponding national carbon-intensity factor ($\approx$0.676~kg~CO\textsubscript{2}eq/kWh). CPU and RAM power are measured via Intel RAPL hardware counters (\texttt{tracking\_mode=machine}). Containers share host CPU and memory with no explicit CPU pinning or memory limits beyond the MongoDB WiredTiger cache cap. The stack comprises Docker~29.4.0 with Compose~v5.1.1, PostgreSQL~15 with TimescaleDB (\texttt{latest-pg15}), MongoDB~7.0 (\texttt{--wiredTigerCacheSizeGB~30}), MinIO (\texttt{minio/minio:latest}), Python~3.14.3, and the libraries \texttt{psycopg2}~2.9.11, \texttt{pymongo}, \texttt{minio}~7.2.20, Pillow~12.2.0, and CodeCarbon~3.2.6.
+All experiments execute on a single host (Table~\ref{tab:env}) running Ubuntu~24.04.4~LTS (Linux 6.8.0) with an 11th~Gen Intel Core i9-11900H (8~cores / 16~threads, 2.50~GHz base, 4.90~GHz max), 30.99~GB RAM, and a 1.9~TB Samsung NVMe SSD. The host is in Indonesia (Banten); CodeCarbon uses the corresponding national carbon-intensity factor ($\approx$0.676~kg~CO\textsubscript{2}eq/kWh). CPU and RAM power are measured via Intel RAPL hardware counters (\texttt{tracking\_mode=machine}). Containers share host CPU and memory with no explicit CPU pinning or memory limits beyond the MongoDB WiredTiger cache cap.
+
+\begin{table}[t]
+\caption{Hardware and software environment (reproducibility).}\label{tab:env}
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+Component & Version / setting \\
+\midrule
+CPU & Intel Core i9-11900H, 8C/16T, 2.50--4.90~GHz \\
+RAM / SSD & 30.99~GB / 1.9~TB Samsung NVMe \\
+OS & Ubuntu 24.04.4 LTS (Linux 6.8.0) \\
+Containers & Docker 29.4.0, Compose v5.1.1 \\
+PostgreSQL & 15 + TimescaleDB (\texttt{latest-pg15}) \\
+MongoDB & 7.0 (\texttt{--wiredTigerCacheSizeGB 30}) \\
+MinIO & \texttt{minio/minio:latest} \\
+Runtime & Python 3.14, \texttt{psycopg2} 2.9.11, \texttt{pymongo} 4.17, \\
+        & \texttt{minio} 7.2.20, Pillow 12.2.0, CodeCarbon 3.2.7 \\
+Energy & Intel RAPL (CPU+RAM), \texttt{tracking\_mode=machine} \\
+Grid factor & 0.676~kg~CO\textsubscript{2}eq/kWh (Indonesia) \\
+\botrule
+\end{tabular}
+\end{table}
 
 \subsection{Workloads and payloads}\label{subsec:workloads}
-The benchmark harness generates deterministic JPEG payloads from a single source image using a collage transform (Pillow), at quality~90. Seven resolutions are evaluated: 360p ($640{\times}360$, $\sim$0.09~MB), 480p ($854{\times}480$, $\sim$0.16~MB), 720p ($1280{\times}720$, $\sim$0.36~MB), 1080p ($1920{\times}1080$, $\sim$0.80~MB), 1440p ($2560{\times}1440$, $\sim$1.40~MB), 4K~UHD ($3840{\times}2160$, $\sim$2.99~MB), and 5K ($5120{\times}2880$, $\sim$5.09~MB). Quality-90 JPEG retains high visual entropy that largely defeats internal block compression, reflecting realistic inline-storage conditions. For each resolution the harness performs a 100-row warm-up, then 5 measured insertion runs of 2{,}000 rows each in batches of~50, followed by measured retrieval runs. Each engine/table is wiped and rebuilt between resolutions.
-
-% TODO (Fase 1): use a REAL image dataset (variable entropy) in addition to the
-% synthetic collage to strengthen external validity.
+The benchmark harness generates deterministic JPEG payloads from a single source image using a collage transform (Pillow), at quality~90. Eight resolutions are evaluated: 360p ($640{\times}360$, 0.09~MB), 480p ($854{\times}480$, 0.16~MB), 720p ($1280{\times}720$, 0.36~MB), 1080p ($1920{\times}1080$, 0.80~MB), 1440p ($2560{\times}1440$, 1.40~MB), 4K~UHD ($3840{\times}2160$, 2.99~MB), 5K ($5120{\times}2880$, 5.09~MB), and 6K ($6144{\times}3456$, 7.13~MB). Quality-90 JPEG retains high visual entropy that largely defeats internal block compression, reflecting realistic inline-storage conditions. For each resolution the harness performs a 100-row warm-up, then 5 measured insertion runs of 2{,}000 rows each in batches of~50, followed by 5 measured full-retrieval runs and 5 measured point-reads (after warm-ups). Each engine/table is wiped and rebuilt between resolutions, and each engine phase brings up only the services it needs, in isolation, for fair energy attribution.
 
 \subsection{Schema and operations}\label{subsec:schema}
 \textbf{MongoDB (MG).} Each frame is a document in a native Time-Series Collection (\texttt{timeField}/\texttt{metaField}, granularity seconds), with the binary payload stored inline as \texttt{BinData} and metadata under a nested \texttt{meta} object; WiredTiger applies Snappy compression on disk.
@@ -117,7 +137,7 @@ The benchmark harness generates deterministic JPEG payloads from a single source
 
 \textbf{PostgreSQL+MinIO (PM).} The hypertable stores metadata plus a \texttt{minio\_object\_key}; the binary is uploaded to MinIO via HTTP PUT. Retrieval first reads the key from PostgreSQL, then streams the object via HTTP GET.
 
-All three carry a compound index on \texttt{(device\_id, ts~DESC)}. Listing~\ref{lst:schema} sketches the relational schema; for PM the \texttt{payload\_data} column is replaced by \texttt{minio\_object\_key~TEXT}.
+All three carry a compound index on \texttt{(device\_id, ts~DESC)}. We measure four dimensions per engine and resolution: (i)~insert throughput and storage amplification; (ii)~full-materialisation retrieval, which streams all 2{,}000 payloads in a time range; (iii)~latest-payload point-read latency; and (iv)~driver round-trip overhead. Listing~\ref{lst:schema} sketches the relational schema; for PM the \texttt{payload\_data} column is replaced by \texttt{minio\_object\_key~TEXT}.
 
 \begin{lstlisting}[caption={Relational hypertable schema (PG). For PM, replace \texttt{payload\_data BYTEA} with \texttt{minio\_object\_key TEXT}.},label={lst:schema}]
 CREATE TABLE sensor_media (
@@ -132,160 +152,229 @@ SELECT create_hypertable('sensor_media', by_range('ts'));
 \end{lstlisting}
 
 \subsection{Carbon-footprint measurement}\label{subsec:carbon_method}
-Each engine phase runs as a single CodeCarbon~\citep{codecarbon}-tracked process. CodeCarbon reads CPU and RAM power via Intel RAPL and converts total energy to CO\textsubscript{2}-equivalent using the Indonesian grid intensity. A tracked phase includes warm-up, insertion, retrieval, and setup/teardown within one measured duration, reporting duration, total energy, CPU energy, RAM energy, and CO\textsubscript{2}eq. To obtain per-resolution estimates we apply a constant power-rate model: from phase energy $E$ and duration $T$ we derive an average rate $E/T$ and multiply by each resolution's measured insert and retrieval durations.
+Each \emph{(engine, dimension, resolution)} cell runs inside its own CodeCarbon~\citep{codecarbon} tracker, so per-resolution energy and emissions are measured \emph{directly} rather than estimated from a phase-level power-rate model. CodeCarbon reads CPU and RAM power via Intel RAPL and converts total energy to CO\textsubscript{2}-equivalent using the Indonesian grid intensity; we report duration, total/CPU/RAM energy, and CO\textsubscript{2}eq for insertion, retrieval, and point-read at every resolution. Reported figures are means over five runs; we also report standard deviations as a measure of run-to-run dispersion. Because emissions are the product of energy and a grid factor, the relative ranking of architectures is determined by energy alone (Section~\ref{subsec:grid}).
 
-% TODO (Fase 1 -- PRIORITY): replace the constant power-rate ESTIMATE with a
-% DIRECTLY MEASURED CodeCarbon phase per resolution per engine. Reviewers at an
-% environmental journal will scrutinise the estimation assumption.
-
-% TODO (Fase 2): report Software Carbon Intensity (SCI, ISO/IEC 21031:2024)
-% per functional unit (e.g., gCO2eq per 1000 stored frames) -- see \citep{gsf_sci}.
+\subsection{Failover and the unstorable cell}\label{subsec:failover}
+To keep the sweep robust and the data honest, each measurement cell is buffered and persisted only after a fully successful attempt; a cell that raises is retried, and after repeated failures it is recorded as \emph{skipped} (engine, resolution, attempts, error) and the sweep continues to the next resolution and engine. Exactly one cell triggered this path: \textbf{MongoDB at 6K} (Section~\ref{subsec:bson}). The harness thus reports a clean three-way comparison from 360p to 5K and a two-way PG-versus-PM comparison at 6K, with the omission explicit rather than silently mishandled.
 
 %%=====================================================================%%
 \section{Results}\label{sec:results}
 %%=====================================================================%%
 
-We report insertion throughput (Sec.~\ref{subsec:insert}), retrieval (Sec.~\ref{subsec:retrieval}), storage amplification and its embodied-carbon implication (Sec.~\ref{subsec:storage}), and the central per-resolution carbon comparison (Sec.~\ref{subsec:carbon}). Tables~\ref{tab:insert}--\ref{tab:carbon} integrate measurements in which the three engines share the same hardware and CodeCarbon configuration; the PostgreSQL baseline is consistent across runs (e.g., 1080p emissions of 1{,}210--1{,}266~mg~CO\textsubscript{2}eq), supporting the three-way comparison.
+We report insertion throughput and storage amplification (Section~\ref{subsec:insert}), retrieval and point-read (Section~\ref{subsec:retrieval}), the central per-resolution carbon comparison with its SCI and embodied-carbon implications (Section~\ref{subsec:carbon}), multi-region grid sensitivity (Section~\ref{subsec:grid}), and MongoDB's 16~MB ceiling (Section~\ref{subsec:bson}). All values are directly measured on identical hardware and CodeCarbon configuration; standard deviations across five runs are small (Tables~\ref{tab:write}--\ref{tab:read}), supporting the comparison.
 
-% TODO (Fase 1): MongoDB 360p-720p not yet measured; re-run the full sweep.
-% TODO (Fase 1): regenerate three-way boxplot/figures and add \begin{figure}s here.
+\subsection{Insertion throughput and storage amplification}\label{subsec:insert}
+Insertion (Figure~\ref{fig:insert}, Table~\ref{tab:write}) exhibits a clear, monotone reordering with payload size. At low resolution MongoDB ingests dramatically faster than the alternatives---4{,}194~rows/s at 360p, over $6\times$ PostgreSQL and $56\times$ the hybrid---because each frame compresses to a near-empty bucket (storage amplification $0.001\times$) that WiredTiger writes entirely in cache. PostgreSQL is the middle ingester at low resolution (batched inserts avoid a per-object network call), while PM pays the fixed cost of one MinIO PUT per payload and is slowest. As payloads grow the order inverts: MongoDB falls below PostgreSQL between 1440p and 4K and becomes the slowest engine at 4K--5K as WiredTiger serialises multi-megabyte BSON documents through B-tree pages~\citep{wiredtiger_btree_architecture} and compression fails; PM, whose throughput is nearly flat, overtakes PostgreSQL at 4K and remains highest through 6K. Storage amplification (Figure~\ref{fig:storage}) explains much of the downstream carbon: PG holds a stable $\sim$1.04$\times$ (TOAST out-of-line layout) and PM $\sim$1.00$\times$ (raw object size) at all resolutions, whereas MongoDB undergoes a regime change---$0.10\times$ at 1080p (Snappy crushes small documents dominated by metadata) rising to $1.59\times$ at 4K and $3.00\times$ at 5K as high-entropy JPEG defeats block compression.
 
-\subsection{Insertion throughput}\label{subsec:insert}
-Table~\ref{tab:insert} shows a clear write-side ordering by payload size. At small resolutions, inline PG dominates (738 rows/s at 360p) because batched inserts avoid a per-object network call; PM is penalised by the fixed cost of a MinIO PUT per payload, and MongoDB's advantage only appears once documents are large enough to exploit cache-resident buffering. As payload size grows the picture inverts: PM overtakes PG at 4K--5K, and MongoDB---fast at 1080p--1440p---falls behind both at 4K--5K as WiredTiger serialises multi-megabyte BSON documents through B-tree pages~\citep{wiredtiger_btree_architecture} and approaches cache pressure~\citep{percona_wiredtiger_eviction}.
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{storage_amplification.pdf}
+\caption{Storage amplification (on-disk $\div$ raw payload, log scale; dashed line marks unity). PostgreSQL and the hybrid are flat near $1.0\times$; MongoDB crosses from sub-unity compression at low resolution to $3.0\times$ at 5K, with embodied-carbon consequences (Section~\ref{subsec:carbon}).}\label{fig:storage}
+\end{figure}
 
-\begin{table}[h]
-\caption{Insert throughput (rows/s), three-way. Higher is better.}\label{tab:insert}
-\begin{tabular}{@{}lrrr@{}}
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{insert_throughput.pdf}
+\caption{Insert throughput (rows/s, log scale; mean$\pm$std over 5 runs). MongoDB dominates at low resolution but collapses at high resolution; the hybrid (PM) is flattest and leads from 4K. MongoDB is omitted at 6K (Section~\ref{subsec:bson}).}\label{fig:insert}
+\end{figure}
+
+\begin{table}[t]
+\caption{Insert throughput (rows/s, mean$\pm$std) and storage amplification (on-disk $\div$ raw). Higher throughput and lower amplification are better; \textbf{bold} marks the best engine per row.}\label{tab:write}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lrrrrrr@{}}
 \toprule
-Res. & PG (BYTEA) & MongoDB & PM (PG+MinIO) \\
+ & \multicolumn{3}{c}{Insert throughput (rows/s)} & \multicolumn{3}{c}{Storage amp. ($\times$)} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Res. & PG & MongoDB & PM & PG & MG & PM \\
 \midrule
-360p  & \textbf{738.32} & --     & 104.05 \\
-480p  & \textbf{475.75} & --     & 56.88  \\
-720p  & \textbf{205.12} & --     & 51.69  \\
-1080p & 91.86           & \textbf{337.6} & 39.02 \\
-1440p & 50.51           & \textbf{128.3} & 35.47 \\
-4K    & 23.04           & 18.1   & \textbf{28.49} \\
-5K    & 13.16           & 7.8    & \textbf{15.59} \\
+360p  & 640.9          & \textbf{4194.1} & 74.4          & 1.045 & \textbf{0.001} & 1.003 \\
+480p  & 452.6          & \textbf{2532.4} & 44.7          & 1.044 & \textbf{0.000} & 1.002 \\
+720p  & 185.7          & \textbf{760.3}  & 40.4          & 1.039 & \textbf{0.101} & 1.001 \\
+1080p & 81.5           & \textbf{311.3}  & 34.4          & 1.039 & \textbf{0.101} & 1.000 \\
+1440p & 43.8           & \textbf{114.2}  & 32.8          & 1.039 & \textbf{0.269} & 1.000 \\
+4K    & 19.8           & 16.0            & \textbf{27.3} & 1.038 & 1.587 & \textbf{1.000} \\
+5K    & 11.6           & 7.0             & \textbf{15.3} & 1.038 & 3.004 & \textbf{1.000} \\
+6K    & 8.1            & --              & \textbf{13.1} & 1.038 & --    & \textbf{1.000} \\
 \botrule
 \end{tabular}
-\footnotetext{PG and PM from the PG-vs-PM campaign; MongoDB from the PG-vs-MongoDB campaign (same host/CodeCarbon setup). MongoDB at 360p--720p not yet measured.}
+\footnotetext{Std deviations are small (e.g.\ MongoDB 360p $\pm$314; PG/PM typically $<2\%$). MongoDB at 6K is unstorable (Section~\ref{subsec:bson}).}
 \end{table}
 
-\subsection{Retrieval}\label{subsec:retrieval}
-Retrieval was measured under two different workloads in the source campaigns and is \emph{not yet unified}: a 2{,}000-row full-materialisation workload (in which MongoDB's contiguous inline layout retrieved binaries $1.7$--$2.9\times$ faster than PG's TOAST-pointer indirection across all tested resolutions), and a latest-payload single point-read workload (in which PM, streaming directly from MinIO, reduced PG's point-read latency from 3.64~ms to 2.35~ms at 1080p and from 27.32~ms to 3.36~ms at 5K, an $8\times$ reduction). Both observations indicate that externalised or inline binary co-location helps the read path at high resolution, but a single common retrieval workload across all three engines is required before reporting a unified three-way table.
+\subsection{Retrieval and point-read}\label{subsec:retrieval}
+Under a common workload across all three engines, the read path tells the same mirror-image story (Figures~\ref{fig:retrieval}--\ref{fig:pointread}, Table~\ref{tab:read}). For \emph{full materialisation} of 2{,}000 payloads, MongoDB's contiguous inline layout is fastest at low resolution (216~ms at 360p), but PostgreSQL degrades steeply as TOAST-pointer indirection materialises ever-larger \texttt{BYTEA} values through its wire protocol---reaching 53.6~s at 5K and 76.1~s at 6K. The hybrid is by far the most scalable reader: streaming objects over HTTP keeps full retrieval at 5.8~s (5K) and 8.6~s (6K), $9\times$ faster than inline PostgreSQL. \emph{Point-reads} of the latest payload reinforce this: PM stays near-flat (1--5~ms across the whole range) while PostgreSQL climbs to 39.6~ms at 6K and MongoDB to 69.8~ms at 5K. PM is slightly slower than PG only at the smallest resolutions, where its fixed HTTP round-trip (driver overhead 0.58~ms versus PostgreSQL's 0.05~ms) outweighs the streaming benefit.
 
-% TODO (Fase 1 -- PRIORITY): re-run ONE retrieval workload (recommend latest-payload
-% point-read) across PG, MongoDB, and PM, and replace this paragraph with a table.
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{retrieval_latency.pdf}
+\caption{Full-materialisation retrieval latency for 2{,}000 payloads (ms, log scale; mean$\pm$std). Inline PostgreSQL degrades steeply; the hybrid scales best.}\label{fig:retrieval}
+\end{figure}
 
-\subsection{Storage amplification and embodied carbon}\label{subsec:storage}
-Storage amplification (Table~\ref{tab:storage}) differs sharply by architecture. PG remains near $1.04\times$ (TOAST out-of-line overhead) and PM near $1.00\times$ (raw object size) at all resolutions. MongoDB instead exhibits a regime change: Snappy compresses small documents effectively ($0.10\times$ at 1080p, where JSON metadata dominates) but is defeated by high-entropy JPEG as the payload grows, reaching $1.58\times$ at 4K and $3.00\times$ at 5K. Beyond the operational energy of extra write I/O, this amplification has an \emph{embodied}-carbon implication: storing the same logical data at $3.00\times$ requires roughly three times the provisioned SSD capacity, with corresponding manufacturing emissions and faster device wear---an effect that compounds at fleet scale.
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{point_read_latency.pdf}
+\caption{Latest-payload point-read latency (ms, log scale; mean$\pm$std). The hybrid stays near-flat; inline engines climb with payload size.}\label{fig:pointread}
+\end{figure}
 
-\begin{table}[h]
-\caption{Storage amplification (on-disk $\div$ raw payload). Lower is better.}\label{tab:storage}
-\begin{tabular}{@{}lrrr@{}}
+\begin{table}[t]
+\caption{Retrieval latency (ms, mean$\pm$std): full materialisation of 2{,}000 payloads, and latest-payload point-read. Lower is better; \textbf{bold} marks the best engine per row.}\label{tab:read}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lrrrrrr@{}}
 \toprule
-Res. & PG (BYTEA) & MongoDB & PM (PG+MinIO) \\
+ & \multicolumn{3}{c}{Full retrieval (ms)} & \multicolumn{3}{c}{Point-read (ms)} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Res. & PG & MG & PM & PG & MG & PM \\
 \midrule
-360p  & 1.045 & --   & \textbf{1.003} \\
-480p  & 1.044 & --   & \textbf{1.002} \\
-720p  & 1.039 & --   & \textbf{1.001} \\
-1080p & 1.039 & \textbf{0.10} & 1.000 \\
-1440p & 1.039 & \textbf{0.27} & 1.000 \\
-4K    & 1.038 & 1.58 & \textbf{1.000} \\
-5K    & 1.038 & 3.00 & \textbf{1.000} \\
+360p  & 788.5    & \textbf{215.9}  & 1497.2 & 1.27 & 3.37 & \textbf{1.09} \\
+480p  & 1377.0   & \textbf{479.4}  & 1487.5 & \textbf{0.97} & 3.67 & 1.93 \\
+720p  & 3057.7   & 1188.5 & \textbf{1706.9} & 1.78 & 4.30 & \textbf{1.22} \\
+1080p & 8238.6   & 2895.8 & \textbf{2211.2} & 3.88 & 5.17 & \textbf{1.78} \\
+1440p & 13433.1  & 5286.8 & \textbf{2879.9} & 6.52 & 7.74 & \textbf{1.80} \\
+4K    & 29883.8  & 11669.3 & \textbf{4273.0} & 17.06 & 25.38 & \textbf{2.12} \\
+5K    & 53638.4  & 31821.2 & \textbf{5833.4} & 29.55 & 69.83 & \textbf{3.31} \\
+6K    & 76059.0  & --     & \textbf{8634.5} & 39.59 & --    & \textbf{5.15} \\
 \botrule
 \end{tabular}
 \end{table}
-
-% TODO (Fase 2): quantify embodied carbon (kgCO2eq per TB of SSD) and add a PUE
-% factor to convert IT energy to facility energy.
 
 \subsection{Carbon footprint per resolution}\label{subsec:carbon}
-Table~\ref{tab:carbon} reports estimated per-resolution emissions and is the central result. It reveals a \emph{resolution-dependent emission crossover with no universal winner}:
+Table~\ref{tab:carbon} and Figure~\ref{fig:carbon} report directly measured per-resolution emissions and constitute the central result. They reveal a \emph{resolution-dependent emission crossover with no universal winner}, in which MongoDB and the hybrid are mirror images and inline PostgreSQL is the pivot:
 \begin{itemize}
-  \item \textbf{Standard resolutions (1080p--1440p):} MongoDB emits the least (366 and 872~mg) because its much faster completion outweighs its per-second power; PG is the middle option, and PM is penalised by per-payload HTTP overhead on small images.
-  \item \textbf{High resolutions (4K--5K):} PM emits the least (2{,}376 and 4{,}289~mg) by decoupling the multi-megabyte payload from the relational write path; MongoDB becomes the \emph{worst} (5{,}289 and 12{,}562~mg) due to inline BSON write amplification, defeated compression, and cache pressure; PG is again the middle option.
-  \item \textbf{Inline PostgreSQL} is the robust middle across the whole range---never the greenest, but never the worst.
+  \item \textbf{Standard resolutions (360p--1440p): MongoDB is greenest}, and dramatically so at the low end---40~mg at 360p versus 191~mg (PG) and 933~mg (PM), a $4.8$--$23\times$ advantage---because near-empty compressed buckets ingest extremely fast. PM is the \emph{worst} here, penalised by a per-payload HTTP PUT on small images.
+  \item \textbf{High resolutions (4K--6K): the hybrid is greenest}, emitting 2{,}628~mg at 4K and 5{,}114~mg at 5K---roughly half of inline PostgreSQL---by decoupling the multi-megabyte payload from the database write path. MongoDB becomes the \emph{worst} (5{,}740~mg at 4K, 12{,}564~mg at 5K) due to inline BSON write amplification, defeated compression, and cache pressure, then fails entirely at 6K.
+  \item \textbf{Inline PostgreSQL is the robust pivot}: it is never the greenest but operates across the whole range and avoids both extremes.
 \end{itemize}
-At the whole-phase level (directly measured), the PG-vs-MongoDB campaign (1080p--5K) gave PG 18{,}439~mg vs MongoDB 20{,}891~mg (MongoDB $+13.3\%$), and the PG-vs-PM campaign (360p--5K) gave PG 19{,}824.8~mg vs PM 14{,}483.0~mg (PM $-26.9\%$); both are dominated by the high-resolution profiles.
+Insertion dominates the footprint (Figure~\ref{fig:breakdown}); full retrieval is the second contributor and point-reads are negligible ($<5$~mg). Cumulatively over the common 360p--5K range, the hybrid is the lowest-carbon architecture at 15.6~g~CO\textsubscript{2}eq, $24.7\%$ below inline PostgreSQL (20.8~g) and $25.9\%$ below MongoDB (21.1~g): despite winning every standard resolution, MongoDB ends highest cumulatively because the high-resolution profiles dominate total energy. A CPU/RAM decomposition shows CPU accounts for $\approx$53\% of energy for the inline engines (PG, MongoDB) but only $\approx$41\% for the hybrid, consistent with PM offloading payload handling away from the database CPU path.
 
-\begin{table}[h]
-\caption{Estimated per-resolution emissions (mg~CO\textsubscript{2}eq). Lower is better. \textbf{Bold} = greenest at that resolution.}\label{tab:carbon}
-\begin{tabular}{@{}lrrr@{}}
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{carbon_per_resolution.pdf}
+\caption{Directly measured carbon per resolution (mg~CO\textsubscript{2}eq, log scale; insert+retrieval+point-read). The ``scissors'' crossover: MongoDB greenest at $\le$1440p, the hybrid greenest at $\ge$4K, inline PostgreSQL the pivot. MongoDB is omitted at 6K (Section~\ref{subsec:bson}).}\label{fig:carbon}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.85\linewidth]{carbon_breakdown.pdf}
+\caption{Cumulative carbon over 360p--5K, split into insert and read (retrieval+point-read) contributions. The hybrid is lowest overall; its read contribution is negligible because objects stream over HTTP rather than materialising through the database.}\label{fig:breakdown}
+\end{figure}
+
+\begin{table}[t]
+\caption{Directly measured per-resolution carbon (mg~CO\textsubscript{2}eq; insert+retrieval+point-read). Lower is better; \textbf{bold} = greenest at that resolution.}\label{tab:carbon}
+\small
+\begin{tabular}{@{}lrrrl@{}}
 \toprule
-Res. & PG (BYTEA) & MongoDB & PM (PG+MinIO) \\
+Res. & PG (BYTEA) & MongoDB & PM (PG+MinIO) & Greenest \\
 \midrule
-360p  & \textbf{147.6}  & --      & 662.0  \\
-480p  & \textbf{234.3}  & --      & 1175.0 \\
-720p  & \textbf{532.8}  & --      & 1292.8 \\
-1080p & 1210.4          & \textbf{366}  & 1749.9 \\
-1440p & 2173.8          & \textbf{872}  & 1924.8 \\
-4K    & 4826.2          & 5289    & \textbf{2375.8} \\
-5K    & 8488.6          & 12562   & \textbf{4288.5} \\
+360p  & 191.1   & \textbf{40.1}   & 933.2   & MG \\
+480p  & 293.7   & \textbf{74.2}   & 1490.8  & MG \\
+720p  & 667.9   & \textbf{194.3}  & 1587.9  & MG \\
+1080p & 1507.3  & \textbf{457.3}  & 1852.5  & MG \\
+1440p & 2592.3  & \textbf{1048.6} & 2035.0  & MG \\
+4K    & 5639.9  & 5739.5 & \textbf{2628.1} & PM \\
+5K    & 9866.6  & 12564.4 & \textbf{5113.6} & PM \\
+6K    & 13908.6 & --     & \textbf{6072.0} & PM \\
+\midrule
+\multicolumn{1}{@{}l}{Cum.\ 360p--5K} & 20758.9 & 21118.4 & \textbf{15641.2} & PM \\
 \botrule
 \end{tabular}
-\footnotetext{Per-resolution values are constant power-rate estimates; whole-phase totals are directly measured. MongoDB at 360p--720p not yet measured. PG/PM from one campaign, MongoDB from a companion campaign on the same host.}
+\footnotetext{Cumulative row over the common three-way range; MongoDB is highest cumulatively despite winning every standard resolution, because high-resolution profiles dominate total energy.}
 \end{table}
 
-\subsubsection{Grid-intensity sensitivity}\label{subsubsec:grid}
-% TODO (Fase 2 -- KEY for ESD): recompute emissions for several grid intensities,
-% since emissions = energy x grid factor. Add a table over, e.g., Nordic (~0.02),
-% EU avg (~0.23), Indonesia (0.676), India coal-heavy (~0.71) kgCO2eq/kWh, and
-% discuss how the architecture ranking is/ isn't robust to grid decarbonisation.
-The emissions in Table~\ref{tab:carbon} scale linearly with grid carbon intensity. A full multi-region sensitivity analysis is the subject of the directly-measured re-run (see Sec.~\ref{sec:conclusion}); we expect the \emph{relative} ranking to be grid-invariant (it depends on energy, not grid factor), while the \emph{absolute} savings shrink as grids decarbonise.
+\textbf{Software Carbon Intensity.} Expressing the storage operation in SCI terms~\citep{gsf_sci} with a functional unit of 1{,}000 stored frames (Table~\ref{tab:sci}), the carbon intensity of ingestion spans nearly three orders of magnitude across resolutions and inverts between engines: at 360p MongoDB stores 1{,}000 frames for 13.5~mg~CO\textsubscript{2}eq versus 418~mg for the hybrid, whereas at 5K the hybrid needs 2{,}333~mg versus MongoDB's 5{,}834~mg. SCI makes the operating-point dependence explicit and portable across deployments.
+
+\begin{table}[t]
+\caption{Software Carbon Intensity of ingestion: mg~CO\textsubscript{2}eq per 1{,}000 stored frames (Indonesian grid). Lower is better.}\label{tab:sci}
+\small
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Res. & PG & MongoDB & PM \\
+\midrule
+360p  & 67.9   & \textbf{13.5}  & 418.0 \\
+1080p & 517.2  & \textbf{144.0} & 853.1 \\
+1440p & 919.8  & \textbf{376.8} & 920.1 \\
+4K    & 1996.4 & 2530.9 & \textbf{1159.9} \\
+5K    & 3430.6 & 5833.8 & \textbf{2333.1} \\
+6K    & 4816.9 & --     & \textbf{2713.1} \\
+\botrule
+\end{tabular}
+\end{table}
+
+\textbf{Embodied carbon of storage amplification.} Operational energy is not the only cost: provisioned storage carries embodied (manufacturing) carbon~\citep{gupta_chasing_carbon,tannu_ssd_embodied}. At 5K, 2{,}000 frames occupy $\approx$9.9~GB of raw payload; PM provisions essentially that (9.9~GB) and PG $\approx$10.3~GB, but MongoDB's $3.00\times$ amplification provisions $\approx$29.8~GB. Using a representative NAND-flash embodied intensity of 0.16~kg~CO\textsubscript{2}eq/GB~\citep{tannu_ssd_embodied}, MongoDB carries $\approx$4.8~kg of embodied carbon for this data versus $\approx$1.6~kg for the hybrid---a one-time $\approx$3.2~kg penalty that recurs with every retained dataset and compounds at fleet scale through faster device wear.
+
+\subsection{Multi-region grid-intensity sensitivity}\label{subsec:grid}
+Because emissions equal energy times grid intensity, the architecture \emph{ranking} is grid-invariant while the \emph{absolute} footprint scales with the local grid (Table~\ref{tab:grid}). Recomputing the cumulative 360p--5K footprint across grids from near-decarbonised (Sweden, 41~g/kWh) to coal-heavy (India, 713~g/kWh), the hybrid remains the lowest-carbon choice everywhere, and the absolute saving versus MongoDB grows from 0.33~kg (Sweden) to 5.8~kg (India) for this modest 2{,}000-frame-per-resolution workload. Grid decarbonisation shrinks the absolute stakes but does not change which architecture an operator should choose.
+
+\begin{table}[t]
+\caption{Multi-region grid sensitivity: cumulative footprint over 360p--5K (g~CO\textsubscript{2}eq) under different grid intensities. The hybrid (PM) is greenest under every grid.}\label{tab:grid}
+\small
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Grid region & g/kWh & PG & MongoDB & PM \\
+\midrule
+Sweden            & 41  & 1.26  & 1.28  & \textbf{0.95} \\
+France            & 53  & 1.63  & 1.66  & \textbf{1.23} \\
+EU-27 average     & 230 & 7.06  & 7.19  & \textbf{5.32} \\
+United States     & 360 & 11.06 & 11.25 & \textbf{8.33} \\
+China             & 550 & 16.89 & 17.18 & \textbf{12.73} \\
+Indonesia$^\ast$  & 676 & 20.76 & 21.12 & \textbf{15.64} \\
+India             & 713 & 21.90 & 22.28 & \textbf{16.50} \\
+\botrule
+\end{tabular}
+\footnotetext{$^\ast$Baseline grid used for all other tables.}
+\end{table}
+
+\subsection{The MongoDB 16~MB ceiling}\label{subsec:bson}
+MongoDB could not store 6K frames at all. The 6K payload is 7.13~MB---comfortably within the 16~MB BSON document limit for a single frame---yet insertion failed with error~10334 (\texttt{BSONObjectTooLarge}), the offending object measuring 22.4~MB ($\approx$3$\times$ the payload). The cause is architectural: native Time-Series Collections \emph{bucket} multiple measurements that share a metadata value into a single underlying bucket document, which is itself bound by the 16~MB BSON limit. With multi-megabyte payloads only two frames fit in a bucket; the attempt to bucket a third breaches the ceiling. The same bucketing that makes time-series collections efficient for small measurements becomes a hard wall for large binaries, and---unlike a tuning parameter---it cannot be raised. This is a decision-relevant constraint: \emph{MongoDB inline storage is not merely inefficient but infeasible} once payloads approach a few megabytes, independent of cache size or hardware.
 
 %%=====================================================================%%
 \section{A Carbon-Aware Decision Framework}\label{sec:framework}
 %%=====================================================================%%
 
-The measurements above translate into operational guidance for sustainable building-monitoring infrastructure. The dominant decision variable is camera resolution (a proxy for payload size); the secondary variable is workload emphasis (write-heavy ingestion vs read-heavy analytics vs storage-bound archival). Table~\ref{tab:decision} summarises the carbon-aware recommendation.
+The measurements translate into operational guidance for sustainable building-monitoring infrastructure. The dominant decision variable is camera resolution (a proxy for payload size); the secondary variable is workload emphasis (write-heavy ingestion, read-heavy analytics, or storage-bound archival). Table~\ref{tab:decision} summarises the carbon-aware recommendation. The rule is simple and crossover-driven: below $\sim$1440p choose MongoDB; from 4K upward choose the hybrid; choose inline PostgreSQL when resolution is mixed/uncertain or operational simplicity is paramount; and never choose MongoDB once payloads approach the BSON ceiling.
 
-\begin{table}[h]
+\begin{table}[t]
 \caption{Carbon-aware architecture selection. PG = PostgreSQL-BYTEA; MG = MongoDB; PM = PostgreSQL+MinIO.}\label{tab:decision}
-\begin{tabular}{@{}p{0.27\textwidth}p{0.16\textwidth}p{0.45\textwidth}@{}}
+\small
+\begin{tabular}{@{}p{0.27\textwidth}p{0.13\textwidth}p{0.46\textwidth}@{}}
 \toprule
-Operating regime & Lowest-emission choice & Rationale \\
+Operating regime & Choice & Rationale \\
 \midrule
-$\leq$1440p, ingest-heavy & MG & Fastest completion dominates carbon; sub-unity storage amplification. \\
-$\geq$4K, any emphasis & PM & Externalised payload minimises write energy and storage; $\sim$half the carbon of PG at 4K--5K. \\
-Mixed / uncertain resolution & PG & Robust middle: never greenest, never worst; single transactional boundary. \\
+$\leq$1440p, ingest-heavy & MG & Greenest by $5$--$23\times$; near-zero storage amplification; fastest completion dominates carbon. \\
+$\geq$4K, any emphasis & PM & $\sim$half the carbon of inline storage; flat storage; HTTP streaming makes reads cheap. \\
+Mixed / uncertain resolution & PG & Robust pivot: never worst, single transactional boundary, operates over the full range. \\
 Storage-bound / archival & PM & $\sim$1.00$\times$ amplification minimises operational \emph{and} embodied carbon. \\
-High-resolution read-heavy & PM & Direct object streaming reduces high-resolution read latency and energy. \\
+High-resolution read-heavy & PM & Object streaming keeps point-read and full-retrieval latency and energy low. \\
+$\geq$6K (payload $\gtrsim$8~MB) & PG or PM & MongoDB \emph{infeasible}: bucketed documents exceed the 16~MB BSON limit. \\
 \botrule
 \end{tabular}
 \end{table}
 
-% TODO (Fase 2): render this as a decision tree figure; validate the rule on a
-% held-out workload; express thresholds via a simple crossover cost-model
-% (function of payload size, batch size, grid factor).
-
 \subsection{Fleet-scale projection}\label{subsec:fleet}
-% TODO (Fase 2): turn the per-row carbon indicator into an annualised fleet estimate.
-As a first-order indicator, dividing measured phase emissions by insertion count at 4K yields $\sim$0.37~mg~CO\textsubscript{2}eq per row for PG and $\sim$0.49~mg for MongoDB ($\sim$33\% higher). Projected to a building fleet---e.g., $N$ cameras each storing one 4K frame per second over a year---these per-frame differences accumulate into operationally meaningful annual emissions; a worked, directly-measured projection with relatable equivalents (km driven, tree-years) is left for the camera-ready re-run.
+The per-frame differences accumulate at fleet scale. Taking the directly measured 4K ingestion carbon and a fleet of 1{,}000 cameras each storing one 4K frame per minute for a year ($5.26\times10^{8}$ frames), the annual ingestion footprint is $\approx$610~kg~CO\textsubscript{2}eq for the hybrid, 1{,}049~kg for inline PostgreSQL, and 1{,}330~kg for MongoDB; applying a representative data-centre PUE of 1.5~\citep{shehabi_us_datacenter} raises these to $\approx$914, 1{,}574, and 1{,}995~kg respectively. Choosing the hybrid over inline PostgreSQL at 4K therefore avoids $\approx$440~kg~CO\textsubscript{2}eq per year for this fleet---comparable to roughly 2{,}600~km driven by an average passenger car, or the annual sequestration of about 21 mature trees---and the saving scales linearly with fleet size, frame rate, and retention.
+
+\subsection{Alignment with Sustainable Development Goals}\label{subsec:sdg}
+Carbon-aware storage selection contributes to several UN Sustainable Development Goals: SDG~7 (affordable and clean energy) and SDG~13 (climate action) through direct reductions in operational and embodied emissions; SDG~9 (industry, innovation, and infrastructure) and SDG~11 (sustainable cities and communities) by informing greener building-monitoring infrastructure; and SDG~12 (responsible consumption and production) by curbing over-provisioning of storage through amplification-aware design.
 
 %%=====================================================================%%
 \section{Discussion}\label{sec:discussion}
 %%=====================================================================%%
 
-\textbf{Why the crossover occurs.} MongoDB's inline BSON layout is energy-efficient while documents stay small and cache-resident, but at $\geq$4K each insert must serialise a multi-megabyte payload through B-tree pages, compression fails on high-entropy JPEG, and storage amplification and cache pressure inflate both time and energy. PG's TOAST keeps the primary index compact and the write path resolution-independent, giving stable $1.04\times$ amplification and middle-of-the-road carbon. PM removes the payload from the relational engine entirely, so PostgreSQL logs only metadata while MinIO streams the object, which is the most energy-efficient path once payloads are large.
+\textbf{Why the crossover occurs.} The three engines occupy different points on a single trade-off between fixed per-operation overhead and per-byte payload handling. MongoDB's inline BSON layout is extraordinarily efficient while documents stay small and cache-resident: buckets compress to near-nothing and ingest in cache. But WiredTiger keeps documents in their \emph{uncompressed} form in cache and serialises the entire BSON document---including multi-megabyte \texttt{BinData}---through B-tree leaf pages~\citep{wiredtiger_btree_architecture}; as payloads grow, Snappy~\citep{google_snappy} fails on high-entropy JPEG, storage amplification climbs to $3.00\times$, and at the largest sizes cache pressure forces eviction threads to stall application threads~\citep{percona_wiredtiger_eviction}. PostgreSQL's TOAST~\citep{postgresql_toast_docs} relocates payloads out-of-line, keeping the primary index compact and the write path resolution-independent ($1.04\times$), which yields stable, middle-of-the-road carbon. The hybrid removes the payload from the relational engine entirely, so PostgreSQL logs only metadata---its write-ahead log and index growth scale with metadata rather than payload size---while MinIO streams the object; this is the most energy-efficient path once payloads are large, at the cost of a fixed HTTP round-trip that makes it the worst choice for small images.
 
-\textbf{Implications for green building monitoring.} There is no single ``green database''. Standard-definition camera streams are greenest on MongoDB; high-resolution inspection or surveillance streams are greenest on PostgreSQL+MinIO; inline PostgreSQL is the safe default when resolution is mixed or operational simplicity (a single transactional boundary, simpler backup/recovery) is valued. These map directly to infrastructure decisions in Table~\ref{tab:decision}.
+\textbf{Implications for green building monitoring.} There is no single ``green database.'' Standard-definition camera streams are greenest on MongoDB; high-resolution inspection or surveillance streams are greenest on PostgreSQL+MinIO; inline PostgreSQL is the safe default when resolution is mixed or operational simplicity (a single transactional boundary, simpler backup/recovery) is valued. The 16~MB bucket ceiling further removes MongoDB from consideration for $\geq$6K media regardless of carbon. These map directly to the infrastructure decisions in Table~\ref{tab:decision}.
 
-% TODO (Fase 2): SDG linkage paragraph -- relate carbon-aware storage selection to
-% SDG 7 (affordable clean energy), 9 (industry/infrastructure), 11 (sustainable
-% cities), 12 (responsible consumption), 13 (climate action).
+\textbf{Operational trade-offs.} The hybrid introduces two services with independent failure modes and a non-atomic two-step write (database INSERT plus MinIO PUT) that requires compensation logic, such as periodic garbage collection of orphaned objects. PostgreSQL preserves a single transactional boundary. These operational costs must be weighed against the hybrid's carbon and storage advantages at high resolution. Because the underlying mechanism---inline large-object handling versus externalised object transport---is generic, the qualitative crossover is expected to transfer to other relational engines with large-object columns, though exact crossover points depend on each engine's page layout and logging.
 
-\textbf{Operational trade-offs.} PM introduces two services with independent failure modes and a non-atomic two-step write (database INSERT plus MinIO PUT) that requires compensation logic (e.g., garbage collection of orphaned objects). PG preserves a single transactional boundary. These operational costs must be weighed against PM's carbon and storage advantages at high resolution.
-
-\textbf{Threats to validity.} Results are from a single host and container topology; distributed deployments may differ. Per-resolution emissions are constant power-rate \emph{estimates} (the whole-phase totals are measured); a directly-measured per-resolution re-run is the priority next step. Retrieval is not yet unified across the three engines. Payloads are synthetic quality-90 JPEGs derived from one source asset; real feeds may vary in entropy and compressibility. The fixed batch size of~50 and sequential single-client access may not reflect all production patterns. The current analysis uses a single grid factor (Indonesia); a multi-region sensitivity analysis is planned. The relative comparison remains valid because all engines were benchmarked under identical hardware conditions.
+\textbf{Threats to validity.} Results are from a single host and container topology; distributed deployments may differ, though the relative comparison holds because all engines ran under identical conditions. Per-resolution emissions are now directly measured (removing the estimation assumption of our earlier work), but energy accuracy depends on Intel RAPL; on hosts where RAPL is unavailable, CodeCarbon falls back to TDP estimates. Payloads are synthetic quality-90 JPEGs derived from one source asset; real feeds may vary in entropy and compressibility. The fixed batch size of~50 and sequential single-client access may not reflect all production patterns. The embodied-carbon and fleet figures are first-order estimates using representative published factors and stated assumptions, intended to convey magnitude rather than site-specific precision.
 
 %%=====================================================================%%
 \section{Conclusion}\label{sec:conclusion}
 %%=====================================================================%%
 
-This paper measured the carbon footprint of three storage architectures---document-oriented MongoDB, relational PostgreSQL-BYTEA, and hybrid PostgreSQL+MinIO---for image-based time-series workloads from 360p to 5K, using CodeCarbon with RAPL hardware energy measurement. The key finding is a resolution-dependent emission crossover with no universal winner: MongoDB is greenest at 1080p--1440p, PostgreSQL+MinIO is greenest at 4K--5K (roughly half the carbon of inline storage), and inline PostgreSQL is the robust middle option. We translated these measurements into a carbon-aware decision framework for sustainable building-monitoring infrastructure.
+This paper measured the carbon footprint of three storage architectures---document-oriented MongoDB, relational PostgreSQL-BYTEA, and hybrid PostgreSQL+MinIO---for image-based time-series workloads from 360p to 6K, using CodeCarbon with RAPL hardware energy measurement, with carbon measured directly for every architecture, resolution, and operation and a common retrieval workload across all three engines. The key finding is a resolution-dependent emission crossover with no universal winner: MongoDB is greenest up to 1440p (by as much as $23\times$ at 360p), the hybrid is greenest from 4K (roughly halving inline-storage carbon and lowest cumulatively, by $\approx$25\%), and inline PostgreSQL is the robust pivot---while MongoDB is outright infeasible at 6K because time-series bucketing breaches the 16~MB BSON limit. We translated the measurements into a carbon-aware decision framework and supported it with Software Carbon Intensity, multi-region grid sensitivity, embodied-carbon implications of storage amplification, and a fleet-scale projection.
 
-Future work, already scoped for the camera-ready version, will: (i)~replace the constant power-rate estimate with directly measured per-resolution CodeCarbon phases; (ii)~unify retrieval under one workload across all three engines and complete the MongoDB sweep at 360p--720p; (iii)~add a multi-region grid-intensity sensitivity analysis and report Software Carbon Intensity (SCI) units; (iv)~quantify embodied/life-cycle carbon of the storage amplification and add a PUE factor; and (v)~provide an annualised fleet-scale projection and an SDG linkage. A public artifact (code, Docker configurations, raw results) will be released with a DOI.
+Future work will extend the study to distributed and multi-client deployments, incorporate real (variable-entropy) image feeds, broaden the embodied-carbon and PUE accounting with site-specific factors, and validate the decision rule on held-out monitoring workloads. A public artifact---benchmark code, Docker configurations, and raw results---accompanies the paper to support reproduction.
 
 \backmatter
 
@@ -300,9 +389,9 @@ The authors gratefully acknowledge Universitas Pradita and Universitas Multimedi
 \item \textbf{Ethics approval:} Not applicable.
 \item \textbf{Consent to participate:} Not applicable.
 \item \textbf{Consent for publication:} Not applicable.
-\item \textbf{Data availability:} The datasets generated and analysed during the current study will be made available in a public repository (DOI to be added). % TODO: Zenodo DOI
-\item \textbf{Code availability:} Benchmark code and Docker configurations will be released publicly (DOI to be added). % TODO
-\item \textbf{Author contributions:} All authors contributed to the study design, experiments, analysis, and manuscript. % TODO: refine per CRediT
+\item \textbf{Data availability:} The datasets generated and analysed during the current study will be made available in a public repository (DOI to be added).
+\item \textbf{Code availability:} Benchmark code and Docker configurations will be released publicly (DOI to be added).
+\item \textbf{Author contributions:} All authors contributed to the study design, experiments, analysis, and manuscript.
 \end{itemize}
 
 \bibliography{references}
