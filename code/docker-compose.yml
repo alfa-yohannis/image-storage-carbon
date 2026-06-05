@@ -1,0 +1,44 @@
+name: iot-image-tsdb-unified
+
+# Unified three-way testbed: PostgreSQL/TimescaleDB + MinIO + MongoDB.
+# The phase runners bring up ONLY the services each engine needs, so the
+# carbon/energy of one engine is not polluted by the idle power of the others:
+#   * PostgreSQL (BYTEA)     -> timescaledb
+#   * PostgreSQL + MinIO     -> timescaledb + minio
+#   * MongoDB (inline BSON)  -> mongodb
+
+services:
+  timescaledb:
+    image: timescale/timescaledb:latest-pg15
+    environment:
+      POSTGRES_DB: iot_ts
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "55432:5432"
+    restart: unless-stopped
+    command: ["postgres", "-c", "max_connections=100"]
+
+  minio:
+    image: minio/minio:latest
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "59000:9000"
+      - "59001:9001"
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+
+  mongodb:
+    image: mongo:7.0
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: mongo
+      MONGO_INITDB_DATABASE: iot_ts
+    ports:
+      - "57017:27017"
+    restart: unless-stopped
+    # NOTE: 30 GB matches the paper methodology on a 31 GB host. Lower this to
+    # roughly (RAM - 1 GB) on smaller machines or MongoDB will fail to start.
+    command: ["--wiredTigerCacheSizeGB", "30"]
