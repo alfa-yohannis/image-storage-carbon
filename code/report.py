@@ -145,7 +145,7 @@ class Reporter:
             vals = [emissions.get(f"{key}_{d}_{r}") for d in dims]
             return sum(v for v in vals if v is not None) if any(v is not None for v in vals) else None
 
-        def lineplot(stem, mfield, sfield, ylabel, fname, logy=True, hline=None, note=None):
+        def lineplot(stem, mfield, sfield, ylabel, fname, logy=False, hline=None, note=None):
             fig, ax = plt.subplots(figsize=(6.6, 4.0))
             drew = False
             for key, (colour, marker, label, _) in self._STYLE.items():
@@ -177,13 +177,13 @@ class Reporter:
 
         skip_note = "MongoDB omitted at 6K (16 MB BSON bucket limit)"
         lineplot("insert", "mean_rows_per_sec", "std_rows_per_sec",
-                 "Insert throughput (rows/s, log scale)", "insert_throughput.pdf", note=skip_note)
+                 "Insert throughput (rows/s)", "insert_throughput.pdf", note=skip_note)
         lineplot("retrieve", "mean_latency_ms", "std_latency_ms",
-                 "Full-retrieval latency (ms, log scale)", "retrieval_latency.pdf")
+                 "Full-retrieval latency (ms)", "retrieval_latency.pdf")
         lineplot("point_read", "mean_latency_ms", "std_latency_ms",
-                 "Point-read latency (ms, log scale)", "point_read_latency.pdf")
+                 "Point-read latency (ms)", "point_read_latency.pdf")
         lineplot("insert", "mean_storage_amplification", "std_storage_amplification",
-                 "Storage amplification (x, log scale)", "storage_amplification.pdf", hline=1.0)
+                 "Storage amplification (x)", "storage_amplification.pdf", hline=1.0)
 
         # Headline: directly measured per-resolution carbon (insert + retrieve + point-read).
         fig, ax = plt.subplots(figsize=(6.6, 4.0))
@@ -195,9 +195,8 @@ class Reporter:
                     xs.append(xi); ys.append(c)
             if ys:
                 ax.plot(xs, ys, marker=marker, color=colour, label=label, linewidth=1.8, markersize=6)
-        ax.set_yscale("log")
         ax.set_xticks(x); ax.set_xticklabels(xlabels)
-        ax.set_xlabel("Image resolution"); ax.set_ylabel("Carbon per resolution (mg CO$_2$eq, log scale)")
+        ax.set_xlabel("Image resolution"); ax.set_ylabel("Carbon per resolution (mg CO$_2$eq)")
         ax.grid(True, which="both", linestyle=":", alpha=0.4)
         ax.legend(frameon=False)
         ax.annotate(skip_note, xy=(0.99, 0.02), xycoords="axes fraction", ha="right", va="bottom",

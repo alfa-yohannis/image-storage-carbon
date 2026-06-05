@@ -169,13 +169,13 @@ Insertion (Figure~\ref{fig:insert}, Table~\ref{tab:write}) exhibits a clear, mon
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{storage_amplification.pdf}
-\caption{Storage amplification (on-disk $\div$ raw payload, log scale; dashed line marks unity). PostgreSQL and the hybrid are flat near $1.0\times$; MongoDB crosses from sub-unity compression at low resolution to $3.0\times$ at 5K, with embodied-carbon consequences (Section~\ref{subsec:carbon}).}\label{fig:storage}
+\caption{Storage amplification (on-disk $\div$ raw payload; dashed line marks unity). PostgreSQL and the hybrid are flat near $1.0\times$; MongoDB crosses from sub-unity compression at low resolution to $3.0\times$ at 5K, with embodied-carbon consequences (Section~\ref{subsec:carbon}).}\label{fig:storage}
 \end{figure}
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{insert_throughput.pdf}
-\caption{Insert throughput (rows/s, log scale; mean$\pm$std over 5 runs). MongoDB dominates at low resolution but collapses at high resolution; the hybrid (PM) is flattest and leads from 4K. MongoDB is omitted at 6K (Section~\ref{subsec:bson}).}\label{fig:insert}
+\caption{Insert throughput (rows/s; mean$\pm$std over 5 runs). MongoDB dominates at low resolution but collapses at high resolution; the hybrid (PM) is flattest and leads from 4K. MongoDB is omitted at 6K (Section~\ref{subsec:bson}).}\label{fig:insert}
 \end{figure}
 
 \begin{table}[t]
@@ -207,13 +207,13 @@ Under a common workload across all three engines, the read path tells the same m
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{retrieval_latency.pdf}
-\caption{Full-materialisation retrieval latency for 2{,}000 payloads (ms, log scale; mean$\pm$std). Inline PostgreSQL degrades steeply; the hybrid scales best.}\label{fig:retrieval}
+\caption{Full-materialisation retrieval latency for 2{,}000 payloads (ms; mean$\pm$std). Inline PostgreSQL degrades steeply; the hybrid scales best.}\label{fig:retrieval}
 \end{figure}
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{point_read_latency.pdf}
-\caption{Latest-payload point-read latency (ms, log scale; mean$\pm$std). The hybrid stays near-flat; inline engines climb with payload size.}\label{fig:pointread}
+\caption{Latest-payload point-read latency (ms; mean$\pm$std). The hybrid stays near-flat; inline engines climb with payload size.}\label{fig:pointread}
 \end{figure}
 
 \begin{table}[t]
@@ -250,7 +250,7 @@ Insertion dominates the footprint (Figure~\ref{fig:breakdown}); full retrieval i
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{carbon_per_resolution.pdf}
-\caption{Directly measured carbon per resolution (mg~CO\textsubscript{2}eq, log scale; insert+retrieval+point-read). The ``scissors'' crossover: MongoDB greenest at $\le$1440p, the hybrid greenest at $\ge$4K, inline PostgreSQL the pivot. MongoDB is omitted at 6K (Section~\ref{subsec:bson}).}\label{fig:carbon}
+\caption{Directly measured carbon per resolution (mg~CO\textsubscript{2}eq; insert+retrieval+point-read). The ``scissors'' crossover: MongoDB greenest at $\le$1440p, the hybrid greenest at $\ge$4K, inline PostgreSQL the pivot. MongoDB is omitted at 6K (Section~\ref{subsec:bson}).}\label{fig:carbon}
 \end{figure}
 
 \begin{figure}[t]
