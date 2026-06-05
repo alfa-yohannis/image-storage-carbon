@@ -1,0 +1,6 @@
+timestamp,engine,profile,payload_kind,query_id,run_id,latency_ms,payload_size_bytes
+2026-06-05T09:54:16.711993+00:00,mongodb_timeseries,720p,image,Q_latest_payload_by_device,1,6.623,382610
+2026-06-05T09:54:16.712081+00:00,mongodb_timeseries,720p,image,Q_latest_payload_by_device,2,4.968,382610
+2026-06-05T09:54:16.712126+00:00,mongodb_timeseries,720p,image,Q_latest_payload_by_device,3,3.995,382610
+2026-06-05T09:54:16.712163+00:00,mongodb_timeseries,720p,image,Q_latest_payload_by_device,4,2.52,382610
+2026-06-05T09:54:16.712200+00:00,mongodb_timeseries,720p,image,Q_latest_payload_by_device,5,3.386,382610

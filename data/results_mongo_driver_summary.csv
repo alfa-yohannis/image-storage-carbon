@@ -1,0 +1,8 @@
+timestamp,engine,profile,query_id,mean_latency_ms,std_latency_ms,n_runs
+2026-06-05T09:53:22.882879+00:00,mongodb_timeseries,360p,Q_driver_roundtrip_ping,0.144934,0.049879,10
+2026-06-05T09:53:43.205881+00:00,mongodb_timeseries,480p,Q_driver_roundtrip_ping,0.138427,0.061441,10
+2026-06-05T09:54:16.710701+00:00,mongodb_timeseries,720p,Q_driver_roundtrip_ping,0.149737,0.081566,10
+2026-06-05T09:55:21.606716+00:00,mongodb_timeseries,1080p,Q_driver_roundtrip_ping,0.104308,0.005754,10
+2026-06-05T09:57:44.875719+00:00,mongodb_timeseries,1440p,Q_driver_roundtrip_ping,0.096344,0.002586,10
+2026-06-05T10:10:04.360270+00:00,mongodb_timeseries,4k,Q_driver_roundtrip_ping,0.125714,0.03801,10
+2026-06-05T10:39:18.399407+00:00,mongodb_timeseries,5k,Q_driver_roundtrip_ping,0.103971,0.036823,10

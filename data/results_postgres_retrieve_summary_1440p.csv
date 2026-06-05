@@ -1,0 +1,2 @@
+timestamp,engine,profile,payload_kind,query_id,mean_latency_ms,std_latency_ms,n_runs,rows_returned,total_bytes_returned
+2026-06-05T07:52:56.278827+00:00,postgresql+timescaledb,1440p,image,Q_retrieve_binaries_time_range,13433.093,96.401,5,2000,2934246000

@@ -1,0 +1,2 @@
+timestamp,engine,profile,payload_kind,payload_size_bytes,payload_size_mb,warmup_rows,total_rows_per_run,batch_size,n_runs,mean_duration_sec,std_duration_sec,mean_rows_per_sec,std_rows_per_sec,mean_logical_mb_per_sec,std_logical_mb_per_sec,mean_db_size_after_mb,std_db_size_after_mb,mean_table_total_after_mb,std_table_total_after_mb,mean_storage_amplification,std_storage_amplification
+2026-06-05T07:52:56.278436+00:00,postgresql+timescaledb,1440p,image,1467123,1.399158,100,2000,50,5,45.6953,0.7214,43.78,0.69,61.251,0.963,2917.062,0.015,2907.578,0.0,1.039,0.0

@@ -1,0 +1,9 @@
+timestamp,engine,profile,query_id,mean_latency_ms,std_latency_ms,n_runs
+2026-06-05T08:59:11.822830+00:00,postgresql+timescaledb+minio,360p,Q_driver_roundtrip_list_buckets,0.546524,0.113846,10
+2026-06-05T09:03:29.164712+00:00,postgresql+timescaledb+minio,480p,Q_driver_roundtrip_list_buckets,0.570402,0.088137,10
+2026-06-05T09:08:11.960623+00:00,postgresql+timescaledb+minio,720p,Q_driver_roundtrip_list_buckets,0.706933,0.099087,10
+2026-06-05T09:13:41.949886+00:00,postgresql+timescaledb+minio,1080p,Q_driver_roundtrip_list_buckets,0.521617,0.106207,10
+2026-06-05T09:19:31.183755+00:00,postgresql+timescaledb+minio,1440p,Q_driver_roundtrip_list_buckets,0.537965,0.118088,10
+2026-06-05T09:26:32.123031+00:00,postgresql+timescaledb+minio,4k,Q_driver_roundtrip_list_buckets,0.544298,0.072494,10
+2026-06-05T09:38:35.819201+00:00,postgresql+timescaledb+minio,5k,Q_driver_roundtrip_list_buckets,0.60394,0.113867,10
+2026-06-05T09:52:51.723397+00:00,postgresql+timescaledb+minio,6k,Q_driver_roundtrip_list_buckets,0.583618,0.106346,10

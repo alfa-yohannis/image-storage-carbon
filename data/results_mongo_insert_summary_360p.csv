@@ -1,0 +1,2 @@
+timestamp,engine,profile,payload_kind,payload_size_bytes,payload_size_mb,warmup_rows,total_rows_per_run,batch_size,n_runs,mean_duration_sec,std_duration_sec,mean_rows_per_sec,std_rows_per_sec,mean_logical_mb_per_sec,std_logical_mb_per_sec,mean_db_size_after_mb,std_db_size_after_mb,mean_table_total_after_mb,std_table_total_after_mb,mean_storage_amplification,std_storage_amplification
+2026-06-05T09:53:22.883465+00:00,mongodb_timeseries,360p,image,97335,0.092826,100,2000,50,5,0.4791,0.037,4194.1,314.26,389.321,29.171,0.151,0.293,0.143,0.293,0.0008,0.0016
