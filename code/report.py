@@ -145,31 +145,50 @@ class Reporter:
             vals = [emissions.get(f"{key}_{d}_{r}") for d in dims]
             return sum(v for v in vals if v is not None) if any(v is not None for v in vals) else None
 
-        def lineplot(stem, mfield, sfield, ylabel, fname, logy=False, hline=None, note=None):
-            fig, ax = plt.subplots(figsize=(6.6, 4.0))
+        def _panel(ax, getseries, ylabel, logscale, title, hline, note):
             drew = False
             for key, (colour, marker, label, _) in self._STYLE.items():
+                xs, ys, es = getseries(key)
+                if ys:
+                    ax.errorbar(xs, ys, yerr=es if any(es) else None, marker=marker, color=colour,
+                                label=label, capsize=3, linewidth=1.7, markersize=5)
+                    drew = True
+            if hline is not None:
+                ax.axhline(hline, linestyle="--", color="gray", linewidth=1.0, alpha=0.8)
+            if logscale:
+                ax.set_yscale("log")
+            ax.set_xticks(x); ax.set_xticklabels(xlabels, rotation=30, ha="right", fontsize=8.5)
+            ax.set_xlabel("Image resolution"); ax.set_ylabel(ylabel)
+            if title:
+                ax.set_title(title, fontsize=10)
+            ax.grid(True, which="both", linestyle=":", alpha=0.4)
+            if note:
+                ax.annotate(note, xy=(0.99, 0.02), xycoords="axes fraction", ha="right", va="bottom",
+                            fontsize=7.3, style="italic", color="#444444")
+            return drew
+
+        def lineplot(stem, mfield, sfield, ylabel, fname, hline=None, note=None, dual=True):
+            """A figure for one metric. With dual=True, two panels (linear left,
+            logarithmic right); with dual=False, a single linear panel -- used for
+            ratios like storage amplification, whose values touch zero and whose
+            natural reference is 1.0, so a logarithmic axis is meaningless."""
+            def getseries(key):
                 ms, ss = mean_std(key, stem, mfield, sfield)
                 xs = [xi for xi, m in zip(x, ms) if m is not None]
                 ys = [m for m in ms if m is not None]
                 es = [s for m, s in zip(ms, ss) if m is not None]
-                if ys:
-                    ax.errorbar(xs, ys, yerr=es if any(es) else None, marker=marker, color=colour,
-                                label=label, capsize=3, linewidth=1.8, markersize=6)
-                    drew = True
+                return xs, ys, es
+            if dual:
+                fig, (axL, axR) = plt.subplots(1, 2, figsize=(9.4, 4.0))
+                d1 = _panel(axL, getseries, ylabel, False, "(a) Linear scale", hline, note)
+                d2 = _panel(axR, getseries, ylabel, True, "(b) Logarithmic scale", hline, note)
+                drew = d1 or d2
+            else:
+                fig, axL = plt.subplots(figsize=(6.6, 4.2))
+                drew = _panel(axL, getseries, ylabel, False, None, hline, note)
             if not drew:
                 plt.close(fig); return
-            if hline is not None:
-                ax.axhline(hline, linestyle="--", color="gray", linewidth=1.0, alpha=0.8)
-            if logy:
-                ax.set_yscale("log")
-            ax.set_xticks(x); ax.set_xticklabels(xlabels)
-            ax.set_xlabel("Image resolution"); ax.set_ylabel(ylabel)
-            ax.grid(True, which="both", linestyle=":", alpha=0.4)
-            ax.legend(frameon=False)
-            if note:
-                ax.annotate(note, xy=(0.99, 0.02), xycoords="axes fraction", ha="right", va="bottom",
-                            fontsize=8.5, style="italic", color="#444444")
+            axL.legend(frameon=False, fontsize=9)
             fig.tight_layout()
             out = self.figures_dir / fname
             fig.savefig(out); plt.close(fig)
@@ -179,28 +198,27 @@ class Reporter:
         lineplot("insert", "mean_rows_per_sec", "std_rows_per_sec",
                  "Insert throughput (rows/s)", "insert_throughput.pdf", note=skip_note)
         lineplot("retrieve", "mean_latency_ms", "std_latency_ms",
-                 "Full-retrieval latency (ms)", "retrieval_latency.pdf")
+                 "Bulk-retrieval latency (ms)", "retrieval_latency.pdf")
         lineplot("point_read", "mean_latency_ms", "std_latency_ms",
-                 "Point-read latency (ms)", "point_read_latency.pdf")
+                 "Latest-frame read latency (ms)", "point_read_latency.pdf")
         lineplot("insert", "mean_storage_amplification", "std_storage_amplification",
-                 "Storage amplification (x)", "storage_amplification.pdf", hline=1.0)
+                 "Storage amplification (x)", "storage_amplification.pdf", hline=1.0, dual=False)
 
-        # Headline: directly measured per-resolution carbon (insert + retrieve + point-read).
-        fig, ax = plt.subplots(figsize=(6.6, 4.0))
-        for key, (colour, marker, label, _) in self._STYLE.items():
+        # Headline: directly measured per-resolution carbon (insert + retrieve + point-read),
+        # shown on both linear (left) and logarithmic (right) y-axes.
+        def carbon_series(key):
             xs, ys = [], []
             for xi, r in zip(x, res):
                 c = carbon(key, r, ("insert", "retrieve", "point_read"))
                 if c is not None:
                     xs.append(xi); ys.append(c)
-            if ys:
-                ax.plot(xs, ys, marker=marker, color=colour, label=label, linewidth=1.8, markersize=6)
-        ax.set_xticks(x); ax.set_xticklabels(xlabels)
-        ax.set_xlabel("Image resolution"); ax.set_ylabel("Carbon per resolution (mg CO$_2$eq)")
-        ax.grid(True, which="both", linestyle=":", alpha=0.4)
-        ax.legend(frameon=False)
-        ax.annotate(skip_note, xy=(0.99, 0.02), xycoords="axes fraction", ha="right", va="bottom",
-                    fontsize=8.5, style="italic", color="#444444")
+            return xs, ys, []
+        fig, (axL, axR) = plt.subplots(1, 2, figsize=(9.4, 4.0))
+        _panel(axL, carbon_series, "Carbon per resolution (mg CO$_2$eq)", False,
+               "(a) Linear scale", None, skip_note)
+        _panel(axR, carbon_series, "Carbon per resolution (mg CO$_2$eq)", True,
+               "(b) Logarithmic scale", None, skip_note)
+        axL.legend(frameon=False, fontsize=9)
         fig.tight_layout()
         out = self.figures_dir / "carbon_per_resolution.pdf"
         fig.savefig(out); plt.close(fig)

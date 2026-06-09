@@ -43,15 +43,15 @@ Risiko #1 = **desk-reject karena dianggap paper computing**. Maka:
 ## 🗺️ Roadmap (bertahap)
 
 ### Fase 0 — Konsolidasi & perencanaan
-- [ ] Gabungkan `_3` + `_4` menjadi satu naskah three-way (hindari *salami slicing*)
-- [ ] Tetapkan **1 RQ payung** + 3 sub-RQ (energi, emisi/CO₂eq, keputusan arsitektur)
-- [ ] Tetapkan rentang resolusi yang konsisten (mis. 360p–5K) di semua arsitektur
-- [ ] Buat outline section final (lihat [Fase 3](#fase-3--penulisan))
+- [x] Gabungkan `_3` + `_4` menjadi satu naskah three-way (hindari *salami slicing*) — selesai di [`paper/main.tex`](paper/main.tex)
+- [x] Tetapkan **1 RQ payung** + 3 sub-RQ (energi, emisi/CO₂eq, keputusan arsitektur)
+- [x] Tetapkan rentang resolusi yang konsisten — **360p–6K** (three-way s.d. 5K; PG-BYTEA & PG+MinIO s.d. 6K; MongoDB di-skip di 6K)
+- [x] Buat outline section final (lihat [Fase 3](#fase-3--penulisan))
 
 ### Fase 1 — Eksperimen & data
 > Beban benchmarking di sini lebih ringan daripada track IT/SE; fokus ke kualitas pengukuran carbon.
 - [x] **Ukur carbon per-resolusi secara LANGSUNG** dengan CodeCarbon — **sudah diimplementasikan** di [`code/`](code): satu tracker CodeCarbon per *engine × dimensi × resolusi* → `data/emissions.csv`, **bukan lagi** model estimasi konstan-daya. ⚠️ Sisa: pastikan **RAPL terbaca** (`setup_rapl.sh`) supaya energi benar-benar terukur hardware, bukan fallback estimasi TDP CodeCarbon.
-- [ ] Lengkapi **three-way**: pastikan MongoDB, PG-BYTEA, dan PG+MinIO diuji pada resolusi yang sama
+- [x] Lengkapi **three-way**: MongoDB, PG-BYTEA, dan PG+MinIO diuji pada resolusi sama (360p–5K three-way; 6K untuk PG/PM) + retrieval **terpadu** (bulk + latest-frame) di ketiga engine
   - ⚠️ **Batas MongoDB di 6K**: payload 6K (inline BSON) melampaui batas **16 MiB** per-dokumen BSON → MongoDB **gagal & otomatis di-skip** di titik ini (harness: *retry-lalu-skip*, dicatat di [`code/`](code) → `data/skipped.csv`). PG-BYTEA & PG+MinIO tetap jalan di 6K. Perlakukan ini sebagai **temuan arsitektural**, bukan sekadar limitasi (lihat [Fase 2](#fase-2--analisis--kontribusi-lingkungan-pembeda-q2) & [Risiko](#-risiko--catatan)).
 - [ ] Ukur **baseline idle power** tiap engine (untuk energy proportionality)
 - [ ] (Opsional, nilai tambah) ulang dengan **dataset citra nyata**, bukan hanya JPEG sintetis
@@ -69,7 +69,12 @@ Risiko #1 = **desk-reject karena dianggap paper computing**. Maka:
 - [x] Petakan kontribusi ke **SDG** (7, 9, 11, 12, 13)
 
 ### Fase 3 — Penulisan
-> Naskah lengkap di [`paper/main.tex`](paper/main.tex) — kompilasi bersih (`sn-jnl`, 20 hlm, 6 gambar, 8 tabel, 35 sitasi).
+> Naskah lengkap di [`paper/main.tex`](paper/main.tex) — kompilasi bersih (`sn-jnl`, **22 hlm, 6 gambar, 10 tabel, 38 sitasi**, 0 undefined/overfull).
+> **Revisi editorial terbaru (2026-06-09):**
+> - Bahasa disesuaikan untuk **audiens akademik umum/lingkungan** (bukan ilmuwan komputer); **setiap singkatan** diberi kepanjangan + penjelasan singkat + sumber pada penyebutan pertama (BSON, TOAST, BYTEA, RAPL, WAL, PUE, SCI, SDG, JPEG, NVMe, dll.).
+> - Gambar **dwi-skala** (linear kiri + logaritmik kanan) untuk metrik rentang-lebar; **Fig. amplifikasi storage linear-only** (rasio menyentuh 0 → log tak terdefinisi, dijelaskan di caption).
+> - **Istilah dibuat lebih umum**: *full-materialisation retrieval* → **bulk retrieval**; *point read* → **latest-frame read** (istilah teknis tetap disebut sekali dalam kurung).
+> - **Tabel ringkasan pemenang per-operasi** (Tabel `tab:winners`) + **breakdown carbon per-operasi baca** (`tab:dimcarbon`): temuan kunci → **pemenang carbon = pemenang performa** di setiap operasi (carbon ∝ waktu).
 - [x] **Abstract** (terstruktur, tonjolkan carbon + keputusan + temuan 6K)
 - [x] **Introduction** (motivasi karbon IoT, gap, 4 bullet kontribusi eksplisit)
 - [x] **Related Work** dgn sub-bagian + **tabel pembanding** (payload size, metrik, energi ya/tidak) → gap visual
@@ -126,4 +131,4 @@ Risiko #1 = **desk-reject karena dianggap paper computing**. Maka:
 
 ---
 
-*Status:* `draft lengkap — data three-way riil & terukur terintegrasi (Fase 1–3 selesai); berikutnya Fase 4 (artifact/Zenodo DOI) & Fase 5 (cover letter, similarity, submission)` · *Terakhir diperbarui:* 2026-06-05
+*Status:* `draft lengkap — data three-way riil & terukur terintegrasi (Fase 1–3 selesai); berikutnya Fase 4 (artifact/Zenodo DOI) & Fase 5 (cover letter, similarity, submission)` · *Terakhir diperbarui:* 2026-06-09
