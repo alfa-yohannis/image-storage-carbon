@@ -1,134 +1,175 @@
-# Paper B — Target: *Environment Systems and Decisions* (Springer)
+# Carbon-Aware Storage for Image-Based Time-Series — reproduction guide
 
-Roadmap & to-do untuk mengembangkan **paper carbon footprint** (Paper B, track Green)
-menjadi artikel jurnal **Q2** yang menyasar *Environment Systems and Decisions* (ESD).
+This folder contains everything needed to reproduce the study **"Carbon Footprint and
+Carbon-Aware Selection of Document-Oriented, Relational, and Hybrid Object-Relational
+Storage for Image-Based Time-Series Workloads in Green IoT"** (target journal:
+*Environment Systems and Decisions*): the benchmark **code**, the measured **data**, the
+generated **figures**, and the **paper** sources.
 
-> **Konsep paper:** konsolidasi dua draf konferensi
-> [`alfa_yohannis_3.tex`](../postgre-vs-mongodb-carbon-footprint/paper/alfa_yohannis_3.tex)
-> (+) [`alfa_yohannis_4.tex`](../postgre-vs-postgre-minio-carbon-footprint/paper/alfa_yohannis_4.tex)
-> menjadi **satu** studi *three-way*: **MongoDB vs PostgreSQL-BYTEA vs PostgreSQL+MinIO**,
-> dibingkai sebagai **penilaian & pengambilan keputusan carbon untuk infrastruktur IoT hijau**.
+It benchmarks three storage architectures across eight image resolutions (360p–6K),
+measuring insertion, retrieval, storage amplification, and **directly measured per-resolution
+carbon** (CodeCarbon + Intel RAPL), and converts the result into a carbon-aware decision
+framework. It is the reproducibility artifact accompanying the paper.
 
 ---
 
-## 📌 Fakta jurnal (verifikasi ulang sebelum submit)
+## Repository layout
 
-| Item | Nilai |
+```
+.
+├── README.md       # this file (how to reproduce + what the code/data are)
+├── code/           # benchmark harness (Python) + docker-compose + tests
+├── data/           # measured CSVs + emissions.csv          (generated)
+├── figures/        # comparison figures, PDF                (generated)
+└── paper/          # main.tex, references.bib, sn-jnl.cls   (the manuscript)
+```
+
+---
+
+## The software (`code/`)
+
+One object-oriented harness drives all three architectures through the same measurement
+protocol. Design: **Strategy** (each engine is a `StorageEngine` subclass owning its schema
+and queries) + **Template Method** (the shared insert / retrieve / point-read / driver
+protocol lives once in `engine_base.py` and calls small engine-specific primitives).
+
+| File | Role |
 |---|---|
-| Penerbit | Springer Nature |
-| Quartile | **Q2** (SJR ≈ 0.59) |
-| ISSN | 2194-5403 / 2194-5411 |
-| Model | **Hybrid** → publikasi **gratis** via jalur subscription; OA berbayar (opsional) |
-| Biaya penulis | **Rp0** (jalur non-OA) — lihat [Strategi biaya & OA](#-strategi-biaya--open-access) |
-| Scope | environmental systems, **risk analysis**, **life-cycle assessment (LCA)**, **decision analysis**, infrastructure & sustainability decisions |
+| `run.py` | Single entry point: CLI, **auto-venv** bootstrap, Docker orchestration, timing/ETA, and the **retry-then-skip** failover. |
+| `engine_base.py` | `StorageEngine` abstract base — the shared measurement protocol. |
+| `engine_postgres.py` | **Postgre** — PostgreSQL 15 / TimescaleDB, image inline in a `BYTEA` column (TOAST). |
+| `engine_mongodb.py` | **Mongo** — MongoDB 7 native Time-Series Collection, image inline as BSON `BinData`. |
+| `engine_postgres_minio.py` | **PostMin** — PostgreSQL metadata + image externalised to MinIO object storage. |
+| `payloads.py` | Builds deterministic JPEG payloads (a collage) from the source image at each resolution. |
+| `carbon.py` | `CarbonTracker` — wraps each *(engine × operation × resolution)* in a CodeCarbon run → `emissions.csv`. |
+| `results.py` | CSV writers for every dimension (+ the skip log). |
+| `config.py` | Workload profiles (360p…6K), settings, and output paths. |
+| `report.py` | Aggregates `data/` into `threeway_summary.csv` and renders the figures. |
+| `docker-compose.yml` | `timescaledb` + `minio` + `mongodb`; only the services a phase needs are started, in isolation, for fair energy attribution. |
+| `setup_rapl.sh` | One-time `sudo` helper to make Intel RAPL energy counters readable. |
+| `assets/Schwarzsee.jpg` | Source image — a freely-licensed photograph of **Durdle Door, Dorset, UK** (JJ Perks, Pexels), resized to 6144×3456. |
+| `tests/` | Unit tests (config, payloads, CSV writer, measurement protocol, skip logic) — no databases required. |
 
-- [ ] Verifikasi *Aims & Scope* terbaru di https://link.springer.com/journal/10669
-- [ ] Verifikasi *Submission Guidelines*: tipe artikel, batas kata, struktur section, gaya sitasi
-- [ ] Konfirmasi template LaTeX Springer Nature (`sn-jnl.cls`)
+Four operations are measured per *(engine, resolution)*: **insertion** throughput + storage
+amplification, **bulk retrieval** (read back all 2,000 images in a time range), **latest-frame
+read** (fetch the single most recent image), and **driver** round-trip overhead. One cell is
+skipped by design — **MongoDB at 6K** — because time-series bucketing pushes the bucket
+document past MongoDB's 16 MB BSON limit; this is retried, then recorded in `data/skipped.csv`.
 
----
-
-## ⭐ Kunci sukses: GESER framing dari "DB" ke "lingkungan"
-
-ESD dibaca oleh ilmuwan lingkungan/keputusan, **bukan** orang database.
-Risiko #1 = **desk-reject karena dianggap paper computing**. Maka:
-
-- [ ] Jadikan **kontribusi lingkungan + decision support** sebagai bintang utama
-- [ ] Posisikan perbandingan database sebagai **metode**, bukan kontribusi utama
-- [ ] Judul & abstrak menonjolkan *carbon*, *green IoT/smart building*, *decision*, *sustainability* — bukan "benchmark database"
-- [ ] Buka Introduction dari masalah **karbon infrastruktur IoT 24/7**, bukan dari TimescaleDB/WiredTiger
-
----
-
-## 🗺️ Roadmap (bertahap)
-
-### Fase 0 — Konsolidasi & perencanaan
-- [x] Gabungkan `_3` + `_4` menjadi satu naskah three-way (hindari *salami slicing*) — selesai di [`paper/main.tex`](paper/main.tex)
-- [x] Tetapkan **1 RQ payung** + 3 sub-RQ (energi, emisi/CO₂eq, keputusan arsitektur)
-- [x] Tetapkan rentang resolusi yang konsisten — **360p–6K** (three-way s.d. 5K; PG-BYTEA & PG+MinIO s.d. 6K; MongoDB di-skip di 6K)
-- [x] Buat outline section final (lihat [Fase 3](#fase-3--penulisan))
-
-### Fase 1 — Eksperimen & data
-> Beban benchmarking di sini lebih ringan daripada track IT/SE; fokus ke kualitas pengukuran carbon.
-- [x] **Ukur carbon per-resolusi secara LANGSUNG** dengan CodeCarbon — **sudah diimplementasikan** di [`code/`](code): satu tracker CodeCarbon per *engine × dimensi × resolusi* → `data/emissions.csv`, **bukan lagi** model estimasi konstan-daya. ⚠️ Sisa: pastikan **RAPL terbaca** (`setup_rapl.sh`) supaya energi benar-benar terukur hardware, bukan fallback estimasi TDP CodeCarbon.
-- [x] Lengkapi **three-way**: MongoDB, PG-BYTEA, dan PG+MinIO diuji pada resolusi sama (360p–5K three-way; 6K untuk PG/PM) + retrieval **terpadu** (bulk + latest-frame) di ketiga engine
-  - ⚠️ **Batas MongoDB di 6K**: payload 6K (inline BSON) melampaui batas **16 MiB** per-dokumen BSON → MongoDB **gagal & otomatis di-skip** di titik ini (harness: *retry-lalu-skip*, dicatat di [`code/`](code) → `data/skipped.csv`). PG-BYTEA & PG+MinIO tetap jalan di 6K. Perlakukan ini sebagai **temuan arsitektural**, bukan sekadar limitasi (lihat [Fase 2](#fase-2--analisis--kontribusi-lingkungan-pembeda-q2) & [Risiko](#-risiko--catatan)).
-- [ ] Ukur **baseline idle power** tiap engine (untuk energy proportionality)
-- [ ] (Opsional, nilai tambah) ulang dengan **dataset citra nyata**, bukan hanya JPEG sintetis
-- [ ] Catat konfigurasi lengkap (shared_buffers, WAL, WiredTiger cache, dll.) untuk reprodusibilitas
-- [ ] Naikkan jumlah run & laporkan **confidence interval** (bukan sekadar "variance low")
-
-### Fase 2 — Analisis & kontribusi lingkungan (pembeda Q2)
-- [x] **Sensitivitas grid multi-region**: tabel emisi kumulatif untuk 7 grid (Swedia 41 → India 713 gCO₂/kWh); ranking PM<PG<MG invarian (energi-determined)
-- [x] Nyatakan hasil dalam unit **SCI (Software Carbon Intensity, ISO/IEC 21031:2024)** — mg CO₂eq per 1000 frame (Tabel SCI)
-- [x] **LCA ringan / embodied carbon**: amplifikasi 3× MongoDB @5K → ~3.2 kg embodied ekstra vs PM (faktor 0.16 kgCO₂/GB, ref Tannu&Nair/Gupta)
-- [x] Sertakan faktor **PUE** data center (proyeksi fleet ×1.5)
-- [x] **Proyeksi skala fleet**: 1000 kamera × 1 frame/menit × 1 thn @4K → PM hemat ~440 kg/thn vs PG (~2600 km mobil / ~21 pohon-tahun)
-- [x] Bangun **decision framework / decision tree** carbon-aware (ini kait utama ke "...and Decisions")
-  - Cabang **ukuran payload**: bila payload/sample mendekati/melebihi **16 MiB**, MongoDB inline-BSON **tidak layak** (lihat skip 6K di Fase 1) → arahkan ke arsitektur eksternalisasi objek (PG+MinIO). Constraint keras ini = titik keputusan konkret, bukan sekadar trade-off karbon.
-- [x] Petakan kontribusi ke **SDG** (7, 9, 11, 12, 13)
-
-### Fase 3 — Penulisan
-> Naskah lengkap di [`paper/main.tex`](paper/main.tex) — kompilasi bersih (`sn-jnl`, **22 hlm, 6 gambar, 10 tabel, 38 sitasi**, 0 undefined/overfull).
-> **Revisi editorial terbaru (2026-06-09):**
-> - Bahasa disesuaikan untuk **audiens akademik umum/lingkungan** (bukan ilmuwan komputer); **setiap singkatan** diberi kepanjangan + penjelasan singkat + sumber pada penyebutan pertama (BSON, TOAST, BYTEA, RAPL, WAL, PUE, SCI, SDG, JPEG, NVMe, dll.).
-> - Gambar **dwi-skala** (linear kiri + logaritmik kanan) untuk metrik rentang-lebar; **Fig. amplifikasi storage linear-only** (rasio menyentuh 0 → log tak terdefinisi, dijelaskan di caption).
-> - **Istilah dibuat lebih umum**: *full-materialisation retrieval* → **bulk retrieval**; *point read* → **latest-frame read** (istilah teknis tetap disebut sekali dalam kurung).
-> - **Tabel ringkasan pemenang per-operasi** (Tabel `tab:winners`) + **breakdown carbon per-operasi baca** (`tab:dimcarbon`): temuan kunci → **pemenang carbon = pemenang performa** di setiap operasi (carbon ∝ waktu).
-- [x] **Abstract** (terstruktur, tonjolkan carbon + keputusan + temuan 6K)
-- [x] **Introduction** (motivasi karbon IoT, gap, 4 bullet kontribusi eksplisit)
-- [x] **Related Work** dgn sub-bagian + **tabel pembanding** (payload size, metrik, energi ya/tidak) → gap visual
-- [x] Kurangi sitasi blog vendor → tambah 4 ref peer-reviewed lingkungan (Masanet *Science*, Gupta *HPCA*, Tannu&Nair SSD-embodied, Shehabi/LBNL); doc engine tetap untuk detail internal
-- [x] **Methodology** (hardware/repro table, CodeCarbon/RAPL **pengukuran langsung**, grid intensity, schema three-way, failover retry-skip)
-- [x] **Results** (energi, emisi per-resolusi **terukur**, grid sensitivity, storage→embodied, retrieval terpadu, temuan 6K)
-- [x] **Decision framework** (section tersendiri + tabel pemilihan)
-- [x] **Discussion** (implikasi green building/IoT, mekanisme crossover, trade-off, threats to validity)
-- [x] **Conclusion** + future work
-- [x] Tambah **Data/Code Availability Statement**
-
-### Fase 4 — Reprodusibilitas
-- [ ] Rapikan kode benchmark + `docker-compose` + generator data
-- [ ] Sertakan raw results + notebook analisis
-- [ ] Publikasikan artifact ke **Zenodo** → dapatkan **DOI**, tautkan di paper
-
-### Fase 5 — Submission
-- [x] Reformat ke **template Springer Nature** (`sn-jnl.cls`) — naskah sudah memakai `sn-jnl` (sn-basic), kompilasi bersih
-- [ ] Tulis **cover letter** (tekankan kontribusi lingkungan + ungkap *companion paper* track IT/SE untuk transparansi)
-- [ ] Cek **similarity** (hindari overlap teks dengan draf konferensi / Paper A)
-- [ ] Siapkan **daftar reviewer** yang disarankan
-- [ ] Submit via Editorial Manager
-- [ ] Setelah terbit: **self-archive** *accepted manuscript* ke Zenodo/repositori (embargo Springer ~6 bln) agar bisa dibaca gratis
-
-### Fase 6 — Pasca-submission
-- [ ] Tangani *major/minor revision* (siapkan *response-to-reviewers* yang sistematis)
-- [ ] Jika ditolak → *cascade* ke target lain (Sustainable Computing Q1 / EMA Q2 / STI $300)
+(For the full CLI and all environment-variable knobs, see [`code/README.md`](code/README.md).)
 
 ---
 
-## 📂 Sumber materi
+## The data (`data/`)
 
-| Dari | Ambil |
+All CSVs are generated by `run.py`; `<engine>` ∈ `{postgres, mongo, postgres_minio}`,
+`<res>` ∈ `{360p, 480p, 720p, 1080p, 1440p, 4k, 5k, 6k}` (Mongo omits `6k`).
+
+| File pattern | Contents |
 |---|---|
-| [`alfa_yohannis_3.tex`](../postgre-vs-mongodb-carbon-footprint/paper/alfa_yohannis_3.tex) | Carbon PG vs MongoDB, breakdown CPU/RAM, tabel emisi per-resolusi |
-| [`alfa_yohannis_4.tex`](../postgre-vs-postgre-minio-carbon-footprint/paper/alfa_yohannis_4.tex) | Carbon PG vs PG+MinIO, whole-phase totals, crossover analysis |
-| Draf performa `_1`/`_2` | Ringkasan *supporting performance* (penjelas mekanistik kenapa carbon berbeda) |
+| `results_<engine>_insert_runs_<res>.csv` / `_summary_<res>.csv` | Per-run and summary **insertion** metrics: rows/s, durations, on-disk sizes, and **storage amplification** (on-disk ÷ raw payload). |
+| `results_<engine>_retrieve_runs_<res>.csv` / `_summary_<res>.csv` | **Bulk-retrieval** latency (ms) for materialising all 2,000 payloads in a time range. |
+| `results_<engine>_point_read_runs_<res>.csv` / `_summary_<res>.csv` | **Latest-frame read** latency (ms). |
+| `results_<engine>_driver_summary.csv` | Minimal client–server round-trip overhead (ms). |
+| `emissions.csv` | CodeCarbon output, one row per `project_name = <engine>_<operation>_<resolution>`: `duration`, `energy_consumed` (kWh), `cpu_energy`, `ram_energy`, `emissions` (kg CO₂eq), grid intensity, host info. **Per-resolution carbon = sum of the insert + retrieve + point\_read rows × 10⁶ (kg→mg).** |
+| `threeway_summary.csv` | The aggregated headline table (one row per resolution): each engine's insert rows/s, storage amp, retrieval ms, point-read ms, and total carbon (mg). Built by `report.py`. |
+| `skipped.csv` | Cells skipped after repeated failures (engine, resolution, attempts, error) — here, MongoDB at 6K. |
+
+Figures in `figures/` (PDF, vector) are: `insert_throughput`, `retrieval_latency`,
+`point_read_latency`, `storage_amplification`, `carbon_per_resolution`, `carbon_breakdown`.
 
 ---
 
-## 💰 Strategi biaya & open access
+## 1. Prerequisites
 
-- **Publikasi = gratis** lewat jalur subscription ESD (hybrid). Tidak perlu langganan institusi.
-- Agar tetap bisa dibaca gratis → **self-archiving** AM (green OA, embargo ~6 bln).
-- **Jangan** pilih gold OA berbayar; **jangan** andalkan waiver APC (Indonesia kemungkinan tak memenuhi syarat).
-
----
-
-## ⚠️ Risiko & catatan
-- **Batas dokumen MongoDB (16 MiB BSON)**: MongoDB inline-BSON tidak dapat menyimpan payload 6K → harness otomatis **retry-lalu-skip** dan mencatatnya di `data/skipped.csv`; three-way menjadi *two-way* **hanya di titik 6K**. Laporkan eksplisit (jangan disembunyikan) sebagai constraint arsitektural + jadikan input decision framework (Fase 2).
-- **Akurasi energi bergantung pada RAPL**: carbon per-resolusi kini diukur **langsung** (CodeCarbon per resolusi, bukan estimasi konstan-daya), namun bila RAPL tak terbaca CodeCarbon jatuh ke estimasi TDP → jalankan `setup_rapl.sh` dan verifikasi sebelum run final.
-- Tanpa kontribusi lingkungan yang kuat (Fase 2), editor lingkungan akan menilai ini "paper computing".
-- Jaga konsistensi antar paper (companion): sitasi silang dengan Paper A, ungkap di cover letter.
+- **Docker** + **Docker Compose** (runs the three databases).
+- **Python 3.11+** — `run.py` creates a local `.venv` and installs `requirements.txt` on first launch (set `IOTBENCH_NO_VENV=1` to use the current interpreter).
+- **TeX Live** with `latexmk` + `bibtex` (to build the paper). `sn-jnl.cls`/`sn-*.bst` are bundled in `paper/`.
+- *(Optional)* **Intel RAPL** for true hardware energy; otherwise CodeCarbon falls back to TDP estimates.
 
 ---
 
-*Status:* `draft lengkap — data three-way riil & terukur terintegrasi (Fase 1–3 selesai); berikutnya Fase 4 (artifact/Zenodo DOI) & Fase 5 (cover letter, similarity, submission)` · *Terakhir diperbarui:* 2026-06-09
+## 2. Reproduce the data and figures
+
+```bash
+cd code
+
+# one-time: make Intel RAPL energy counters readable (self-elevates with sudo).
+# Skip this if you accept CodeCarbon's TDP-estimate fallback.
+bash setup_rapl.sh
+
+# full sweep (360p -> 6K, all three engines), then build the report + figures:
+python run.py --report
+#   -> ../data/    results_*_summary_*.csv, emissions.csv, threeway_summary.csv, skipped.csv
+#   -> ../figures/ insert_throughput.pdf, retrieval_latency.pdf, point_read_latency.pdf,
+#                  storage_amplification.pdf, carbon_per_resolution.pdf, carbon_breakdown.pdf
+```
+
+Useful variants:
+
+```bash
+python run.py 1080p 4k 6k             # only these resolutions
+python run.py 4k --engines mongodb    # one resolution, one engine
+python run.py --no-docker 4k          # services already running
+python run.py --dry-run               # print the plan and exit
+python report.py                      # rebuild figures + threeway_summary from existing data
+```
+
+MongoDB at 6K is **automatically skipped** (16 MB BSON bucket limit) and logged to
+`data/skipped.csv`; PostgreSQL and the hybrid still run at 6K.
+
+Run the tests (no databases needed):
+
+```bash
+cd code && python -m unittest discover -s tests
+```
+
+---
+
+## 3. Build the paper
+
+```bash
+cd paper
+latexmk -pdf -interaction=nonstopmode main.tex   # runs pdflatex + bibtex -> main.pdf
+latexmk -c                                        # remove aux files (keep main.pdf)
+```
+
+Figures are read from `../figures/`; the bibliography is `references.bib`. The class and
+bibliography styles (`sn-jnl.cls`, `sn-basic.bst`, …) are bundled in `paper/`, so no extra
+Springer package install is needed.
+
+---
+
+## 4. Cover letter (optional)
+
+```bash
+cd cover_letter
+latexmk -pdf cover_letter.tex
+```
+
+---
+
+## Notes
+
+- **Source image:** `code/assets/Schwarzsee.jpg` is a photograph of Durdle Door (Dorset, UK)
+  by JJ Perks via Pexels (free-use licence), resized to 6144×3456; it is cited in the paper.
+- **Configuration:** workload size and ports are env-var configurable
+  (`BENCHMARK_TOTAL_ROWS`, `BENCHMARK_BATCH_SIZE`, `BENCHMARK_INSERT_RUNS`, `POSTGRES_PORT`,
+  `MONGO_URI`, `MINIO_ENDPOINT`, …) — see [`code/README.md`](code/README.md).
+- **Exact environment** (CPU, OS, database, and library versions) used for the reported
+  numbers is documented in the paper's environment table.
+
+---
+
+## Citation
+
+If you use this artifact or its data, please cite the accompanying paper:
+
+> A. Yohannis and A. Waworuntu, *Carbon Footprint and Carbon-Aware Selection of
+> Document-Oriented, Relational, and Hybrid Object-Relational Storage for Image-Based
+> Time-Series Workloads in Green IoT*, Environment Systems and Decisions (under review).
+
+The source image `code/assets/Schwarzsee.jpg` is a photograph of Durdle Door, Dorset, UK,
+by JJ Perks via [Pexels](https://www.pexels.com/photo/bay-with-orange-seashore-under-white-and-gray-clouds-8567869/)
+(free-use licence).
+```

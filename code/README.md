@@ -162,4 +162,4 @@ Merged and refactored from the two original conference-paper codebases at the re
 [PG vs MongoDB](../../postgre-vs-mongodb-carbon-footprint/code) ·
 [PG vs PG+MinIO](../../postgre-vs-postgre-minio-carbon-footprint/code).
 The MongoDB arm uses the **inline-BSON** design (paper-3); paper-4's MongoDB+MinIO hybrid is
-intentionally not used. See the roadmap in [`../README.md`](../README.md).
+intentionally not used (the paper's Discussion explains why a MongoDB+MinIO hybrid is omitted).

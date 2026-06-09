@@ -1,0 +1,78 @@
+%% Cover letter for submission to Environment Systems and Decisions (Springer).
+%% Build: latexmk -pdf cover_letter.tex
+%% Before sending: fill the editor's name if known, and add the conference
+%% venue(s)/status of the prior work where indicated by the % TODO marks.
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=0.9in]{geometry}
+\usepackage{parskip}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+\setlength{\parskip}{4pt}
+
+\begin{document}
+\pagestyle{empty}
+
+\noindent Alfa Yohannis\\
+Universitas Pradita, Tangerang, Banten, Indonesia\\
+\href{mailto:alfa.ryano@gmail.com}{alfa.ryano@gmail.com}
+
+\vspace{0.6em}
+\noindent \today
+
+\vspace{0.6em}
+\noindent The Editor-in-Chief\\
+\emph{Environment Systems and Decisions}, Springer Nature
+
+\vspace{0.6em}
+\noindent Dear Editor, % TODO: replace with the editor's name if known
+
+We are pleased to submit our manuscript, ``\textbf{Carbon Footprint and Carbon-Aware
+Selection of Document-Oriented, Relational, and Hybrid Object-Relational Storage for
+Image-Based Time-Series Workloads in Green IoT},'' for consideration as a research article
+in \emph{Environment Systems and Decisions}. Smart buildings and monitoring systems now keep
+streams of time-stamped images (for example, from cameras and sensors) in databases that run
+around the clock, so how those images are stored is an environmental choice as much as a
+technical one---yet its carbon cost has not been measured.
+
+Using the same hardware and direct energy measurement throughout, we compared the carbon
+footprint of three common storage approaches: a document database (MongoDB), a relational
+database (PostgreSQL), and a hybrid that keeps only small descriptive records in the database
+while placing each image in a separate file store. Testing image qualities from low resolution
+up to very high resolution (6K), we found that no single option is best everywhere: the
+document database is the lowest-carbon choice for ordinary image sizes, the hybrid becomes the
+lowest-carbon choice for large images (roughly halving the emissions of storing images inside
+the database), and the relational database sits consistently in between. At the largest size,
+the document database cannot store the images at all, owing to a built-in limit on how large a
+single record may be. We turn these measurements into a practical, carbon-aware guide for
+choosing an approach, and we test how it holds up across countries with cleaner or dirtier
+electricity, account for the manufacturing (``embodied'') carbon of the extra storage some
+options consume, and project the yearly emissions of a realistic camera fleet.
+
+The work suits \emph{Environment Systems and Decisions}: it treats an everyday infrastructure
+choice as an environmental decision, combines direct measurement with both operational and
+manufacturing carbon, considers how the answer depends on the local electricity grid, and
+offers actionable guidance for sustainable building monitoring rather than a purely technical
+benchmark. We also relate the findings to several UN Sustainable Development Goals.
+
+In the interest of transparency, this manuscript consolidates and extends two of our earlier
+conference papers % TODO: add venue(s)/status, e.g. "(presented at <venue>, <year>)"
+that separately compared two of the three approaches. The present work measures the energy
+directly (rather than estimating it from an assumed, fixed power draw), brings all three
+approaches together under one common test, extends the range to the largest image size (where
+the document-database limit appears), and adds the decision guide and the environmental
+analyses that are its central contribution.
+
+The manuscript is original, has not been published previously, and is not under consideration
+elsewhere; all authors have read and approved it and declare no competing interests. To support
+reproducibility, the benchmark code, configuration, and raw measurements will be released in a
+public repository with a permanent identifier upon acceptance. Thank you for considering our
+submission.
+
+\vspace{0.6em}
+\noindent Sincerely,
+
+\vspace{1em}
+\noindent Alfa Yohannis, on behalf of the authors\\
+(Alfa Yohannis, Universitas Pradita; Alexander Waworuntu, Universitas Multimedia Nusantara)
+
+\end{document}
