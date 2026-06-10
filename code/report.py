@@ -19,6 +19,13 @@ ENGINES = [
 ]
 DIMENSIONS = ("insert", "retrieve", "point_read")
 
+# Each CodeCarbon tracker wrapped the WHOLE run_<op> loop, i.e. all repeated runs
+# (config: insert_runs=5, aggregation_runs=5, point_read_runs=5). We divide the
+# integrated emission by the run count so every reported figure is the carbon of a
+# SINGLE run -- one batch of 2,000 inserts, one 2,000-image bulk retrieval, or one
+# latest-frame read -- which is the per-run/per-frame unit used throughout the paper.
+RUN_COUNTS = {"insert": 5, "retrieve": 5, "point_read": 5}
+
 
 def _read_last(path: Path) -> dict | None:
     if not path.exists():
@@ -87,7 +94,8 @@ class Reporter:
                     row[f"{key}_storage_amp"] = (ins or {}).get("mean_storage_amplification", "")
                     row[f"{key}_retrieve_ms"] = (ret or {}).get("mean_latency_ms", "")
                     row[f"{key}_point_read_ms"] = (prd or {}).get("mean_latency_ms", "")
-                    carbon = sum(emissions.get(f"{key}_{dim}_{profile}", 0.0) for dim in DIMENSIONS)
+                    carbon = sum(emissions.get(f"{key}_{dim}_{profile}", 0.0) / RUN_COUNTS[dim]
+                                 for dim in DIMENSIONS)
                     row[f"{key}_carbon_mg"] = round(carbon, 3) if carbon else ""
                 writer.writerow(row)
         print(f"[report] wrote {combined}")
@@ -142,8 +150,9 @@ class Reporter:
         def carbon(key, r, dims):
             if (key, r) in skipped:
                 return None
-            vals = [emissions.get(f"{key}_{d}_{r}") for d in dims]
-            return sum(v for v in vals if v is not None) if any(v is not None for v in vals) else None
+            vals = [(emissions.get(f"{key}_{d}_{r}"), d) for d in dims]
+            present = [(v, d) for v, d in vals if v is not None]
+            return sum(v / RUN_COUNTS[d] for v, d in present) if present else None
 
         def _panel(ax, getseries, ylabel, logscale, title, hline, note):
             drew = False
