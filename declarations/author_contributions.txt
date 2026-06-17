@@ -1,0 +1,5 @@
+Use author initials. Suggested statement (VERIFY against the actual division of work before submitting):
+
+A.Y. conceived the study, designed and implemented the benchmark harness, performed the experiments and analysis, prepared the figures, and wrote the original draft. A.W. contributed to the study design, validation, and review and editing of the manuscript. Both authors read and approved the final manuscript.
+
+(A.Y. = Alfa Yohannis; A.W. = Alexander Waworuntu.)

@@ -56,7 +56,7 @@ Risiko #1 = **desk-reject karena dianggap paper computing**. Maka:
 - [ ] Ukur **baseline idle power** tiap engine (untuk energy proportionality)
 - [ ] (Opsional, nilai tambah) ulang dengan **dataset citra nyata**, bukan hanya JPEG sintetis
 - [ ] Catat konfigurasi lengkap (shared_buffers, WAL, WiredTiger cache, dll.) untuk reprodusibilitas
-- [ ] Naikkan jumlah run & laporkan **confidence interval** (bukan sekadar "variance low")
+- [~] **Variabilitas dilaporkan** (2026-06-10): CV per-operasi **≈1,6%** (median) untuk insert+bulk-retrieval, <8% terburuk; klaim "emisi = mean±SD 5-run" **dikoreksi** (carbon = 1 pengukuran terintegrasi per sel, dinormalisasi per-run; near-tie 4K Mongo–Postgre 1,8% dinyatakan "within noise"). Sisa: ulang **run energi independen** untuk CI carbon per-sel (carbon kini n=1).
 
 ### Fase 2 — Analisis & kontribusi lingkungan (pembeda Q2)
 - [x] **Sensitivitas grid multi-region**: tabel emisi kumulatif untuk 7 grid (Swedia 41 → India 713 gCO₂/kWh); ranking PM<PG<MG invarian (energi-determined)
@@ -80,6 +80,13 @@ Risiko #1 = **desk-reject karena dianggap paper computing**. Maka:
 > - **Abstrak dipangkas ke ≤250 kata (≈243)** sesuai pedoman ESD (150–250 kata).
 > - **Listing schema+query ketiga arsitektur dipindah ke Appendix A**.
 > - **Referensi diverifikasi** (cek DOI/URL satu per satu): perbaiki DOI Tannu&Nair, URL Shehabi→OSTI, DOI konsep CodeCarbon; **42 ref, 0 unused, 0 undefined**. Ekuivalensi km-mobil/pohon disitasi (DESNZ, Nowak&Crane).
+>
+> **Revisi 2026-06-10 — koreksi data besar + double-blind + 7 isu reviewer:**
+> - ⚠️ **Koreksi normalisasi carbon 5×.** Tiap tracker CodeCarbon membungkus **seluruh 5 run** (`run_insert`/`run_retrieval` = 5×2.000 = 10.000 operasi), tetapi SCI/per-frame/fleet sebelumnya dibagi **2.000** → angka absolut **5× terlalu tinggi**. **Diperbaiki (Opsi A):** semua carbon dinormalisasi ke **satu run 2.000-frame** (÷ jumlah run) di `code/report.py` + seluruh tabel & teks. **Ranking, crossover, & semua persentase TIDAK berubah** — hanya absolut mg/g/kg (mis. fleet saving 440→**88 kg/thn**, per-frame PM 1.16→**0.232 mg**, kumulatif PM 15.6→**3.13 g**). Sekalian perbaiki **typo unit g→kg** di kalimat grid-saving (0.33 kg→**0.066 g**, 5.8 kg→**1.16 g**).
+> - **Anonimisasi double-blind** (ESD = *double-anonymous*): author/afiliasi/email/acknowledgement/funding di-*comment* + placeholder `[Hidden for Double-blind Review]`; "Banten province"→"Indonesia"; self-reference "our earlier work"→netral `[hidden for double-blind review]`; **metadata 6 figur PDF di-strip** (PyMuPDF: hapus creator/producer/timestamp **WIB** + XMP). Naskah ter-render **bersih dari identitas** (diverifikasi skrip).
+> - **7 isu reviewer ditangani:** (1) *scope/venue* — kontribusi+abstrak dibingkai sebagai **environmental-systems decision**; (3a) **normalisasi 5×** di atas; (3b) klaim "emisi=mean±SD 5-run" dikoreksi (carbon = 1 pengukuran terintegrasi; CV performa ≈1,6%), near-tie 4K Mongo–Postgre dilunakkan (1,8%, dalam noise); (4) embodied carbon dibingkai eksplisit **first-order/single-factor + boundary LCA**; (5) grid sweep = **rescaling linear**, SCI+embodied sebagai nilai carbon spesifik; (6) **pertahanan GridFS-inkompatibel-TS** ditambah di skema MongoDB (bukan *setup* lemah); (2) **baseline terkontrol** single-host/single-client dijustifikasi; (7) caveat **entropi-bukan-subjek** dipertajam.
+> - `code/report.py` kini menghasilkan angka **per-run** (konsisten dgn paper); 6 figur diregenerasi + metadata di-strip ulang. Kompilasi bersih **26 hlm**, 0 undefined.
+> - **Persiapan upload (akhir 2026-06-10):** author/ack/funding/Declarations **dihapus penuh** dari source `main.tex` (bukan sekadar *comment*) supaya source LaTeX aman di-upload; **blok Declarations diekstrak** → `declarations/` (teks siap-tempel per-field form ESD); **artifact siap-upload** dirakit di `zenodo/` (code+data+figures+paper anonim+README), dgn **geolokasi `data/emissions.csv` di-scrub** (region/lon/lat) pada salinan zenodo. `CONTEXT.md` & `declarations/` **dikecualikan** dari upload.
 - [x] **Abstract** (terstruktur, tonjolkan carbon + keputusan + temuan 6K)
 - [x] **Introduction** (motivasi karbon IoT, gap, 4 bullet kontribusi eksplisit)
 - [x] **Related Work** dgn sub-bagian + **tabel pembanding** (payload size, metrik, energi ya/tidak) → gap visual
@@ -99,7 +106,7 @@ Risiko #1 = **desk-reject karena dianggap paper computing**. Maka:
 
 ### Fase 5 — Submission
 - [x] Reformat ke **template Springer Nature** (`sn-jnl.cls`) — naskah sudah memakai `sn-jnl` (sn-basic), kompilasi bersih
-- [x] **Tulis cover letter** — [`cover_letter/cover_letter.tex`](cover_letter/cover_letter.tex): **1 halaman**, bahasa non-teknis (audiens lingkungan), menekankan kontribusi lingkungan + decision support, dan **mengungkap dua companion conference paper** untuk transparansi. ⚠️ Sisa: isi **nama editor** + **venue/status konferensi** (tanda `% TODO`).
+- [x] **Tulis cover letter** — [`cover_letter/cover_letter.tex`](cover_letter/cover_letter.tex): **1 halaman**, bahasa non-teknis (audiens lingkungan), menekankan kontribusi lingkungan + decision support, dan **mengungkap dua companion conference paper** (diterima di **ATIGB**, UTE–UDN Vietnam, menunggu presentasi) untuk transparansi. ⚠️ Sisa: isi **nama editor** + **konfirmasi judul/tahun/tanggal pasti ATIGB** (`% TODO`); cover letter kini ~2 hlm karena tambahan disclosure.
 - [ ] Cek **similarity** (hindari overlap teks dengan draf konferensi / Paper A)
 - [x] (draft) Siapkan **daftar reviewer** — lihat bagian **Saran reviewer** di bawah (verifikasi afiliasi/email + COI sebelum submit)
 - [ ] Submit via Editorial Manager
@@ -134,21 +141,22 @@ Risiko #1 = **desk-reject karena dianggap paper computing**. Maka:
 - **Akurasi energi bergantung pada RAPL**: carbon per-resolusi kini diukur **langsung** (CodeCarbon per resolusi, bukan estimasi konstan-daya), namun bila RAPL tak terbaca CodeCarbon jatuh ke estimasi TDP → jalankan `setup_rapl.sh` dan verifikasi sebelum run final.
 - Tanpa kontribusi lingkungan yang kuat (Fase 2), editor lingkungan akan menilai ini "paper computing".
 - Jaga konsistensi antar paper (companion): sitasi silang dengan Paper A, ungkap di cover letter.
+- **Dua conference paper companion** (`alfa_yohannis_3/4.tex`, **diterima di ATIGB** [atigb.ute.udn.vn], menunggu presentasi) **wajib diungkap ke editor**: cover letter + deklarasi **Dual publication = Yes** (`declarations/dual_publication.txt`) + upload sebagai **Related Files** di Editorial Manager. **JANGAN** dimasukkan ke `zenodo/` atau `main.tex` — keduanya menyebut nama penulis (membocorkan double-blind). PDF perlu di-*compile* dari `_3.tex`/`_4.tex` untuk di-upload.
 
 ---
 
-## ✅ Pre-submission consistency & publication-safety checklist (verified 2026-06-09)
+## ✅ Pre-submission consistency & publication-safety checklist (verified 2026-06-10)
 
 > Re-run before each submission. `data/*.csv` is the **authoritative** source for every number;
 > figures are generated by `code/report.py` from that data, so they never need manual editing.
 
 **Data integrity (paper ⇄ data)**
-- [x] Every number in abstract / prose / tables matches `data/threeway_summary.csv` + `emissions.csv` (per-res carbon = Σ insert+retrieve+point\_read, kg×1e6) — cross-checked by script.
-- [x] **MongoDB 5K carbon = 13,564.4 mg** (was mis-typed 12,564) — fixed in `tab:carbon` + Results prose. The cumulative (21.1 g), the −25.9% figure, and the grid table were already computed from 13,564.4; the claim "MongoDB highest cumulatively" *requires* 13,564.4.
-- [x] Cumulative 360p–5K: Postgre 20.8 g · Mongo **21.1 g (highest)** · PostMin 15.6 g (−24.7% vs Postgre).
-- [x] SCI table = insert carbon ÷ 2; **all 8 resolutions** present (added 480p/720p).
-- [x] Per-frame 4K (2.00/2.53/1.16 mg, saving 0.84), fleet (610/1049/1330 kg·yr⁻¹, saving 440), grid table, embodied (4.8/1.6 kg) — all reconcile with data.
-- [x] **Figures regenerated from data** (`report.py`); they plot 13,564.4 at 5K (figures were never wrong — only the hand-typed table cell was).
+- [x] **2026-06-10: semua carbon dinormalisasi per-run (÷ jumlah run).** Angka absolut di bawah = **per satu run 2,000-frame**; persentase & ranking invarian terhadap normalisasi. Tiap angka di abstrak/prosa/tabel dicocokkan ulang dgn `data/threeway_summary.csv` + `emissions.csv` (per-res carbon = Σ(insert+retrieve+point\_read)/run\_count, kg×1e6) — diverifikasi skrip.
+- [x] **MongoDB 5K carbon (per-run) = 2,712.9 mg** (raw 5-run 13,564.4 ÷5). Klaim "MongoDB tertinggi kumulatif" tetap berlaku (rasio invarian).
+- [x] Cumulative 360p–5K (per-run): Postgre **4.15 g** · Mongo **4.22 g (highest)** · PostMin **3.13 g** (−24.7% vs Postgre, −25.9% vs Mongo — persentase tak berubah).
+- [x] SCI = **per-run insert carbon ÷ 2** (= raw insert ÷ 10); **all 8 resolutions** present.
+- [x] Per-frame 4K: PostMin **0.232** / Postgre **0.399** / Mongo **0.506** mg, saving **0.167**; fleet **122/210/266 kg·yr⁻¹**, saving **88** (≈520 km mobil / ~4 pohon); grid table ÷5; **embodied (4.8/1.6 kg) UNCHANGED** (berbasis storage, bukan run-count).
+- [x] **Figures regenerated** (`report.py`, per-run; plot 2,712.9 at 5K) **+ PDF metadata stripped** (double-blind).
 
 **Terminology / labels**
 - [x] Architectures **Postgre / Mongo / PostMin** consistent in all table headers (no stray `MongoDB`/`PG`/`MG`/`PM` in headers).
@@ -177,6 +185,9 @@ Risiko #1 = **desk-reject karena dianggap paper computing**. Maka:
 - [ ] Fill **Zenodo DOI** in Data/Code availability (currently "DOI to be added").
 - [ ] Add **conference-paper venue/status** in the cover letter (companion-work disclosure, `% TODO` in `cover_letter/cover_letter.tex`).
 - [ ] Similarity check vs the two conference drafts.
+- [x] **Double-blind done** (2026-06-10): author/ack/funding/Declarations **dihapus** dari source `main.tex` (placeholder anonim; original di git) → source LaTeX aman di-upload; metadata 6 figur di-strip. ⚠️ **Restore author block dari git** untuk *camera-ready* setelah accept.
+- [x] **Declarations diekstrak** → `declarations/` (teks siap-tempel per field form ESD; **jangan** di-upload bersama naskah/Zenodo — memuat identitas).
+- [x] **Artifact `zenodo/` dirakit** → dibundel jadi **`README.md` + `artifact.zip`** (hanya 2 file untuk upload; geolokasi `emissions.csv` di-scrub). **Review link Zenodo ditambahkan** (draft preview: record 20625061) ke `data_availability.txt` + cover letter. ⚠️ **Verifikasi metadata record Zenodo** (Creators/Title/Description) juga anonim — halaman preview menampilkan nama walau file di dalamnya bersih. Sisa: pilih **LICENSE** (di form Zenodo), (opsional) source image di `code/assets/`.
 - [x] Suggested-reviewer list **ready**: 5 candidates with verified university profile pages + institutional emails (see **Saran reviewer** below) — re-confirm just before submitting.
 
 ---
@@ -199,4 +210,4 @@ Risiko #1 = **desk-reject karena dianggap paper computing**. Maka:
 
 ---
 
-*Status:* `draft lengkap + cover letter 1-hlm (cover_letter/) + checklist QA. Fase 1–3 selesai; Fase 4 sebagian (kode + README reproduksi selesai — sisa: publish Zenodo + DOI); Fase 5 dimulai (cover letter selesai + 5 reviewer terverifikasi — sisa: isi editor/venue TODO, similarity, submit). Verifikasi versi Docker Compose sebelum submit.` · *Terakhir diperbarui:* 2026-06-09
+*Status:* `draft lengkap + cover letter 1-hlm + checklist QA. **2026-06-10: koreksi normalisasi carbon 5× (Opsi A) + anonimisasi double-blind penuh (naskah author/ack/Declarations dihapus; metadata 6 figur + geolokasi emissions.csv di-scrub) + 7 isu reviewer ditangani + Declarations → declarations/ + artifact siap-upload di zenodo/ → 26 hlm, kompilasi bersih.** Fase 1–3 selesai; Fase 4 sebagian (sisa: LICENSE + publish Zenodo + DOI); Fase 5 (sisa: isi editor/venue TODO, similarity, isi field declarations di Editorial Manager, submit). Verifikasi versi Docker Compose sebelum submit.` · *Terakhir diperbarui:* 2026-06-10

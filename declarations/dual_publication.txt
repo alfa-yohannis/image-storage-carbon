@@ -1,0 +1,17 @@
+ESD form -- "Dual publication" question: select **Yes** (some portion of the
+results/data/figures has been published or is under consideration elsewhere).
+
+Suggested explanation to enter:
+
+Preliminary results were reported in two companion conference papers, each comparing only two
+of the three storage architectures and estimating energy from an assumed fixed power draw. Both
+papers have been accepted for presentation at the ATIGB conference (University of Technology and
+Education -- The University of Danang, Vietnam; https://atigb.ute.udn.vn/) and are awaiting
+presentation. The present manuscript substantially extends that work: it directly measures
+per-resolution energy, unifies all three architectures under one common workload, extends the
+resolution range to 6K (where the MongoDB document-size limit appears), and adds the carbon-aware
+decision framework together with the grid-sensitivity, embodied-carbon, Software Carbon Intensity,
+and fleet-scale analyses. The two conference papers are provided as Related Files for the editor's
+reference; they are not part of the anonymized manuscript or the public data artifact.
+
+[Confirm the exact conference title / edition / year / dates before submitting.]

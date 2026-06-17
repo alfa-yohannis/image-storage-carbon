@@ -1,0 +1,1 @@
+Generative AI tools were used in a strictly assistive capacity (supporting parts of the benchmark implementation and refining linguistic clarity). All AI-assisted output was reviewed, verified, and revised by the authors, who assume full responsibility for the final content.
