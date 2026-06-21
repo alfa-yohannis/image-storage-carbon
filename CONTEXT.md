@@ -170,7 +170,7 @@ Risiko #1 = **desk-reject karena dianggap paper computing**. Maka:
 - [x] Source image attributed: JJ Perks / Pexels / Durdle Door (2021, Pexels License).
 
 **Build / structure**
-- [x] Compiles clean: **26 pp, 0 undefined, 0 overfull** (`latexmk -pdf` + bibtex).
+- [x] Compiles clean: **27 pp, 0 undefined, 0 overfull** (`latexmk -pdf` + bibtex) — incl. the **Statements and Declarations → Funding** statement (blinded) added 2026-06-21 for the ESD technical check.
 - [x] Abstract **≤ 250 words** (≈243).
 - [x] 6 figures + all tables referenced in text; figure PDFs present in `figures/`.
 - [x] Declarations + AI-assistance disclosure present.
@@ -210,4 +210,4 @@ Risiko #1 = **desk-reject karena dianggap paper computing**. Maka:
 
 ---
 
-*Status:* `draft lengkap + cover letter 1-hlm + checklist QA. **2026-06-10: koreksi normalisasi carbon 5× (Opsi A) + anonimisasi double-blind penuh (naskah author/ack/Declarations dihapus; metadata 6 figur + geolokasi emissions.csv di-scrub) + 7 isu reviewer ditangani + Declarations → declarations/ + artifact siap-upload di zenodo/ → 26 hlm, kompilasi bersih.** Fase 1–3 selesai; Fase 4 sebagian (sisa: LICENSE + publish Zenodo + DOI); Fase 5 (sisa: isi editor/venue TODO, similarity, isi field declarations di Editorial Manager, submit). Verifikasi versi Docker Compose sebelum submit.` · *Terakhir diperbarui:* 2026-06-10
+*Status:* `Naskah anonim ESD + cover letter 1-hlm + checklist QA + 5 reviewer terverifikasi. **2026-06-21: SUBMITTED ke ESD (Manuscript ID 35174617-3240-44d6-bb1c-fcc74ec1cd4f v1.0). Technical check minta Funding statement di naskah → DITAMBAHKAN dalam format ESD `Statements and Declarations` → `Funding` (blinded `[Hidden for Double-blind Review]`, sebelum daftar pustaka), kompilasi bersih 27 hlm; siap re-submit via portal — JANGAN ubah hal lain.** 2026-06-10: koreksi normalisasi carbon 5× (Opsi A) + anonimisasi double-blind penuh + Declarations → declarations/ + artifact zenodo/. Fase 1–3 selesai; Fase 4 sebagian (sisa: LICENSE + publish Zenodo + DOI); Fase 5: submitted, sedang technical check (revisi funding). Verifikasi versi Docker Compose.` · *Terakhir diperbarui:* 2026-06-21
