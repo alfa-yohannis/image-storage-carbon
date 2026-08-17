@@ -21,6 +21,12 @@ unplugged or offline never freezes the window — it simply shows as *disconnect
 The window opens centred on the screen. See [Cameras on this machine](#cameras-on-this-machine)
 for the measured capability of each device.
 
+This application produced the real-case payload corpus used by the storage benchmark in
+[`../code/`](../code/). Its output is a set of independently captured JPEG frames, so every
+row the benchmark stores holds a different picture, in contrast to the controlled corpus
+which repeats one image. See the top-level [README](../README.md) for how the two are used
+together.
+
 ## Requirements
 
 - **Python 3.10 or newer** (uses the `str | None` type syntax).
@@ -54,11 +60,18 @@ v4l2-ctl --list-devices       # clearer, if v4l-utils is installed
 ## Running
 
 ```bash
-python3 app.py
+python3 launcher.py     # checks prerequisites, then opens the camera wall
+python3 app.py          # the window on its own, without the checks
+python3 record.py --all --minutes 10 --fps 5   # unattended recording, no window
 ```
 
-The first run creates a `.venv` folder, installs the packages, and restarts itself inside it. That
-takes a couple of minutes; later runs start immediately.
+Every entry point calls `bootstrap.py` first, which creates a `.venv`, installs the packages
+from `requirements.txt`, and re-executes inside it. That takes a couple of minutes on the
+first run; later runs start immediately. Set `CAMWALL_NO_VENV=1` to use whatever packages are
+already installed.
+
+Prefer `record.py --all` for any long recording: it needs no window, so nothing can be closed
+by accident, and it sweeps every saved frame for faces when it finishes.
 
 ```bash
 python3 app.py --list          # print the cameras it found, then exit
@@ -71,6 +84,18 @@ python3 app.py --only ipcam     # IP camera only
 | `s` | Save a picture from every working camera into `snapshots/` |
 | `f` | Toggle fullscreen |
 | `q` or `Esc` | Quit |
+
+The window also carries the recording controls: choose a camera or **All cameras**, press
+**Start recording**, and the clock runs until you press stop or the configured duration
+elapses. Recordings land in `payloads/<timestamp>/`, one subfolder per camera. **Leave the
+window open for the duration**, since closing it stops the recorders.
+
+| Setting in `.env` | Meaning |
+|---|---|
+| `RECORD_MINUTES` | How long the Start button records for |
+| `RECORD_FPS` | Frames per second kept. The cameras ignore a request to run slower, so the app reads every frame and keeps every *n*th. |
+| `FACE_DETECTION` | Draw a green box around each detected face |
+| `FACE_MIN_CONFIDENCE` | Detector threshold. YuNet defaults to 0.9, which is too strict for a laptop webcam; 0.35 works across the cameras here. |
 
 ## Cameras on this machine
 

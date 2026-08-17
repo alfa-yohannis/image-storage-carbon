@@ -155,6 +155,19 @@ tests run only when the DB drivers are installed.
 `POSTGRES_PORT` (55432), `MONGO_URI`, `MINIO_ENDPOINT` (127.0.0.1:59000),
 `BENCHMARK_DATA_DIR`, `BENCHMARK_FIGURES_DIR`, `IOTBENCH_NO_VENV`. See `config.py`.
 
+### Payload source and output routing
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `BENCHMARK_PAYLOAD_SOURCE` | `collage` | `collage` stores one image in every row; `frames` stores a different real camera frame per row; `fleet` interleaves several cameras at their native resolutions. |
+| `BENCHMARK_FRAMES_DIR` | `assets/frames` | Folder of `frame_*.jpg` used when the source is `frames`. |
+| `BENCHMARK_FLEET_DIR` | `assets/fleet` | Recording session folder, one subfolder per camera, used when the source is `fleet`. |
+| `BENCHMARK_DATA_DIR` | derived | Where results are written. Defaults to `data/` for `collage`, `data_frames/` for `frames`, and `data_fleet/` for `fleet`, so a run of one corpus cannot overwrite another's results. |
+
+Frames are resized and re-encoded once, before measurement begins, so insertion measures
+storage rather than image processing. A camera is never upscaled: a resolution larger than
+the recorded frame is refused rather than enlarged.
+
 ## Provenance
 
 Merged and refactored from the two original conference-paper codebases at the repo root
