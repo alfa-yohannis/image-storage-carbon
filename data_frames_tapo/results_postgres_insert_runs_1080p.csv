@@ -1,0 +1,6 @@
+timestamp,engine,profile,payload_kind,payload_size_bytes,payload_size_mb,run_id,total_rows_requested,rows_inserted,batch_size,duration_sec,rows_per_sec,logical_mb_inserted,logical_mb_per_sec,db_size_before_mb,db_size_after_mb,table_total_before_mb,table_total_after_mb,table_data_before_mb,table_data_after_mb,table_index_before_mb,table_index_after_mb,rows_in_table_after,table_storage_amplification
+2026-08-17T14:23:02.450773+00:00,postgresql+timescaledb,1080p,image,155935,0.148711,1,2000,2000,50,4.3763,457.01,297.422,67.962,9.364,315.817,0.023,306.461,0.008,306.25,0.016,0.211,2000,1.0304
+2026-08-17T14:23:02.451061+00:00,postgresql+timescaledb,1080p,image,155935,0.148711,2,2000,2000,50,6.2331,320.87,297.422,47.717,9.403,315.856,0.023,306.469,0.008,306.25,0.016,0.219,2000,1.0304
+2026-08-17T14:23:02.451269+00:00,postgresql+timescaledb,1080p,image,155935,0.148711,3,2000,2000,50,5.9033,338.79,297.422,50.382,9.411,315.903,0.023,306.469,0.008,306.25,0.016,0.219,2000,1.0304
+2026-08-17T14:23:02.451467+00:00,postgresql+timescaledb,1080p,image,155935,0.148711,4,2000,2000,50,5.8171,343.81,297.422,51.129,9.458,315.934,0.023,306.469,0.008,306.25,0.016,0.219,2000,1.0304
+2026-08-17T14:23:02.451663+00:00,postgresql+timescaledb,1080p,image,155935,0.148711,5,2000,2000,50,6.0959,328.09,297.422,48.79,9.489,315.934,0.023,306.469,0.008,306.25,0.016,0.219,2000,1.0304

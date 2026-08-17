@@ -1,0 +1,238 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{parskip}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\usepackage{booktabs}
+
+% Anonymised: no author, affiliation, or location appears anywhere in this file.
+\pagestyle{plain}
+\newcommand{\point}[1]{\medskip\noindent\textbf{\color{black!75}#1}\par\smallskip}
+\newcommand{\reply}{\noindent\textbf{Response.}\ }
+
+\title{\vspace{-1.5cm}Response to the Editor\\[2pt]
+\large Carbon Footprint and Carbon-Aware Selection of Document-Oriented,\\
+Relational, and Hybrid Object-Relational Storage for Image-Based\\
+Time-Series Workloads in Green IoT}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{-1.2cm}
+
+\noindent We thank the Editor for a constructive and precise assessment, and for the opportunity to
+revise. Every point has been addressed, and the manuscript is substantially stronger as a result. In
+particular, the request for stronger evidence of applicability prompted a new set of experiments
+against real recorded camera payloads, which both confirmed the paper's central conclusion and
+uncovered a quantitative correction we would otherwise have reported uncorrected. We are grateful
+for that.
+
+Below, each of the Editor's points is quoted, followed by our response and the location of the
+change. One point is answered with partial rebuttal, which we set out explicitly rather than leave
+implicit.
+
+\section*{1. Positioning within the existing literature}
+
+\point{``The discussion should better position the proposed framework within the existing scientific
+literature, demonstrating more convincingly how it advances beyond previous studies rather than
+primarily summarizing the experimental findings.''}
+
+\reply We accept this fully. On re-reading, the Discussion explained \emph{mechanism} and then moved
+directly to threats to validity, without returning to the literature at all. Every citation in that
+section was to vendor or technical documentation rather than to scholarly work. The Editor's
+characterisation was accurate.
+
+We have added a new Discussion subsection, \textbf{``Positioning against prior work''}, which states
+what changes relative to prior studies rather than restating what we measured:
+
+\begin{itemize}
+  \item \textbf{An accepted engine ordering is inverted.} Prior benchmarks on scalar time-series data
+  report MongoDB ingesting faster than TimescaleDB. We reproduce that at low resolution
+  ($>6\times$ faster at 360p) and then show it does not survive its own premise: the ordering
+  inverts between 1440p and 4K, and MongoDB becomes \emph{infeasible} at 6K. What the scalar
+  literature presents as a property of the engines is a property of the payload regime those
+  benchmarks occupy.
+  \item \textbf{The carbon-accounting literature supplies methods, not answers at this granularity.}
+  Green Algorithms, the Software Carbon Intensity specification, and the embodied-carbon literature
+  can attribute a footprint to a workload once its energy is known, but cannot indicate which
+  architecture will consume that energy. We measure per architecture, per operation, and per
+  resolution, and we note that a single aggregate figure per architecture, which those methods
+  would ordinarily yield, would have averaged the crossover away and produced a spurious universal
+  winner.
+  \item \textbf{The output is a decision instrument, not a benchmark table.} The framework is now
+  expressed as a transferable rule (see point 3) rather than a recommendation tied to our hardware.
+\end{itemize}
+
+We also state explicitly what we do \emph{not} claim: that the specific crossover resolutions
+generalise. Table~1 has additionally been extended with a column recording what each prior study
+concludes and what changes in our payload regime, so the advance is visible in the comparison itself
+rather than asserted in prose.
+
+\section*{2. Dialogue with recent publications in this journal}
+
+\point{``The manuscript would also benefit from a stronger dialogue with recent publications in
+Environment Systems and Decisions, reinforcing its contribution to the journal's body of
+knowledge.''}
+
+\reply Accepted. The submitted version cited no work from this journal. We have added a new Related
+Work subsection engaging six recent articles substantively. Each is used to sharpen a specific
+methodological choice, not cited in passing:
+
+\begin{itemize}
+  \item A systematic review of multi-criteria decision making for material selection identifies a
+  recurring weakness: decision criteria are often taken from the literature rather than measured in
+  the adopting organisation's own context. This directly motivates our decision to make the decision
+  variable (payload size) measurable by the adopter, and to express the rule as a computed crossover
+  rather than a fixed recommendation.
+  \item A life-cycle assessment of lightweight railway vehicles establishes sensitivity analysis as
+  what separates a robust conclusion from an artefact of assumed parameters. We identify our
+  multi-region grid-intensity analysis as playing exactly that role, and show our ranking is
+  invariant to the most uncertain parameter in any carbon accounting.
+  \item A data-driven study of smart-home energy consumption treats building instrumentation as the
+  object of environmental analysis. We draw the distinction that its models account for the energy
+  the building consumes, but not for the tier that stores what the instrumentation records, which
+  we show can be halved by a storage decision alone.
+  \item Two studies of IoT operational integrity (self-healing via log analytics; real-time risk at
+  the edge) both presuppose a data tier that durably retains device output. We supply the missing
+  environmental cost of that presupposition.
+  \item A review of price-driven energy management and demand response prompts a substantive point:
+  because emissions are energy multiplied by grid intensity, temporal or geographic load shifting
+  rescales every architecture equally and cannot change which one to select. The saving must come
+  from the architecture itself.
+\end{itemize}
+
+\section*{3. Practical and scientific value, and applicability beyond our environment}
+
+\point{``At present, the framework is derived almost entirely from the experimental environment
+developed by the authors, and its applicability beyond the evaluated hardware, software
+configuration, and workload characteristics remains insufficiently discussed.''}
+
+\reply This was the most substantive point, and we have addressed it in three ways: analytically,
+empirically with new experiments, and by separating claims that depend on measurement from those
+that do not. We also offer one partial rebuttal, stated at the end.
+
+\subsection*{3a. An analytical model, so the rule transfers rather than being copied}
+
+We now derive the mechanism behind the crossover explicitly. Each architecture pays a \emph{fixed}
+per-operation cost $a$ and a \emph{per-byte} cost $b$, so storing a frame of size $s$ costs
+approximately $E(s) = a + bs$. Two architectures with different slopes cross exactly once, at
+$s^{*} = (a_2-a_1)/(b_1-b_2)$.
+
+MongoDB has the smallest fixed cost and the largest per-byte cost; the hybrid is its mirror image;
+inline PostgreSQL lies between on both axes, which is why it is best at no operation and worst at
+none. We fit these constants to our measurements and report them. \textbf{The consequence is that an
+operator need not adopt our resolutions:} two insertion runs per architecture at two payload sizes
+yield $a$ and $b$ on their hardware, and the equation gives their crossover. Our Table~5 is thus one
+instantiation of the equation, and the equation is what generalises.
+
+\subsection*{3b. New experiments: real camera payloads, a second camera, and a different host}
+
+We describe these in the manuscript as \textbf{additional experiments carried out for this revision}.
+
+The submitted benchmark inserted one synthetic collage for every row, so all 2{,}000 stored rows were
+byte-identical, which is reproducible but not what a camera produces. We recorded a corpus of real frames
+from an operational deployment (one networked camera, two USB cameras; ten minutes at 5 frames per
+second; 2{,}845--2{,}988 frames per camera), verified every frame byte-distinct, and re-ran the
+benchmark with a different real image for every inserted row. Three results follow:
+
+\begin{enumerate}
+  \item \textbf{The architectural conclusion holds.} MongoDB is the lowest-carbon architecture at
+  every resolution from 360p to 1080p, as the synthetic sweep reports for that range, and the
+  result replicates independently on a second camera.
+  \item \textbf{The synthetic payload is close to a worst case,} not a typical one: real frames are
+  $3.1\times$ to $5.4\times$ smaller at equal resolution.
+  \item \textbf{The identical-row construction overstated MongoDB's margin.} MongoDB's storage
+  amplification at 1080p rises from $0.10\times$ with identical rows to $0.92\times$ with distinct
+  frames, because bucketed duplicates are removed almost entirely by compression while real frames
+  are not. At matched payload size, inline PostgreSQL's carbon penalty relative to MongoDB falls
+  from $3.96\times$ to $1.11\times$.
+\end{enumerate}
+
+We report this third finding prominently and against our own interest, because it is material: the
+\emph{direction} of the published result is confirmed and its \emph{magnitude} is not, and the
+crossover is expected to occur earlier than the 1440p--4K interval measured synthetically. We also
+state the caveats bounding the comparison, since real frames differ from the collage in size as well
+as in distinctness.
+
+The validation additionally ran on a \emph{different computer}: a four-core Core i7-1165G7 with
+15.30~GB of memory, against the eight-core Core i9-11900H with 30.99~GB used for the controlled benchmark, with
+the MongoDB cache scaled proportionally from 30~GB to 14~GB. This is therefore a second-hardware
+replication and not merely a second-payload one. Absolute figures differ between the machines, as
+they must; the architectural ordering does not. A new table in the manuscript specifies both
+environments side by side. We also state explicitly that the deployment supplied the cameras and the
+capture regime, while the storage measurements were executed on these controlled, fully specified
+hosts.
+
+\subsection*{3c. Separating structural claims from measured ones}
+
+Two claims are now identified as independent of our hardware entirely: the 16~MB BSON ceiling is a
+protocol limit, so no hardware makes bucketed time-series collections able to store 6K frames; and
+the ordering of per-byte costs follows from where each architecture places the payload, not from how
+fast the host runs.
+
+\subsection*{3d. Partial rebuttal: the single-host baseline is a design choice}
+
+Respectfully, we retain the single-host, single-client design and wish to justify rather than
+silently amend it. Multi-client concurrency changes how energy is attributed and introduces
+contention noise. It is effectively a different study, not a more realistic version of this one. The
+controlled baseline isolates payload handling, the variable under study, from scheduling and
+contention confounds, and keeps the comparison fully reproducible. We have strengthened the evidence
+for generality by the means above, which we believe answer the Editor's concern more directly than
+added concurrency would, since the crossover is driven by payload size, a structural property of
+each storage design, rather than by client count. A multi-client evaluation remains identified as
+future work.
+
+\section*{4. Limitations in the abstract}
+
+\point{``The abstract should also explicitly acknowledge the main limitations of the research.''}
+
+\reply Accepted and implemented. The abstract now states, in the authors' own words, that the study
+is deliberately bounded and names four limitations: the single-host, single-client controlled
+baseline rather than a distributed multi-tenant deployment; a limited photographic corpus, with
+real-frame validation reaching 1080p; measurement under one national grid intensity, with the
+explicit note that the \emph{ranking} is grid-invariant because emissions scale linearly with that
+factor; and embodied-carbon and fleet-scale figures being first-order estimates from published
+factors rather than site-specific measurements.
+
+\section*{5. Declaration of AI-assisted technologies}
+
+\point{``If artificial intelligence tools were used for language polishing or translation, this
+should be transparently declared in accordance with the journal's editorial policies.''}
+
+\reply Declared. A \textbf{Use of AI-assisted technologies} statement has been added to Statements
+and Declarations, recording that generative AI tools were used \emph{solely for language
+editing}, that is grammar, clarity, and phrasing of author-written text, and that no AI tool was used to
+generate, analyse, or interpret the experimental data, produce figures or tables, or draw the
+scientific conclusions. The authors reviewed and edited all such output and take full responsibility
+for the entire content. AI is not credited as an author.
+
+We took the opportunity to complete the declarations block, which was otherwise thin: Competing
+Interests, Data and Code Availability, and Ethics Approval have also been added. The ethics statement
+records that the new real-frame corpus involved no human participants and no personal data, was
+captured with no other person present, retained no biometric identifier, and that every saved frame
+was verified automatically to contain no detectable face before use.
+
+\section*{Summary of changes}
+
+\begin{tabular}{@{}p{0.30\textwidth}p{0.62\textwidth}@{}}
+\toprule
+Editor's point & Where addressed \\
+\midrule
+1. Positioning in the literature &
+New Discussion subsection ``Positioning against prior work''; Table~1 extended with a column stating what each prior study concludes and what changes here. \\[2pt]
+2. Dialogue with this journal &
+New Related Work subsection engaging six recent articles from this journal, each used to sharpen a specific methodological choice. \\[2pt]
+3. Applicability beyond our setup &
+New subsection deriving the mechanism behind the crossover and giving a measurement procedure for locating it elsewhere; new section reporting the real-case deployment, with a controlled comparison that separates payload construction from hardware; claims that do not depend on measurement identified separately. \\[2pt]
+4. Limitations in the abstract &
+Abstract revised to name four limitations explicitly. \\[2pt]
+5. AI declaration &
+Statements and Declarations rewritten, adding use of AI-assisted technologies, competing interests, data availability, and ethics approval. \\
+\bottomrule
+\end{tabular}
+
+\bigskip
+\noindent We hope the revised manuscript now meets the standard required to proceed to an Associate
+Editor, and we thank the Editor again for guidance that materially improved the work.
+
+\end{document}

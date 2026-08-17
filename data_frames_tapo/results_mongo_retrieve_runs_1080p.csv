@@ -1,0 +1,6 @@
+timestamp,engine,profile,payload_kind,query_id,run_id,latency_ms,rows_returned,total_bytes_returned
+2026-08-17T14:39:16.573291+00:00,mongodb_timeseries,1080p,image,Q_retrieve_binaries_time_range,1,412.055,2000,311869264
+2026-08-17T14:39:16.573540+00:00,mongodb_timeseries,1080p,image,Q_retrieve_binaries_time_range,2,414.568,2000,311869264
+2026-08-17T14:39:16.573724+00:00,mongodb_timeseries,1080p,image,Q_retrieve_binaries_time_range,3,414.346,2000,311869264
+2026-08-17T14:39:16.573908+00:00,mongodb_timeseries,1080p,image,Q_retrieve_binaries_time_range,4,418.571,2000,311869264
+2026-08-17T14:39:16.574086+00:00,mongodb_timeseries,1080p,image,Q_retrieve_binaries_time_range,5,422.817,2000,311869264

@@ -1,0 +1,2 @@
+timestamp,engine,profile,payload_kind,query_id,mean_latency_ms,std_latency_ms,n_runs,rows_returned,total_bytes_returned
+2026-08-17T14:35:44.580781+00:00,mongodb_timeseries,480p,image,Q_retrieve_binaries_time_range,83.871,5.192,5,2000,100503062

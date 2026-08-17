@@ -2,3 +2,7 @@
 __pycache__/
 *.pyc
 .deps-*
+
+# Real camera payload corpus (462 MB) - regenerate with code_realcase/record.py
+assets/frames/
+assets/fleet

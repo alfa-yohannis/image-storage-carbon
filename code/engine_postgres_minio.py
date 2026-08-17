@@ -11,7 +11,7 @@ from minio import Minio
 from psycopg2.extras import execute_batch
 
 from engine_base import StorageEngine, StorageSizes
-from payloads import MediaPayload
+from payloads import MediaPayload, PayloadSource
 
 _DDL = """
 CREATE EXTENSION IF NOT EXISTS timescaledb;
@@ -94,7 +94,7 @@ class PostgresMinioEngine(StorageEngine):
             conn.close()
         self._recreate_bucket()
 
-    def _insert_rows(self, payload: MediaPayload, n_rows: int, batch_size: int) -> tuple[int, float]:
+    def _insert_rows(self, source: PayloadSource, n_rows: int, batch_size: int) -> tuple[int, float]:
         sql = _INSERT_SQL.format(table=self.table)
         client = self._minio()
         conn = self._connect(False)
@@ -104,6 +104,7 @@ class PostgresMinioEngine(StorageEngine):
                 t0 = time.perf_counter()
                 batch = []
                 while inserted < n_rows:
+                    payload = source.next()
                     ts = datetime.now(timezone.utc)
                     key = f"{self.settings.device_id}/{ts.strftime('%Y%m%d%H%M%S%f')}_{uuid.uuid4().hex[:8]}"
                     client.put_object(self.bucket, key, BytesIO(payload.payload_bytes),

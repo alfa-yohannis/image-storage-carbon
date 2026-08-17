@@ -1,0 +1,2 @@
+timestamp,engine,profile,query_id,mean_latency_ms,std_latency_ms,n_runs
+2026-08-17T15:22:31.763824+00:00,mongodb_timeseries,1080p,Q_driver_roundtrip_ping,0.156496,0.004894,10

@@ -1,0 +1,6 @@
+timestamp,engine,profile,payload_kind,query_id,run_id,latency_ms,rows_returned,total_bytes_returned
+2026-08-17T14:19:12.576152+00:00,postgresql+timescaledb,480p,image,Q_retrieve_binaries_time_range,1,457.649,2000,100503062
+2026-08-17T14:19:12.576470+00:00,postgresql+timescaledb,480p,image,Q_retrieve_binaries_time_range,2,450.441,2000,100503062
+2026-08-17T14:19:12.576710+00:00,postgresql+timescaledb,480p,image,Q_retrieve_binaries_time_range,3,472.398,2000,100503062
+2026-08-17T14:19:12.576944+00:00,postgresql+timescaledb,480p,image,Q_retrieve_binaries_time_range,4,540.969,2000,100503062
+2026-08-17T14:19:12.577187+00:00,postgresql+timescaledb,480p,image,Q_retrieve_binaries_time_range,5,747.636,2000,100503062

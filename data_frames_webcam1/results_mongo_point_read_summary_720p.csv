@@ -1,0 +1,2 @@
+timestamp,engine,profile,payload_kind,query_id,mean_latency_ms,std_latency_ms,n_runs,payload_size_bytes
+2026-08-17T15:16:49.121987+00:00,mongodb_timeseries,720p,image,Q_latest_payload_by_device,3.313,0.195,5,60746

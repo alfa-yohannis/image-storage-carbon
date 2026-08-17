@@ -27,9 +27,7 @@ Examples:
 from __future__ import annotations
 
 import argparse
-import hashlib
 import os
-import subprocess
 import sys
 from pathlib import Path
 
@@ -37,67 +35,9 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
 
-def ensure_venv() -> None:
-    """Create a local .venv on first run, then restart this script inside it.
+from bootstrap import ensure_venv  # noqa: E402
 
-    A virtual environment is a private folder of Python packages belonging to
-    this project alone, so installing OpenCV here cannot disturb anything else
-    on the computer.
-
-    Set CAMWALL_NO_VENV=1 to skip this and use the packages already installed.
-    """
-    if os.environ.get("CAMWALL_NO_VENV") == "1":
-        return
-    if os.environ.get("CAMWALL_IN_VENV") == "1":
-        return  # we are already the restarted copy
-
-    venv_dir = HERE / ".venv"
-    venv_python = venv_dir / "bin" / "python"
-
-    # sys.prefix is the environment we are running in. If it is already our
-    # .venv, there is nothing to do.
-    if venv_dir.exists() and venv_dir.resolve() == Path(sys.prefix).resolve():
-        return
-
-    if not venv_python.exists():
-        print("[setup] creating virtual environment:", venv_dir)
-        subprocess.run([sys.executable, "-m", "venv", str(venv_dir)], check=True)
-        subprocess.run([str(venv_python), "-m", "pip", "install", "-q", "--upgrade", "pip"], check=True)
-
-    install_requirements(venv_dir, venv_python)
-
-    # Replace this process with the same script running under the venv's Python.
-    # execve does not return: everything below runs in the restarted copy.
-    environment = dict(os.environ, CAMWALL_IN_VENV="1")
-    os.execve(str(venv_python), [str(venv_python), str(HERE / "app.py")] + sys.argv[1:], environment)
-
-
-def install_requirements(venv_dir: Path, venv_python: Path) -> None:
-    """Install requirements.txt, but only when it has changed since last time.
-
-    We hash the file and leave a marker named after that hash. If the marker is
-    already there, the packages are up to date and installing again would only
-    waste time on every start.
-    """
-    requirements = HERE / "requirements.txt"
-    if not requirements.exists():
-        return
-
-    digest = hashlib.md5(requirements.read_bytes()).hexdigest()
-    marker = venv_dir / (".deps-" + digest)
-    if marker.exists():
-        return
-
-    print("[setup] installing packages from requirements.txt ...")
-    subprocess.run([str(venv_python), "-m", "pip", "install", "-r", str(requirements)], check=True)
-
-    # Remove markers from older versions of the file, then record this one.
-    for old_marker in venv_dir.glob(".deps-*"):
-        old_marker.unlink()
-    marker.touch()
-
-
-ensure_venv()
+ensure_venv("app.py")
 
 # These packages live inside .venv, so they can only be imported after
 # ensure_venv() has restarted us in there.

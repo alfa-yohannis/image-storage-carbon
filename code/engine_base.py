@@ -13,7 +13,7 @@ import time
 from dataclasses import dataclass, field
 
 from config import Settings
-from payloads import MediaPayload
+from payloads import MediaPayload, PayloadSource
 
 
 def mean_std(values: list[float]) -> tuple[float, float]:
@@ -87,8 +87,13 @@ class StorageEngine(abc.ABC):
         """Drop and recreate the table/collection (+ bucket) for a fresh run."""
 
     @abc.abstractmethod
-    def _insert_rows(self, payload: MediaPayload, n_rows: int, batch_size: int) -> tuple[int, float]:
-        """Insert n_rows; return (rows_inserted, measured_duration_sec)."""
+    def _insert_rows(self, source: PayloadSource, n_rows: int, batch_size: int) -> tuple[int, float]:
+        """Insert n_rows, taking one payload per row from source.
+
+        Call source.next() once per row rather than reusing a single payload:
+        with the frames source that yields a different real picture each time,
+        which is what stops a database compressing away duplicate rows.
+        """
 
     @abc.abstractmethod
     def _storage_sizes(self) -> StorageSizes: ...
@@ -131,16 +136,16 @@ class StorageEngine(abc.ABC):
         return None
 
     # ---- measurement protocol (template methods) ------------------------ #
-    def run_insert(self, payload: MediaPayload) -> InsertResult:
+    def run_insert(self, source: PayloadSource) -> InsertResult:
         s = self.settings
         if s.warmup_rows > 0:
             self._reset()
-            self._insert_rows(payload, s.warmup_rows, s.batch_size)
+            self._insert_rows(source, s.warmup_rows, s.batch_size)
         runs: list[InsertRun] = []
         for i in range(1, s.insert_runs + 1):
             self._reset()
             before = self._storage_sizes()
-            rows, duration = self._insert_rows(payload, s.total_rows, s.batch_size)
+            rows, duration = self._insert_rows(source, s.total_rows, s.batch_size)
             after = self._storage_sizes()
             count = self._row_count()
             runs.append(InsertRun(duration, rows, count, before, after))

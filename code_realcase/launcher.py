@@ -26,6 +26,13 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+# Build the .venv and restart in it if needed, so the camera check below can
+# import config (which needs python-dotenv). Without this the launcher reports
+# "No module named 'dotenv'" when started with the system Python.
+from bootstrap import ensure_venv  # noqa: E402
+
+ensure_venv("launcher.py")
+
 APP = HERE / "app.py"
 ENV_FILE = HERE / ".env"
 ENV_EXAMPLE = HERE / ".env.example"

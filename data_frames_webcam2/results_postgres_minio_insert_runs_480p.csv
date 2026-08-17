@@ -1,0 +1,6 @@
+timestamp,engine,profile,payload_kind,payload_size_bytes,payload_size_mb,run_id,total_rows_requested,rows_inserted,batch_size,duration_sec,rows_per_sec,logical_mb_inserted,logical_mb_per_sec,db_size_before_mb,db_size_after_mb,table_total_before_mb,table_total_after_mb,table_data_before_mb,table_data_after_mb,table_index_before_mb,table_index_after_mb,rows_in_table_after,table_storage_amplification
+2026-08-17T14:52:11.215000+00:00,postgresql+timescaledb+minio,480p,image,50447,0.04811,1,2000,2000,50,11.5515,173.14,96.22,8.33,9.208,105.951,0.023,96.751,0.008,96.533,0.016,0.219,2000,1.0055
+2026-08-17T14:52:11.215306+00:00,postgresql+timescaledb+minio,480p,image,50447,0.04811,2,2000,2000,50,9.3553,213.78,96.22,10.285,9.239,105.975,0.023,96.751,0.008,96.533,0.016,0.219,2000,1.0055
+2026-08-17T14:52:11.215517+00:00,postgresql+timescaledb+minio,480p,image,50447,0.04811,3,2000,2000,50,12.3909,161.41,96.22,7.765,9.255,105.998,0.023,96.751,0.008,96.533,0.016,0.219,2000,1.0055
+2026-08-17T14:52:11.215717+00:00,postgresql+timescaledb+minio,480p,image,50447,0.04811,4,2000,2000,50,12.5696,159.11,96.22,7.655,9.278,106.014,0.023,96.751,0.008,96.533,0.016,0.219,2000,1.0055
+2026-08-17T14:52:11.215909+00:00,postgresql+timescaledb+minio,480p,image,50447,0.04811,5,2000,2000,50,13.4544,148.65,96.22,7.152,9.286,106.022,0.023,96.751,0.008,96.533,0.016,0.219,2000,1.0055

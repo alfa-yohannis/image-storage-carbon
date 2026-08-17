@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from pymongo import MongoClient
 
 from engine_base import StorageEngine, StorageSizes
-from payloads import MediaPayload
+from payloads import MediaPayload, PayloadSource
 
 
 class MongoEngine(StorageEngine):
@@ -63,7 +63,7 @@ class MongoEngine(StorageEngine):
         db[self.settings.mongo_collection_name].create_index(
             [("meta.device_id", 1), ("ts", -1)], name="idx_device_ts_desc")
 
-    def _insert_rows(self, payload: MediaPayload, n_rows: int, batch_size: int) -> tuple[int, float]:
+    def _insert_rows(self, source: PayloadSource, n_rows: int, batch_size: int) -> tuple[int, float]:
         # Inserts are NOT swallowed: a failure (e.g. a 6K payload exceeding the
         # 16 MiB BSON document limit) propagates so the orchestrator can retry
         # and, if it keeps failing, skip this cell. `inserted` counts only rows
@@ -73,6 +73,7 @@ class MongoEngine(StorageEngine):
         t0 = time.perf_counter()
         batch = []
         for _ in range(n_rows):
+            payload = source.next()
             batch.append({
                 "meta": {"device_id": self.settings.device_id, "profile": payload.profile_name,
                          "payload_kind": payload.payload_kind},

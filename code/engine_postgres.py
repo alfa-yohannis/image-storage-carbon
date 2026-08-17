@@ -8,7 +8,7 @@ import psycopg2
 from psycopg2.extras import execute_batch
 
 from engine_base import StorageEngine, StorageSizes
-from payloads import MediaPayload
+from payloads import MediaPayload, PayloadSource
 
 _DDL = """
 CREATE EXTENSION IF NOT EXISTS timescaledb;
@@ -79,7 +79,7 @@ class PostgresEngine(StorageEngine):
         finally:
             conn.close()
 
-    def _insert_rows(self, payload: MediaPayload, n_rows: int, batch_size: int) -> tuple[int, float]:
+    def _insert_rows(self, source: PayloadSource, n_rows: int, batch_size: int) -> tuple[int, float]:
         sql = _INSERT_SQL.format(table=self.table)
         conn = self._connect(False)
         inserted = 0
@@ -88,6 +88,7 @@ class PostgresEngine(StorageEngine):
                 t0 = time.perf_counter()
                 batch = []
                 while inserted < n_rows:
+                    payload = source.next()
                     ts = datetime.now(timezone.utc)
                     batch.append((self.settings.device_id, ts, payload.profile_name, payload.payload_kind,
                                   psycopg2.Binary(payload.payload_bytes), payload.payload_size_bytes,

@@ -1,0 +1,4 @@
+timestamp,engine,profile,query_id,mean_latency_ms,std_latency_ms,n_runs
+2026-08-17T15:05:58.463098+00:00,postgresql+timescaledb,360p,Q_driver_roundtrip_select_1,0.065602,0.002895,10
+2026-08-17T15:07:02.359978+00:00,postgresql+timescaledb,480p,Q_driver_roundtrip_select_1,0.067991,0.002138,10
+2026-08-17T15:07:52.324545+00:00,postgresql+timescaledb,720p,Q_driver_roundtrip_select_1,0.089612,0.003034,10

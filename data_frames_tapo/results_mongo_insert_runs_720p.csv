@@ -1,0 +1,6 @@
+timestamp,engine,profile,payload_kind,payload_size_bytes,payload_size_mb,run_id,total_rows_requested,rows_inserted,batch_size,duration_sec,rows_per_sec,logical_mb_inserted,logical_mb_per_sec,db_size_before_mb,db_size_after_mb,table_total_before_mb,table_total_after_mb,table_data_before_mb,table_data_after_mb,table_index_before_mb,table_index_after_mb,rows_in_table_after,table_storage_amplification
+2026-08-17T14:37:44.718686+00:00,mongodb_timeseries,720p,image,92255,0.087981,1,2000,2000,50,0.6287,3181.27,175.962,279.892,0.082,12.285,0.012,12.285,0.004,12.277,0.008,0.008,2000,0.0698
+2026-08-17T14:37:44.718941+00:00,mongodb_timeseries,720p,image,92255,0.087981,2,2000,2000,50,0.9888,2022.67,175.962,177.957,0.082,25.637,0.012,26.387,0.004,26.379,0.008,0.008,2000,0.15
+2026-08-17T14:37:44.719129+00:00,mongodb_timeseries,720p,image,92255,0.087981,3,2000,2000,50,2.7655,723.19,175.962,63.627,0.082,56.879,0.012,57.398,0.004,57.391,0.008,0.008,2000,0.3262
+2026-08-17T14:37:44.719327+00:00,mongodb_timeseries,720p,image,92255,0.087981,4,2000,2000,50,3.2849,608.85,175.962,53.567,0.082,67.117,0.012,67.242,0.004,67.234,0.008,0.008,2000,0.3821
+2026-08-17T14:37:44.719510+00:00,mongodb_timeseries,720p,image,92255,0.087981,5,2000,2000,50,2.0833,960.03,175.962,84.465,0.082,77.887,0.012,77.816,0.004,77.809,0.008,0.008,2000,0.4422

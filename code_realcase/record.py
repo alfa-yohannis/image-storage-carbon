@@ -50,6 +50,12 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+# OpenCV, Pillow and python-dotenv live in the .venv, so build it and restart
+# there before importing them.
+from bootstrap import ensure_venv  # noqa: E402
+
+ensure_venv("record.py")
+
 import cv2
 import numpy as np
 from PIL import Image

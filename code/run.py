@@ -74,7 +74,7 @@ from config import DEFAULT_SWEEP, Locations, Settings, resolve_profile  # noqa: 
 from engine_mongodb import MongoEngine  # noqa: E402
 from engine_postgres import PostgresEngine  # noqa: E402
 from engine_postgres_minio import PostgresMinioEngine  # noqa: E402
-from payloads import PayloadFactory  # noqa: E402
+from payloads import PayloadFactory, SinglePayloadSource  # noqa: E402
 from results import ResultWriter  # noqa: E402
 
 ENGINE_REGISTRY = {
@@ -132,7 +132,35 @@ class DockerCompose:
             self._run("down", "-v", "--remove-orphans")
 
 
-def _measure_cell(engine, payload, engine_name: str, profile: str,
+def _build_payload_source(settings):
+    """Choose the payload source for one cell: real camera frames, or the collage.
+
+    Defaults to the collage, so an unconfigured run reproduces the published
+    results exactly. BENCHMARK_PAYLOAD_SOURCE=frames switches to the recorded
+    corpus; if the corpus is missing, or the resolution is larger than the
+    frames (nothing above 1080p was recorded), the collage is used for that cell
+    and the reason is printed rather than silently substituted.
+    """
+    factory = PayloadFactory(settings.locations.source_image_path)
+    collage = SinglePayloadSource(factory.build(settings.workload))
+
+    if settings.payload_source not in ("frames", "fleet"):
+        return collage
+
+    try:
+        if settings.payload_source == "fleet":
+            return factory.build_fleet_sequence(
+                settings.locations.fleet_dir, settings.workload, settings.total_rows
+            )
+        return factory.build_frame_sequence(
+            settings.locations.frames_dir, settings.workload, settings.total_rows
+        )
+    except (FileNotFoundError, ValueError) as exc:
+        print(f"   ! real frames unavailable ({exc}); using the collage for this cell")
+        return collage
+
+
+def _measure_cell(engine, source, engine_name: str, profile: str,
                   carbon_enabled: bool, data_dir: Path) -> dict:
     """Run all four dimensions for one (engine, resolution) cell and return the
     in-memory results. Nothing is persisted here: an exception raised by any
@@ -149,9 +177,11 @@ def _measure_cell(engine, payload, engine_name: str, profile: str,
         print(f"   - {label} done in {_fmt(time.perf_counter() - started)}")
         return result
 
+    # Point-read only needs payload metadata, not a per-row picture.
+    payload = source.representative()
     return {
         "driver": step("driver overhead", engine.run_driver),
-        "insert": step("insert", lambda: engine.run_insert(payload), f"{engine_name}_insert_{profile}"),
+        "insert": step("insert", lambda: engine.run_insert(source), f"{engine_name}_insert_{profile}"),
         "retrieval": step("retrieval", engine.run_retrieval, f"{engine_name}_retrieve_{profile}"),
         "point_read": step("point-read", lambda: engine.run_point_read(payload),
                            f"{engine_name}_point_read_{profile}"),
@@ -174,11 +204,13 @@ def run_engine(engine_name: str, profiles: list[str], compose: DockerCompose,
 
     for profile in profiles:
         settings = Settings.load(profile)
-        payload = PayloadFactory(settings.locations.source_image_path).build(settings.workload)
+        source = _build_payload_source(settings)
+        payload = source.representative()
         gidx = progress["done"] + 1
         profile_start = time.perf_counter()
         print(f"\n==== [{gidx}/{progress['total']}] {engine_name} :: {profile}  "
               f"({payload.payload_size_mb:.2f} MB/sample) ====")
+        print(f"     payload: {source.describe()}")
 
         # Retry-then-skip: measure into memory, persist only on a fully clean
         # attempt. After `max_attempts` failures, record the skip and move on so
@@ -187,7 +219,7 @@ def run_engine(engine_name: str, profiles: list[str], compose: DockerCompose,
         error = None
         for attempt in range(1, max_attempts + 1):
             try:
-                results = _measure_cell(engine, payload, engine_name, profile, carbon_enabled, data_dir)
+                results = _measure_cell(engine, source, engine_name, profile, carbon_enabled, data_dir)
                 writer.write_driver(engine, settings, results["driver"])
                 writer.write_insert(engine, settings, payload, results["insert"])
                 writer.write_retrieval(engine, settings, payload, results["retrieval"])

@@ -102,20 +102,42 @@ class Locations:
     figures_dir: Path
     assets_dir: Path
     source_image_path: Path
+    # Real camera frames. Defaulted so existing callers (and tests) that build
+    # Locations directly keep working; create() always supplies an absolute path.
+    frames_dir: Path = Path("assets/frames")
+    fleet_dir: Path = Path("assets/fleet")
 
     @classmethod
     def create(cls) -> "Locations":
         code_dir = Path(__file__).resolve().parent          # 01_*/code
         esd_root = code_dir.parent                            # 01_*/
-        data_dir = Path(os.getenv("BENCHMARK_DATA_DIR", str(esd_root / "data")))
+        # Runs with a non-default payload source write to their own folder, so a
+        # real-frame or multi-camera run can never overwrite the published CSVs
+        # in data/ that the submitted manuscript's tables and figures come from.
+        variant = os.getenv("BENCHMARK_PAYLOAD_SOURCE", "collage").strip().lower()
+        default_data = esd_root / "data"
+        if variant in ("frames", "fleet"):
+            default_data = esd_root / f"data_{variant}"
+        data_dir = Path(os.getenv("BENCHMARK_DATA_DIR", str(default_data)))
         figures_dir = Path(os.getenv("BENCHMARK_FIGURES_DIR", str(esd_root / "figures")))
         assets_dir = code_dir / "assets"
         source_image = Path(
             os.getenv("BENCHMARK_SOURCE_IMAGE", str(assets_dir / "Schwarzsee.jpg"))
         ).resolve()
+        # Real camera frames recorded by code_realcase/record.py, used when
+        # BENCHMARK_PAYLOAD_SOURCE=frames.
+        frames_dir = Path(
+            os.getenv("BENCHMARK_FRAMES_DIR", str(assets_dir / "frames"))
+        ).resolve()
+        # A recording session folder holding one subfolder per camera, used when
+        # BENCHMARK_PAYLOAD_SOURCE=fleet.
+        fleet_dir = Path(
+            os.getenv("BENCHMARK_FLEET_DIR", str(assets_dir / "fleet"))
+        ).resolve()
         data_dir.mkdir(parents=True, exist_ok=True)
         figures_dir.mkdir(parents=True, exist_ok=True)
-        return cls(code_dir, esd_root, data_dir, figures_dir, assets_dir, source_image)
+        return cls(code_dir, esd_root, data_dir, figures_dir, assets_dir, source_image,
+                   frames_dir, fleet_dir)
 
 
 # --------------------------------------------------------------------------- #
@@ -148,6 +170,10 @@ class Settings:
     point_read_warmup_runs: int
     point_read_runs: int
     point_read_limit: int
+    # "collage" reproduces the published results: one synthetic image inserted
+    # for every row. "frames" inserts a different real recorded frame per row
+    # from one camera. "fleet" interleaves several cameras round-robin.
+    payload_source: str = "collage"
 
     @property
     def profile_slug(self) -> str:
@@ -205,6 +231,7 @@ class Settings:
             total_rows=_env_int("BENCHMARK_TOTAL_ROWS", wl.total_rows),
             batch_size=_env_int("BENCHMARK_BATCH_SIZE", wl.batch_size),
             insert_runs=_env_int("BENCHMARK_INSERT_RUNS", wl.insert_runs),
+            payload_source=os.getenv("BENCHMARK_PAYLOAD_SOURCE", "collage").strip().lower(),
             aggregation_warmup_runs=_env_int("BENCHMARK_AGG_WARMUP_RUNS", 2),
             aggregation_runs=_env_int("BENCHMARK_AGG_RUNS", 5),
             driver_warmup_runs=_env_int("BENCHMARK_DRIVER_WARMUP_RUNS", 10),
