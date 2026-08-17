@@ -22,10 +22,10 @@ Time-Series Workloads in Green IoT}
 
 \noindent We thank the Editor for a constructive and precise assessment, and for the opportunity to
 revise. Every point has been addressed, and the manuscript is substantially stronger as a result. In
-particular, the request for stronger evidence of applicability prompted a new set of experiments
-against real recorded camera payloads, which both confirmed the paper's central conclusion and
-uncovered a quantitative correction we would otherwise have reported uncorrected. We are grateful
-for that.
+particular, the request for stronger evidence of applicability prompted a new set of experiments against
+real payloads recorded from a face-recognition-based attendance system in operational use. These both
+confirmed the paper's central conclusion and uncovered a quantitative correction we would otherwise have
+reported uncorrected. We are grateful for that.
 
 Below, each of the Editor's points is quoted, followed by our response and the location of the
 change. One point is answered with partial rebuttal, which we set out explicitly rather than leave
@@ -78,27 +78,31 @@ knowledge.''}
 Work subsection engaging six recent articles substantively. Each is used to sharpen a specific
 methodological choice, not cited in passing:
 
-\begin{itemize}
-  \item A systematic review of multi-criteria decision making for material selection identifies a
-  recurring weakness: decision criteria are often taken from the literature rather than measured in
-  the adopting organisation's own context. This directly motivates our decision to make the decision
-  variable (payload size) measurable by the adopter, and to express the rule as a computed crossover
-  rather than a fixed recommendation.
-  \item A life-cycle assessment of lightweight railway vehicles establishes sensitivity analysis as
-  what separates a robust conclusion from an artefact of assumed parameters. We identify our
-  multi-region grid-intensity analysis as playing exactly that role, and show our ranking is
-  invariant to the most uncertain parameter in any carbon accounting.
-  \item A data-driven study of smart-home energy consumption treats building instrumentation as the
-  object of environmental analysis. We draw the distinction that its models account for the energy
-  the building consumes, but not for the tier that stores what the instrumentation records, which
-  we show can be halved by a storage decision alone.
-  \item Two studies of IoT operational integrity (self-healing via log analytics; real-time risk at
-  the edge) both presuppose a data tier that durably retains device output. We supply the missing
-  environmental cost of that presupposition.
-  \item A review of price-driven energy management and demand response prompts a substantive point:
-  because emissions are energy multiplied by grid intensity, temporal or geographic load shifting
-  rescales every architecture equally and cannot change which one to select. The saving must come
-  from the architecture itself.
+\begin{itemize}\setlength{\itemsep}{4pt}
+  \item A systematic review of multi-criteria decision making for material selection~[1] identifies a
+  recurring weakness in decision frameworks: criteria are often taken from the literature rather than
+  measured in the adopting organisation's own context. This directly motivates our choice to key the rule
+  to a variable the adopter can measure, namely payload size, and to supply a procedure for locating the
+  boundaries locally rather than a fixed recommendation.
+
+  \item A life-cycle assessment of lightweight railway vehicles~[2] establishes sensitivity analysis as
+  what separates a robust conclusion from an artefact of assumed parameters. We identify our multi-region
+  grid-intensity analysis as playing exactly that role, and show the ranking is invariant to the most
+  uncertain parameter in any carbon accounting.
+
+  \item A data-driven study of smart-home energy consumption~[3] treats building instrumentation as the
+  object of environmental analysis. We draw the distinction that such models account for the energy the
+  building consumes, but not for the tier that stores what the instrumentation records, which we show can
+  be reduced by roughly half through a storage decision alone.
+
+  \item Two studies of IoT operational integrity, on self-healing through log analytics~[4] and real-time
+  risk at the edge~[5], both presuppose a data tier that durably retains device output. We supply the
+  missing environmental cost of that presupposition.
+
+  \item A review of price-driven energy management and demand response~[6] prompts a substantive point
+  rather than a citation: because emissions are energy multiplied by grid intensity, temporal or
+  geographic load shifting rescales every architecture equally and cannot change which one to select. The
+  saving must come from the architecture itself.
 \end{itemize}
 
 \section*{3. Practical and scientific value, and applicability beyond our environment}
@@ -129,11 +133,19 @@ instantiation of the equation, and the equation is what generalises.
 
 We describe these in the manuscript as \textbf{additional experiments carried out for this revision}.
 
-The submitted benchmark inserted one synthetic collage for every row, so all 2{,}000 stored rows were
-byte-identical, which is reproducible but not what a camera produces. We recorded a corpus of real frames
-from an operational deployment (one networked camera, two USB cameras; ten minutes at 5 frames per
-second; 2{,}845--2{,}988 frames per camera), verified every frame byte-distinct, and re-ran the
-benchmark with a different real image for every inserted row. Three results follow:
+The submitted benchmark inserted one collage image for every row, so all 2{,}000 stored rows were
+byte-identical, which is reproducible but not what a camera produces. We therefore drew a corpus of real
+frames from a \textbf{face-recognition-based attendance system} in operational use: an installation that
+captures images from one networked camera and two USB cameras in order to identify people at entry. This
+is precisely the class of deployment the paper addresses, in that it retains image streams alongside
+timestamped metadata in a continuously running data tier. We take from it only the \emph{storage}
+workload, namely the images its cameras produce at the resolutions and capture rate the installation
+uses. The recognition pipeline itself, its detection, embedding and matching stages and their accuracy
+and energy cost, remains outside the scope of the paper, which concerns the carbon cost of retaining
+images rather than of analysing them; we have made that boundary explicit in the manuscript so that
+the reported figures are not read as a whole-system footprint. Ten minutes of capture at 5 frames per second
+yielded 2{,}845--2{,}988 frames per camera; every frame was verified byte-distinct, and the benchmark was
+re-run with a different real image for every inserted row. Three results follow:
 
 \begin{enumerate}
   \item \textbf{The architectural conclusion holds.} MongoDB is the lowest-carbon architecture at
@@ -230,6 +242,39 @@ Abstract revised to name four limitations explicitly. \\[2pt]
 Statements and Declarations rewritten, adding use of AI-assisted technologies, competing interests, data availability, and ethics approval. \\
 \bottomrule
 \end{tabular}
+
+\section*{References}
+
+All six appear in \emph{Environment Systems and Decisions}. Every DOI was verified to resolve and the
+bibliographic details checked against Crossref before inclusion.
+
+\begin{enumerate}\setlength{\itemsep}{3pt}
+  \item Bajwa AUR, Siriwardana C, Shahzad W, Naeem MA (2025) Material selection in the construction
+  industry: a systematic literature review on multi-criteria decision making. \emph{Environment Systems
+  and Decisions} 45(1). \href{https://doi.org/10.1007/s10669-025-10001-w}{\texttt{10.1007/s10669-025-10001-w}}
+
+  \item Kraft S (2023) Life cycle assessment in the development process of lightweight railway vehicles
+  using sensitivity analysis. \emph{Environment Systems and Decisions} 44(3):527--546.
+  \href{https://doi.org/10.1007/s10669-023-09955-6}{\texttt{10.1007/s10669-023-09955-6}}
+
+  \item Adams S, Greenspan S, Velez-Rojas M, Mankovski S, Beling PA (2019) Data-driven simulation for
+  energy consumption estimation in a smart home. \emph{Environment Systems and Decisions} 39(3):281--294.
+  \href{https://doi.org/10.1007/s10669-019-09727-1}{\texttt{10.1007/s10669-019-09727-1}}
+
+  \item Singh P, Saman Azari M, Vitale F, Flammini F, Mazzocca N, Caporuscio M (2022) Using log analytics
+  and process mining to enable self-healing in the Internet of Things. \emph{Environment Systems and
+  Decisions} 42(2):234--250.
+  \href{https://doi.org/10.1007/s10669-022-09859-x}{\texttt{10.1007/s10669-022-09859-x}}
+
+  \item Radanliev P, De Roure D, Van Kleek M, Ani U, Burnap P, Anthi E (2020) Dynamic real-time risk
+  analytics of uncontrollable states in complex internet of things systems: cyber risk at the edge.
+  \emph{Environment Systems and Decisions} 41(2):236--247.
+  \href{https://doi.org/10.1007/s10669-020-09792-x}{\texttt{10.1007/s10669-020-09792-x}}
+
+  \item Al Essa MJM (2025) A review on price-driven energy management systems and demand response
+  programs in smart grids. \emph{Environment Systems and Decisions} 45(1).
+  \href{https://doi.org/10.1007/s10669-024-09998-3}{\texttt{10.1007/s10669-024-09998-3}}
+\end{enumerate}
 
 \bigskip
 \noindent We hope the revised manuscript now meets the standard required to proceed to an Associate
