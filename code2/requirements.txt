@@ -1,0 +1,4 @@
+# Runtime dependencies for the three-camera Tkinter viewer.
+opencv-python>=4.9
+Pillow>=10.0
+python-dotenv>=1.0
