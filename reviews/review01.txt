@@ -1,0 +1,15 @@
+ Dear Dr Yohannis,
+
+Your manuscript, "Carbon Footprint and Carbon-Aware Selection of Document-Oriented, Relational, and Hybrid Object-Relational Storage for Image-Based Time-Series Workloads in Green IoT", has now been assessed.
+
+The manuscript addresses a topic that is well aligned with the aims and scope of Environment Systems and Decisions and presents an experimental comparison of three storage architectures for image-based IoT time-series workloads from an environmental perspective. The methodology is adequately described and reproducible, and the study goes beyond a conventional performance benchmark by proposing a carbon-aware decision framework for selecting storage architectures according to image resolution and operational conditions. Before the manuscript can proceed to an Associate Editor, several important issues should be addressed. The discussion should better position the proposed framework within the existing scientific literature, demonstrating more convincingly how it advances beyond previous studies rather than primarily summarizing the experimental findings. The manuscript would also benefit from a stronger dialogue with recent publications in Environment Systems and Decisions, reinforcing its contribution to the journal's body of knowledge. In addition, the practical and scientific value of the proposed decision framework should be demonstrated more convincingly. At present, the framework is derived almost entirely from the experimental environment developed by the authors, and its applicability beyond the evaluated hardware, software configuration, and workload characteristics remains insufficiently discussed. Strengthening the evidence supporting its broader applicability would considerably enhance the contribution of the study. The abstract should also explicitly acknowledge the main limitations of the research. Finally, if artificial intelligence tools were used for language polishing or translation, this should be transparently declared in accordance with the journal's editorial policies. Subject to these essential revisions, the manuscript could be suitable for further evaluation by an Associate Editor.
+
+Kind regards,
+
+Otavio Jose de Oliveira
+Editor
+Environment Systems and Decisions
+
+Support contact: vinothkumar.raji@springernature.com
+
+Submission ID: 35174617-3240-44d6-bb1c-fcc74ec1cd4f

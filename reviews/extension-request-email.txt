@@ -1,0 +1,45 @@
+To: vinothkumar.raji@springernature.com
+From: alfa.ryano@gmail.com
+Subject: Extension request for revision - Submission ID 35174617-3240-44d6-bb1c-fcc74ec1cd4f
+
+
+Dear Editorial Office,
+
+I am writing regarding my manuscript "Carbon Footprint and Carbon-Aware Selection of
+Document-Oriented, Relational, and Hybrid Object-Relational Storage for Image-Based
+Time-Series Workloads in Green IoT" (Submission ID: 35174617-3240-44d6-bb1c-fcc74ec1cd4f),
+submitted to Environment Systems and Decisions.
+
+I am grateful to the Editor for the constructive assessment and for the opportunity to
+revise, and would like to request a short extension to the recommended revision date of
+13 August 2026.
+
+The revision request did not come to my attention until today. It was sent to an address I
+do not monitor daily, and it arrived under a different subject line from previous
+correspondence on this submission - "Environment Systems and Decisions: Decision on your
+manuscript" rather than the Springer Nature heading used previously - so it was not picked
+up among other messages. I am now working on the revision actively.
+
+The Editor asked, among other points, that the broader applicability and practical value of
+the proposed carbon-aware decision framework be demonstrated more convincingly beyond our
+own experimental environment. To address this substantively rather than superficially, I am
+carrying out additional work on a real deployed system: an operational attendance system
+that captures images from IP cameras and webcams for face recognition, running on different
+hardware from the original benchmark host. This allows the framework to be evaluated against
+genuine deployment conditions - real camera resolutions, capture rates, and workload
+characteristics - rather than only the controlled synthetic workload of the original study.
+I am also expanding the positioning of the work within the existing literature, including a
+substantive engagement with recent publications in Environment Systems and Decisions.
+
+I would therefore be grateful for an extension until 19 August 2026, which would allow me to
+complete this additional evaluation and submit a revision that responds fully to each of the
+Editor's points.
+
+Please let me know if a different date would be more suitable, or if you require any further
+information.
+
+Thank you for your consideration.
+
+Kind regards,
+
+Alfa Yohannis

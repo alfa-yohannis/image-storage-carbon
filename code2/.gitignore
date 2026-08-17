@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.pyc
+
+# Camera credentials - never commit.
+.env
+snapshots/
+payloads/
+corpus/
+
+# Face models (38 MB) - fetched by download_models.sh, not committed.
+models/
+
+# Enrolled face photos are biometric personal data - never commit.
+known_faces/
