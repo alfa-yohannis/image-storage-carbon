@@ -63,7 +63,9 @@ what changes relative to prior studies rather than restating what we measured:
   would ordinarily yield, would have averaged the crossover away and produced a spurious universal
   winner.
   \item \textbf{The output is a decision instrument, not a benchmark table.} The framework is now
-  expressed as a transferable rule (see point 3) rather than a recommendation tied to our hardware.
+  expressed as a transferable calibration procedure (see point 3) rather than a recommendation tied to
+  our hardware. We are careful to claim that the procedure and the sequence of regimes transfer, not
+  the payload sizes at which our own boundaries fall.
 \end{itemize}
 
 We also state explicitly what we do \emph{not} claim: that the specific crossover payloads
@@ -148,7 +150,8 @@ fall.
 \subsection*{3b. New experiments: a second machine, a real-case corpus, and what each isolates}
 
 We report three sets of new measurements, described in the manuscript as part of the study rather than as
-additions, and each isolates one factor.
+additions. We are explicit in the manuscript about what each does and does not isolate: none of them varies
+a single factor cleanly, and we state the confounds rather than leaving them to be inferred.
 
 \textbf{The same payloads on a second machine.} We repeated the entire controlled sweep on a markedly
 smaller computer: four cores and 15.30~GB against eight cores and 30.99~GB, with the database cache scaled
@@ -172,9 +175,10 @@ completed every resolution to $7.13$~MB on the same host in the same session. Th
 architecture: MongoDB holds documents uncompressed in cache, so one insertion run at 4K is $5.8$~GB of live
 working set that quality-90 JPEG gives it no way to shrink, whereas PostgreSQL relocates the payload out of
 line and the hybrid never admits it to the database. We report this as a finding rather than an incident.
-The 16~MiB document ceiling already in the paper is a protocol limit that no hardware removes under the
-bucketing configuration we tested; this is a resource limit that a modest host imposes, and a practitioner
-will meet it first. We also state the two
+The 16~MiB document ceiling already in the paper is a protocol limit that no hardware removes; what
+depends on configuration is whether several frames are packed into one document that breaches it, and under
+the default bucketing we tested they are. This second limit is instead a resource limit that a modest host
+imposes, and a practitioner will meet it first. We also state the two
 qualifications: the cache held the same proportion of memory as on the larger machine, and neither host had
 swap.
 
@@ -221,8 +225,9 @@ contention noise. It is effectively a different study, not a more realistic vers
 controlled baseline isolates payload handling, the variable under study, from scheduling and
 contention confounds, and keeps the comparison fully reproducible. We have strengthened the evidence for generality by the means above, in particular by repeating the
 entire sweep on a second machine, which we believe answers the Editor's concern more directly than
-added concurrency would: it varies the hardware, which was one of the three dimensions raised, while
-leaving the measurement interpretable. A multi-client evaluation remains identified as
+added concurrency would: it varies the computing environment, which was one of the three dimensions
+raised, while leaving the measurement interpretable. We note there too that the second environment differs
+in more than its processor. A multi-client evaluation remains identified as
 future work.
 
 \section*{4. Limitations in the abstract}
@@ -282,7 +287,7 @@ New subsection deriving the mechanism behind the crossover and giving a numbered
 4. Limitations in the abstract &
 Abstract revised to name the study's main limitations explicitly, including the storage-tier measurement boundary and the scenario-projection status of the annual deployment figures. \\[2pt]
 5. AI declaration &
-Statements and Declarations rewritten, adding use of AI-assisted technologies, competing interests, data availability, and ethics approval. \\
+Statements and Declarations rewritten, adding use of AI-assisted technologies (with the tools named), competing interests, data and code availability, and an ethics statement. \\
 \bottomrule
 \end{tabular}
 
