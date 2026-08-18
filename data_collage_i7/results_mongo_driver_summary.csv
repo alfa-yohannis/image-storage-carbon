@@ -1,0 +1,6 @@
+timestamp,engine,profile,query_id,mean_latency_ms,std_latency_ms,n_runs
+2026-08-17T17:31:38.454423+00:00,mongodb_timeseries,360p,Q_driver_roundtrip_ping,0.113679,0.001773,10
+2026-08-17T17:32:05.606586+00:00,mongodb_timeseries,480p,Q_driver_roundtrip_ping,0.106438,0.005657,10
+2026-08-17T17:33:19.550106+00:00,mongodb_timeseries,720p,Q_driver_roundtrip_ping,0.104046,0.003004,10
+2026-08-17T17:35:51.041698+00:00,mongodb_timeseries,1080p,Q_driver_roundtrip_ping,0.100125,0.001466,10
+2026-08-17T21:48:33.533545+00:00,mongodb_timeseries,1440p,Q_driver_roundtrip_ping,0.119076,0.012263,10

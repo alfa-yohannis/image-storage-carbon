@@ -1,0 +1,2 @@
+timestamp,engine,profile,payload_kind,payload_size_bytes,payload_size_mb,attempts,error_type,error
+2026-08-17T22:13:40.690522+00:00,mongodb,4k,image,3138125,2.992749,2,AutoReconnect,127.0.0.1:57017: [Errno 32] Broken pipe (configured timeouts: connectTimeoutMS: 20000.0ms)

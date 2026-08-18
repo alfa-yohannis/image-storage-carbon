@@ -1,0 +1,6 @@
+timestamp,engine,profile,payload_kind,query_id,run_id,latency_ms,payload_size_bytes
+2026-08-17T17:56:30.099358+00:00,postgresql+timescaledb,1440p,image,Q_latest_payload_by_device,1,7.954,1467123
+2026-08-17T17:56:30.099633+00:00,postgresql+timescaledb,1440p,image,Q_latest_payload_by_device,2,7.568,1467123
+2026-08-17T17:56:30.099836+00:00,postgresql+timescaledb,1440p,image,Q_latest_payload_by_device,3,8.536,1467123
+2026-08-17T17:56:30.100041+00:00,postgresql+timescaledb,1440p,image,Q_latest_payload_by_device,4,7.923,1467123
+2026-08-17T17:56:30.100257+00:00,postgresql+timescaledb,1440p,image,Q_latest_payload_by_device,5,8.738,1467123
