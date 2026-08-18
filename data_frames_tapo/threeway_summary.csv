@@ -1,0 +1,9 @@
+profile,postgres_insert_rows_per_sec,postgres_storage_amp,postgres_retrieve_ms,postgres_point_read_ms,postgres_carbon_mg,postgres_minio_insert_rows_per_sec,postgres_minio_storage_amp,postgres_minio_retrieve_ms,postgres_minio_point_read_ms,postgres_minio_carbon_mg,mongodb_insert_rows_per_sec,mongodb_storage_amp,mongodb_retrieve_ms,mongodb_point_read_ms,mongodb_carbon_mg
+360p,1635.07,1.0623,325.407,0.432,8.703,377.34,1.0089,2302.367,1.036,39.588,7296.39,0.0002,53.284,2.868,2.333
+480p,1024.34,1.0763,533.819,0.52,12.851,348.67,1.0055,2323.555,0.947,42.148,4371.28,0.0001,83.871,3.232,4.054
+720p,585.56,1.0487,1216.278,0.83,20.727,312.01,1.003,2499.725,0.946,45.527,1499.2,0.2741,263.008,4.715,11.28
+1080p,357.71,1.0304,2512.022,1.171,34.987,208.61,1.0018,2639.845,1.17,58.172,270.99,0.9241,416.471,2.967,31.59
+1440p,,,,,,,,,,,,,,,
+4k,,,,,,,,,,,,,,,
+5k,,,,,,,,,,,,,,,
+6k,,,,,,,,,,,,,,,

@@ -381,6 +381,37 @@ India             & 713 & 4.38  & 4.45  & \textbf{3.30} \\
 \subsection{The MongoDB 16~MB ceiling}\label{subsec:bson}
 MongoDB could not store 6K frames at all. The 6K payload is 7.13~MB---comfortably within the 16~MB BSON document limit for a single frame---yet insertion failed with error~10334 (\texttt{BSONObjectTooLarge}), the offending object measuring 22.4~MB ($\approx$3$\times$ the payload). The cause is architectural: native Time-Series Collections \emph{bucket} multiple measurements that share a metadata value into a single underlying bucket document, which is itself bound by the 16~MB BSON limit. With multi-megabyte payloads only two frames fit in a bucket; the attempt to bucket a third breaches the ceiling. The same bucketing that makes time-series collections efficient for small measurements becomes a hard limit for large binaries, and---unlike a tuning parameter---it cannot be raised. This is a decision-relevant constraint: \emph{MongoDB inline storage is not merely inefficient but infeasible} at 6K, and this particular limit follows from the BSON specification, so no cache setting or larger machine removes it. A second and quite different limit, which does depend on the host, is reported in Section~\ref{subsec:memory}.
 
+\subsection{The same payloads on two machines}\label{subsec:twohosts}
+The measurements above come from one computer. Repeating the entire collage sweep on a second, markedly smaller machine tests whether the ordering and its crossover are properties of the architectures or of the host. The payload sizes are identical in both columns of Table~\ref{tab:twohosts}, as is the software, so the two differ only in the machine.
+
+Three things follow. The \textbf{ordering at small payloads is unchanged}: MongoDB is greenest at every payload up to $0.80$~MB on both machines, so the low-payload conclusion does not depend on the host. The \textbf{crossover moves}, however, and in the direction the mechanism predicts. On the larger machine the hybrid overtakes MongoDB between $1.40$ and $2.99$~MB; on the smaller one it has already overtaken it by $1.40$~MB. The hybrid's advantage is that it keeps bytes out of the database write path, and a smaller host is precisely where that path is most constrained, so the benefit arrives at a smaller payload. At $1.40$~MB MongoDB emits $0.41\times$ the hybrid's carbon on the larger machine and $1.01\times$ on the smaller: its advantage there has gone.
+
+Third, and not anticipated, \textbf{MongoDB ceases to be runnable} on the smaller machine from 4K upward, for reasons reported in Section~\ref{subsec:memory}, while inline PostgreSQL and the hybrid complete every payload to $7.13$~MB on the same host in the same session.
+
+\begin{table}[htbp]
+\caption{The same collage payloads measured on two machines. Values are ingestion carbon in mg~CO\textsubscript{2}eq per frame; \textbf{bold} marks the lowest in each row. Payload sizes, software versions, and protocol are identical across the two column groups, so any difference is attributable to the host.}\label{tab:twohosts}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lr rrr rrr@{}}
+\toprule
+ & & \multicolumn{3}{c}{i9, 16 threads, 31~GB} & \multicolumn{3}{c}{i7, 8 threads, 15~GB} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}
+Resolution & MB & Postgre & PostMin & Mongo & Postgre & PostMin & Mongo \\
+\midrule
+360p  & 0.09 & 0.0136 & 0.0836 & \textbf{0.0027} & 0.0087 & 0.0277 & \textbf{0.0020} \\
+480p  & 0.16 & 0.0200 & 0.1391 & \textbf{0.0044} & 0.0146 & 0.0431 & \textbf{0.0049} \\
+720p  & 0.36 & 0.0470 & 0.1474 & \textbf{0.0123} & 0.0314 & 0.0608 & \textbf{0.0184} \\
+1080p & 0.80 & 0.1034 & 0.1706 & \textbf{0.0288} & 0.0748 & 0.0928 & \textbf{0.0365} \\
+\midrule
+1440p & 1.40 & 0.1840 & 0.1840 & \textbf{0.0754} & 0.1889 & \textbf{0.1274} & 0.1287 \\
+4K    & 2.99 & 0.3993 & \textbf{0.2320} & 0.5062 & 0.4401 & \textbf{0.2186} & failed \\
+5K    & 5.09 & 0.6861 & \textbf{0.4666} & 1.1668 & 0.7730 & \textbf{0.4024} & --- \\
+6K    & 7.13 & 0.9634 & \textbf{0.5426} & failed & 1.1198 & \textbf{0.4659} & --- \\
+\botrule
+\end{tabular}
+\footnotetext{The horizontal rule marks where the two machines diverge: above it the ordering is identical, below it the hybrid takes over one payload step earlier on the smaller machine. ``failed'' denotes a cell attempted and terminated, MongoDB at 6K by the BSON ceiling (Section~\ref{subsec:bson}) and at 4K on the smaller host by memory exhaustion (Section~\ref{subsec:memory}); ``---'' denotes a cell not attempted, the run having ended at that point. Run-to-run variability is higher on the smaller machine, reaching a coefficient of variation of $28\%$ against under $6\%$ on the larger, which is why we report the direction and magnitude of the shift rather than a precise crossover payload for it.}
+\end{table}
+
 \subsection{A second infeasibility: memory, not protocol}\label{subsec:memory}
 Section~\ref{subsec:bson} reports a limit MongoDB cannot exceed on any hardware: bucketed time-series documents breach the 16~MB BSON ceiling at 6K. Repeating the measurements on the smaller host revealed a second limit, of a different kind, and it is worth reporting because a practitioner will meet it long before the first.
 
@@ -466,31 +497,32 @@ Runtime & Python 3.14 & Python 3.14.7, CodeCarbon 3.2.7 \\
 \footnotetext{Database images are identical in both environments: TimescaleDB \texttt{latest-pg15}, MongoDB 7.0, MinIO \texttt{latest}. The MongoDB cache is set to the same near-total fraction of host memory in each case ($\approx$97\% and $\approx$92\%), so that WiredTiger's behaviour under memory pressure, which drives its high-resolution collapse, is preserved rather than altered. $^{\ddagger}$Holding that proportion constant is what makes the two environments comparable, but on the smaller host it left no headroom: see Section~\ref{subsec:memory}. Neither host was configured with swap.}
 \end{table}
 
+\subsection{Payload size, not resolution, determines the outcome}\label{subsec:sizevsres}
+The results so far have been indexed by resolution, which is how a camera is specified and how an operator would naturally state a requirement. Taken together, however, the two corpora show that resolution is a label for the deciding variable rather than the variable itself, and that the substitution fails in practice and not merely in principle.
+
+Three observations establish this, and the third settles it.
+
+\textbf{The same resolution produces very different payloads.} A 1080p frame is $0.804$~MB as a quality-90 collage and $0.149$~MB as ordinary camera output, a factor of $5.4$; across 360p to 1080p the factor runs from $3.1$ to $5.4$. The collage is high-entropy by construction and close to a worst case for compressibility, whereas a real scene is not, and no resolution label distinguishes the two.
+
+\textbf{Even two real cameras disagree at the same resolution.} The networked camera and the higher-specified USB camera differ by $12.3$\% in encoded size at 1080p, and the sign of that difference reverses at 720p, where the USB camera produces the larger payload. The reason is spectral rather than nominal: the networked camera delivers H.264 and carries more high-frequency content, which survives at native resolution and is removed by downscaling. Two cameras sold as the same resolution therefore sit at different points on the payload axis, and their order can invert between resolutions.
+
+\textbf{The consequence is a different architecture, not merely a different number.} At 1080p on one host, the collage payload selects MongoDB and real camera output selects inline PostgreSQL. The resolution is identical, the machine is identical, the software is identical, and the recommendation is opposite. The second camera corroborates this and sharpens it: its 1080p output is $0.131$~MB and still selects MongoDB, whereas the first camera's $0.149$~MB does not, so the two together place the transition between those payloads. Neither camera alone brackets it that closely, and both are labelled 1080p. An operator applying a resolution-banded rule to a camera whose output is lighter than the rule's calibration would adopt the architecture that is not the greenest for their workload.
+
+We therefore state the decision rule in Section~\ref{sec:framework} in terms of measured payload size, and treat resolution as an indicative guide whose reliability is specific to the camera and the scene. This is not a refinement of presentation. A rule expressed in resolutions is wrong for any deployment whose cameras produce payloads unlike those used to calibrate it, which, as the first observation shows, is the common case rather than the exceptional one.
+
 %%=====================================================================%%
 \section{A Carbon-Aware Decision Framework}\label{sec:framework}
 %%=====================================================================%%
 
 \subsection{Which architecture wins each operation}\label{subsec:winners}
-Bringing the operations together (Table~\ref{tab:winners}), two regularities define the result and motivate a single decision rule. First, in every operation the lowest-carbon architecture is also the best-performing one, at every resolution. This is not a coincidence: emissions are proportional to energy, and energy is power integrated over time, so the architecture that completes an operation fastest almost always emits the least doing it. The carbon question and the performance question therefore share the same answer for each operation, which is convenient for practitioners who can optimise for speed and carbon at once. Second, each operation exhibits the same MongoDB--hybrid ``scissors'' with an operation-specific crossover: storage and insertion favour MongoDB up to 1440p and the hybrid from 4K; bulk retrieval crosses earlier (MongoDB up to 720p, the hybrid from 1080p); and latest-frame reads favour the hybrid almost throughout. Inline PostgreSQL is the single best at no operation, yet it is the worst at none either, and---unlike MongoDB---it operates across the whole 360p--6K range.
+Two regularities across the four operations motivate a single decision rule. First, in every operation the lowest-carbon architecture is also the fastest, at every payload measured. This is not a coincidence: emissions are proportional to energy, energy is power integrated over time, and the architecture that finishes an operation soonest therefore almost always emits least doing it. The carbon question and the performance question share an answer, which is convenient for a practitioner who need not trade one against the other.
 
-\begin{table}[htbp]
-\caption{Which architecture wins each operation, and at which resolutions, for performance and for carbon. The greenest architecture coincides with the best-performing one throughout. Postgre = PostgreSQL-BYTEA; Mongo = MongoDB; PostMin = PostgreSQL+MinIO (hybrid).}\label{tab:winners}
-\small
-\begin{tabular}{@{}p{0.22\textwidth}p{0.31\textwidth}p{0.31\textwidth}@{}}
-\toprule
-Operation & Best performance & Greenest (lowest carbon) \\
-\midrule
-Storage footprint & Mongo ($\leq$1440p), PostMin ($\geq$4K) & Mongo ($\leq$1440p), PostMin ($\geq$4K) \\
-Insertion (storing) & Mongo ($\leq$1440p), PostMin ($\geq$4K) & Mongo ($\leq$1440p), PostMin ($\geq$4K) \\
-Bulk retrieval & Mongo ($\leq$720p), PostMin ($\geq$1080p) & Mongo ($\leq$720p), PostMin ($\geq$1080p) \\
-Latest-frame read & PostMin (all; Postgre at 480p) & PostMin (all; Mongo marginal $\leq$720p) \\
-\botrule
-\end{tabular}
-\footnotetext{MongoDB is omitted at 6K (Section~\ref{subsec:bson}); the hybrid wins both performance and carbon at 6K for every operation.}
-\end{table}
+Second, every operation shows the same MongoDB--hybrid scissors, differing only in where the blades cross. Storage and insertion cross at the largest payloads, bulk retrieval crosses earlier, and latest-frame reads favour the hybrid across almost the whole range, because a point read pays the object store's fixed cost once and avoids materialising anything else. Inline PostgreSQL is best at no single operation and worst at none, and it is the only architecture that operates across the full payload range on both machines.
+
+We do not tabulate these crossovers by resolution. As Section~\ref{subsec:sizevsres} shows, the resolution at which any of them falls is a property of the camera and the corpus rather than of the architectures, so a table of resolution boundaries would encode our payloads rather than the reader's.
 
 \subsection{Selecting an architecture by operating regime}\label{subsec:selection}
-The measurements translate into operational guidance for sustainable building-monitoring infrastructure. The decision variable is the \emph{payload a camera actually produces}; the secondary variable is workload emphasis (write-heavy ingestion, read-heavy analytics, or storage-bound archival). Resolution is the convenient label for payload size but not a reliable substitute for it, for two reasons this study can quantify. Cameras of the same nominal resolution differ by up to 12\% in encoded size (Section~\ref{subsec:realframes}), and, more importantly, payload \emph{content} moves the crossover itself: the ingestion crossover falls between $1.40$ and $2.99$~MB for the high-entropy collage payload but between $0.09$ and $0.15$~MB for real camera output, because bucketed identical rows compress in a way real frames do not. An operator keying the decision to resolution alone, using boundaries calibrated on worst-case payloads, would therefore select MongoDB for a deployment where inline PostgreSQL is greener, which is exactly the situation Section~\ref{subsec:applied} encounters.
+The measurements translate into operational guidance for sustainable building-monitoring infrastructure. The decision variable is the payload a camera actually produces, for the reasons established in Section~\ref{subsec:sizevsres}; the secondary variable is workload emphasis (write-heavy ingestion, read-heavy analytics, or storage-bound archival). Resolution enters only as an indicative guide, since two cameras sold at the same resolution can sit at different points on the payload axis and a rule calibrated on one corpus mis-selects for another.
 
 Table~\ref{tab:decision} states the rule accordingly. Payload bands are given first, with the resolutions that produce them under the high-entropy worst case shown as an indicative guide only; the boundaries for a particular installation are located by the bracketing procedure of Section~\ref{subsec:model}.
 
@@ -521,23 +553,11 @@ Each architecture pays two kinds of cost per stored frame. A \emph{fixed} cost i
 
 An architecture with the lowest fixed cost therefore wins at small payloads, and one with the shallowest payload growth wins at large ones. Because the orderings differ, the curves cross. This is a statement about ordering, not about functional form, and the distinction matters: the growth is \emph{not} linear. Figure~\ref{fig:crossover_collage} shows MongoDB's per-frame cost rising by more than two orders of magnitude across the measured range, accelerating sharply once payloads exceed roughly one megabyte as the cache fills and eviction begins to stall writes. Any single straight line fitted across that range misrepresents it, and fitting one produces negative intercepts, which are unphysical. We therefore do not report a closed-form law. What the measurements support is the ordering of the regimes and the interval in which each transition occurs.
 
-Where that transition falls depends on both the payload and the host, and a controlled comparison separates the two contributions (Table~\ref{tab:costmodel}). Holding the host fixed while changing the payload construction introduces a transition that was not present before, at an order of magnitude smaller payload. Holding the payload fixed while changing the host moves the transition too, and in the direction the mechanism predicts: on the smaller machine MongoDB's advantage is exhausted sooner. At 1440p, where the payload is $1.40$~MB, MongoDB emits $0.41\times$ the hybrid's ingestion carbon on the larger host but $1.01\times$ on the smaller one. Its advantage at that payload has disappeared entirely.
+Where that transition falls depends on both the payload and the host, and the two contributions have been separated. Holding the host fixed while changing the payload construction introduces a transition that was not present before, at an order of magnitude smaller payload (Section~\ref{subsec:sizevsres}); holding the payload fixed while changing the host moves it by one resolution step (Section~\ref{subsec:twohosts}). Neither factor alone accounts for the boundary, which is why the rule below is stated in measured payload and the boundary itself is something an adopter locates rather than inherits.
 
 The reason is the same mechanism that governs the crossover itself. WiredTiger holds documents uncompressed in cache, so MongoDB's live working set scales with the payload: one insertion run of 2{,}000 frames at 4K is $5.8$~GB of poorly compressible data. On a host with 31~GB that is comfortably absorbed. On one with 15.30~GB it is not, and the consequence is not merely slower but categorical, as Section~\ref{subsec:memory} reports.
 
-\begin{table}[htbp]
-\caption{Isolating what moves the crossover. Each row changes one factor while holding the other fixed. Both matter: the payload determines whether a transition falls within a given range, and the host determines where. Brackets are bounded by adjacent measurement points, and no interpolation is implied.}\label{tab:costmodel}
-\small
-\begin{tabular}{@{}lllp{0.36\textwidth}@{}}
-\toprule
-Comparison & Varied & Held fixed & Effect on the transition \\
-\midrule
-collage vs real frames, one host & payload & host & introduces a Mongo\,$\rightarrow$\,Postgre transition at $0.09$--$0.15$~MB where the collage shows none below $0.80$~MB \\
-i9 vs i7, collage payload & host & payload & MongoDB's margin over the hybrid at $1.40$~MB falls from $0.41\times$ to $1.01\times$, so the transition moves to a smaller payload on the smaller host \\
-\botrule
-\end{tabular}
-\footnotetext{The second row states a change in margin rather than a bracket. Run-to-run variability on the smaller host is substantially higher (coefficient of variation up to $28\%$, against under $6\%$ on the larger host), a symptom of the memory pressure described in Section~\ref{subsec:memory}, so the exact position of its transition cannot be resolved. The direction and magnitude of the shift are larger than that variability and are not in doubt.}
-\end{table}
+
 
 \begin{table}[htbp]
 \caption{The effect of storing one repeated image rather than distinct ones, at matched payload size on the same host. Values are ingestion carbon in mg~CO\textsubscript{2}eq per frame, with MongoDB's storage amplification beneath. Only MongoDB is affected, and it is affected in both directions at once: it costs more and stores more.}\label{tab:repetition}
@@ -562,29 +582,8 @@ Two consequences follow for an operator. First, the sequence of regimes is stabl
 
 Two claims in this paper are stronger than any of the measured boundaries, because they do not depend on measurement. The 16~MB BSON ceiling (Section~\ref{subsec:bson}) is a protocol limit: no hardware makes MongoDB's bucketed time-series collections able to store 6K frames. And the ordering of payload-dependent costs, in which inline storage moves more bytes through the database than an externalised object store, follows from where each architecture places the payload rather than from how fast the host runs.
 
-\subsection{From per-frame carbon to fleet scale}\label{subsec:fleet}
-To make the emissions actionable without assuming a particular installation, we express them as a measured \emph{per-frame} rate that a reader can scale to any deployment. At 4K, storing one frame costs a directly measured $0.232$~mg~CO\textsubscript{2}eq with the hybrid, $0.399$~mg with inline PostgreSQL, and $0.506$~mg with MongoDB. These per-frame rates are obtained directly from the measurements: each is the 4K per-run insertion emission (one run of $2{,}000$ inserts) divided by those $2{,}000$ frames---equivalently, the Software Carbon Intensity reported in Table~\ref{tab:sci} (mg~CO\textsubscript{2}eq per $1{,}000$ frames) divided by $1{,}000$. The hybrid's advantage over inline PostgreSQL is therefore $0.167$~mg per stored frame. Treating the measured per-frame rate as constant, an operator obtains a first-order annual footprint by multiplying it by their camera count, capture rate, and retention period (and by a data-centre Power Usage Effectiveness factor, $\approx$1.5~\citep{shehabi_us_datacenter}, for the facility total); at very large scale the rate may drift with batching, contention, and database growth, so this is an estimate rather than a guarantee. As a single normaliser to fix scale, take $1{,}000$ cameras each capturing one frame per minute for a year: that is $1{,}000\times60\times24\times365=5.26\times10^{8}$ stored frames. The annual carbon is then the per-frame rate times this frame count, converting milligrams to kilograms---for the hybrid, $0.232~\mathrm{mg}\times(5.26\times10^{8})/10^{6}\approx122$~kg~CO\textsubscript{2}eq. The three architectures' annual footprints are summarised in Table~\ref{tab:fleet}. Concretely, in a case where an organisation decides to migrate its 4K image tier from inline PostgreSQL (Postgre) to the hybrid (PostMin), it would reduce its ingestion carbon footprint by $\approx$88~kg~CO\textsubscript{2}eq per year for every $1{,}000$ cameras (at one frame per minute)---a reduction comparable to driving an average passenger car about $520$~km (at a representative $\approx$0.17~kg~CO\textsubscript{2}eq per vehicle-km~\citep{desnz_ghg_factors}), or to the yearly CO\textsubscript{2} uptake of about four mature trees (taking $\approx$21~kg~CO\textsubscript{2} per tree per year~\citep{nowak_urban_trees}). This normaliser is illustrative, not a claim about a specific site; the underlying quantity is the measured per-frame rate.
-
-\begin{table}[htbp]
-\caption{Per-frame 4K carbon (directly measured) scaled to a fleet. The annual columns multiply the per-frame rate by an \emph{illustrative} normaliser of $1{,}000$ cameras $\times$ 1 frame/min $\times$ 1 year ($5.26\times10^{8}$ frames); for any other deployment, multiply the per-frame rate by the actual camera count, capture rate, and retention. Postgre = PostgreSQL-BYTEA; Mongo = MongoDB; PostMin = PostgreSQL+MinIO (hybrid).}\label{tab:fleet}
-\small
-\begin{tabular}{@{}lrrr@{}}
-\toprule
-Architecture & Per frame & Per normaliser & With PUE 1.5 \\
-             & (mg) & (kg/yr) & (kg/yr) \\
-\midrule
-PostMin (hybrid) & \textbf{0.232} & \textbf{122}   & \textbf{183}   \\
-Postgre (BYTEA)  & 0.399          & 210            & 315            \\
-Mongo            & 0.506          & 266            & 399            \\
-\midrule
-Saving (Postgre $\rightarrow$ PostMin) & 0.167 & 88 & 132 \\
-\botrule
-\end{tabular}
-\footnotetext{Per-frame rate $=$ per-run 4K insertion carbon (one run of 2{,}000 inserts) $\div$ 2{,}000. Annual $=$ per-frame rate (mg) $\times$ cameras $\times$ frames per camera per year $/\,10^{6}$ (at 1 frame/min, $60\times24\times365=525{,}600$ frames/yr); computed from unrounded rates. The $\approx$88~kg/yr saving $\approx$ $520$~km of car travel $\approx$ annual CO\textsubscript{2} uptake of about four mature trees. Multiply linearly for other fleets.}
-\end{table}
-
 \subsection{Applying the framework to the deployment}\label{subsec:applied}
-The normaliser above is illustrative. We therefore close by applying the framework to the installation that supplied the corpus of Section~\ref{subsec:realframes}, using its measured payload rather than an assumed one. Figures are given per camera, so that a site of any size is obtained by multiplication.
+The framework is stated in payload sizes, so it can be applied to any installation whose payload is known. We close by applying it to the deployment that supplied the corpus of Section~\ref{subsec:realframes}, using its measured payload rather than an assumed one, and expressing the result as a measured per-frame rate that a reader can scale to any site. Figures are given per camera, so that a site of any size follows by multiplication.
 
 The camera operates continuously, so a year of capture at the 5~frames per second used throughout is $5\times365\times24\times3600 = 1.577\times10^{8}$ stored frames per camera. Its measured payload at 1080p is $0.149$~MB. Figures~\ref{fig:applied} and~\ref{fig:applied2} and Table~\ref{tab:applied} give the outcome.
 
@@ -597,7 +596,7 @@ The camera operates continuously, so a year of capture at the 5~frames per secon
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{crossover_realcase.pdf}
-\caption{The same measurement for the real-case corpus, over the payload range the deployment actually produces. The upper axis shows where this camera's resolutions fall on the payload axis; the relation between the two is specific to this camera, since another sensor at the same nominal resolutions would place the ticks elsewhere. The crossover bracket lies between $0.09$ and $0.15$~MB, an order of magnitude below the collage bracket of Figure~\ref{fig:crossover_collage}, and the deployment operates at its upper edge. A controlled comparison (Table~\ref{tab:costmodel}) attributes this gap to the payload rather than to the host: repeating the collage measurement on the second machine leaves the ordering unchanged, whereas changing the payload construction on one machine introduces the transition. The position of the boundary is therefore a property of what the cameras produce, not of the hardware that stores it.}\label{fig:applied}
+\caption{The same measurement for the real-case corpus, over the payload range the deployment actually produces. The upper axis shows where this camera's resolutions fall on the payload axis; the relation between the two is specific to this camera, since another sensor at the same nominal resolutions would place the ticks elsewhere. The crossover bracket lies between $0.09$ and $0.15$~MB, an order of magnitude below the collage bracket of Figure~\ref{fig:crossover_collage}, and the deployment operates at its upper edge. Both the payload and the host contribute to where this boundary falls: changing the payload construction on one machine introduces the transition an order of magnitude earlier (Section~\ref{subsec:sizevsres}), and changing the host moves it by one resolution step (Section~\ref{subsec:twohosts}). The position is therefore specific to an installation and is something to be measured there.}\label{fig:applied}
 \end{figure}
 
 \begin{figure}[htbp]
@@ -623,7 +622,7 @@ PostMin & 0.0228 & 3.60 & 4.59 & 5.79 \\
 
 Three observations follow, and the first is the one that matters most for the framework's credibility.
 
-\textbf{The framework does not return the same answer everywhere.} For this deployment it selects inline PostgreSQL, not MongoDB, even though 1080p would sit in MongoDB's band were the bands read as resolutions calibrated on worst-case payloads. The reason is the one Table~\ref{tab:decision} is now stated to capture: the rule keys on measured payload size, and this camera's output is light enough to fall above the ingestion crossover. The measured crossover bracket for this camera lies between $0.09$ and $0.15$~MB (Table~\ref{tab:costmodel}), and its payload of $0.149$~MB sits at the upper edge of that bracket, on PostgreSQL's side. The annual figures confirm it, at $1.73$ against $2.24$~kg per camera per year. A camera whose output is lighter than the high-entropy worst case falls on the far side of a boundary that a resolution-only rule would have missed entirely.
+\textbf{The framework does not return the same answer everywhere.} For this deployment it selects inline PostgreSQL, not MongoDB, even though 1080p would sit in MongoDB's band were the bands read as resolutions calibrated on worst-case payloads. The reason is the one Table~\ref{tab:decision} is now stated to capture: the rule keys on measured payload size, and this camera's output is light enough to fall above the ingestion crossover. The measured crossover bracket for this corpus lies between $0.131$ and $0.149$~MB (Section~\ref{subsec:sizevsres}), and this camera's payload of $0.149$~MB sits at its upper edge, on PostgreSQL's side. The annual figures confirm it, at $1.73$ against $2.24$~kg per camera per year. A camera whose output is lighter than the high-entropy worst case falls on the far side of a boundary that a resolution-only rule would have missed entirely.
 
 \textbf{Workload emphasis changes the answer.} Ingestion alone selects PostgreSQL; counting retrieval and latest-frame reads equally would select MongoDB ($2.49$ against $2.76$~kg), and minimising retained volume would also select MongoDB ($5.34$~TB at 90 days). A deployment that stores continuously and reads rarely, as this one does, is squarely in the first regime, which is why the write column governs the choice. The three columns of Table~\ref{tab:applied} are the operating regimes of Table~\ref{tab:decision} made concrete for one site.
 
