@@ -47,11 +47,14 @@ what changes relative to prior studies rather than restating what we measured:
 
 \begin{itemize}
   \item \textbf{An accepted engine ordering is inverted.} Prior benchmarks on scalar time-series data
-  report MongoDB ingesting faster than TimescaleDB. We reproduce that at small payloads
-  ($>6\times$ faster at 360p) and then show it does not survive its own premise: the ordering
-  inverts as the payload grows, and MongoDB becomes \emph{infeasible} at 6K on any hardware and
-  unrunnable from 4K on a constrained host. What the scalar literature presents as a property of
-  the engines is a property of the payload regime those benchmarks occupy.
+  report MongoDB ingesting faster than TimescaleDB. Our measurements agree with that direction at
+  small payloads ($>6\times$ faster at 360p) and then show it does not survive its own premise: the
+  ordering inverts as the payload grows, and MongoDB becomes \emph{infeasible} at 6K under the
+  default bucketing of a native time-series collection, and unrunnable from 4K on a constrained
+  host. What the scalar literature presents as a property of the engines is a property of the
+  payload regime those benchmarks occupy. We are careful in the manuscript to call this a
+  qualitative comparison rather than a replication, since those studies use different data,
+  hardware, and metrics, and to scope the literature claim to the studies compared in Table~1.
   \item \textbf{The carbon-accounting literature supplies methods, not answers at this granularity.}
   Green Algorithms, the Software Carbon Intensity specification, and the embodied-carbon literature
   can attribute a footprint to a workload once its energy is known, but cannot indicate which
@@ -75,8 +78,8 @@ Environment Systems and Decisions, reinforcing its contribution to the journal's
 knowledge.''}
 
 \reply Accepted. The submitted version cited no work from this journal. We have added a new Related
-Work subsection engaging six recent articles substantively. Each is used to sharpen a specific
-methodological choice, not cited in passing:
+Work subsection engaging six articles from it substantively, spanning 2019 to 2025. Each is used to
+sharpen a specific methodological choice, not cited in passing:
 
 \begin{itemize}\setlength{\itemsep}{4pt}
   \item A systematic review of multi-criteria decision making for material selection~[1] identifies a
@@ -87,8 +90,9 @@ methodological choice, not cited in passing:
 
   \item A life-cycle assessment of lightweight railway vehicles~[2] establishes sensitivity analysis as
   what separates a robust conclusion from an artefact of assumed parameters. We identify our multi-region
-  grid-intensity analysis as playing exactly that role, and show the ranking is invariant to the most
-  uncertain parameter in any carbon accounting.
+  grid-intensity analysis as playing exactly that role, and show the ranking is invariant to the parameter
+  that varies most between deployment locations, national grid intensity differing by more than an order of
+  magnitude across the regions evaluated.
 
   \item A data-driven study of smart-home energy consumption~[3] treats building instrumentation as the
   object of environmental analysis. We draw the distinction that such models account for the energy the
@@ -132,10 +136,14 @@ which is unphysical. What the measurements support is the ordering of the regime
 each transition falls, and that is what we now report: crossovers are given as brackets bounded by adjacent
 measurement points, with no interpolation implied.
 
-The consequence for transferability is a procedure rather than a formula. An operator measures ingestion at
-two or three payload sizes spanning their expected range and observes where the ordering changes. That is
-the same bracketing we perform, it requires no model, and it yields the boundary for their installation
-rather than ours.
+The consequence for transferability is a procedure rather than a formula, and the manuscript now states it
+as a numbered protocol so that it can be followed rather than inferred: measure the payload the cameras
+actually produce; fix the operation profile; bracket each candidate architecture at three or four payload
+sizes spanning that range; compare with run-to-run uncertainty, treating any separation inside it as a tie;
+exclude cells an architecture cannot complete; and select. It requires no model and no fitting, and it
+yields the boundary for the adopter's installation rather than ours. We are explicit that what transfers is
+this procedure and the sequence of regimes it recovers, not the payload sizes at which our own boundaries
+fall.
 
 \subsection*{3b. New experiments: a second machine, a real-case corpus, and what each isolates}
 
@@ -144,12 +152,17 @@ additions, and each isolates one factor.
 
 \textbf{The same payloads on a second machine.} We repeated the entire controlled sweep on a markedly
 smaller computer: four cores and 15.30~GB against eight cores and 30.99~GB, with the database cache scaled
-to the same proportion of host memory. Payload sizes, software versions and protocol are identical, so any
-difference is attributable to the host. Two results follow. The ordering at small payloads is unchanged,
+to the same proportion of host memory. Payload sizes, database images and benchmark protocol are held
+constant; the operating-system point release, container runtime, Python patch level and storage device
+differ alongside the processor and memory, so we attribute the difference to the environment rather than to
+the processor alone, and say so in the manuscript. Two results follow. The ordering at small payloads is unchanged,
 so that conclusion does not depend on the machine. The crossover, however, moves: the hybrid overtakes
 MongoDB one resolution step earlier on the smaller host, and at $1.40$~MB MongoDB emits $0.41\times$ the
-hybrid's carbon on the larger machine but $1.01\times$ on the smaller. Its advantage there has gone. This
-is the direction the mechanism predicts, since the hybrid's benefit is keeping bytes out of the database
+hybrid's carbon on the larger machine but $1.01\times$ on the smaller. We do not read the latter as
+establishing a crossover at that payload: a $1\%$ separation sits well inside that host's run-to-run
+variability, which reaches $28\%$, and each carbon value is a single integrated measurement. What the pair
+does establish is that a margin of more than a factor of two on one machine has disappeared on the other at
+the same payload, which is larger than the variability. This is the direction the mechanism predicts, since the hybrid's benefit is keeping bytes out of the database
 write path and a smaller host is where that path is most constrained.
 
 \textbf{A second infeasibility, of a different kind.} On the smaller machine MongoDB ceased to be runnable
@@ -159,34 +172,46 @@ completed every resolution to $7.13$~MB on the same host in the same session. Th
 architecture: MongoDB holds documents uncompressed in cache, so one insertion run at 4K is $5.8$~GB of live
 working set that quality-90 JPEG gives it no way to shrink, whereas PostgreSQL relocates the payload out of
 line and the hybrid never admits it to the database. We report this as a finding rather than an incident.
-The 16~MB document ceiling already in the paper is a protocol limit that no hardware removes; this is a
-resource limit that a modest host imposes, and a practitioner will meet it first. We also state the two
+The 16~MiB document ceiling already in the paper is a protocol limit that no hardware removes under the
+bucketing configuration we tested; this is a resource limit that a modest host imposes, and a practitioner
+will meet it first. We also state the two
 qualifications: the cache held the same proportion of memory as on the larger machine, and neither host had
 swap.
 
 \textbf{A real-case corpus, and what it corrects.} The submitted benchmark stored one image in every row,
 which is exactly reproducible but not what a camera produces. We recorded frames from a
 face-recognition-based attendance system in operational use, one networked and two USB cameras, and re-ran
-the benchmark with a different real image in every row. The architectural conclusion holds, on two cameras
-and on a second machine. But storing one repeated image rather than distinct ones understates MongoDB's
-ingestion carbon by $2.4$ to $2.9\times$ and its storage amplification by $16$ to $25\times$, while leaving
-the other two architectures essentially unaffected, because MongoDB alone compresses across rows. We report
-this prominently and against our own interest: the direction of our published result is confirmed and its
-magnitude is not.
+the benchmark with a different real image in every row. The architectural conclusion holds on two cameras,
+under a profile counting one insertion, one bulk retrieval and one latest-frame read equally. We are careful
+about what this establishes: the real corpus was measured on the second machine only, so payload and
+environment vary jointly between this experiment and the two-host comparison, and the manuscript claims
+consistency across the tested host and corpus combinations rather than hardware independence.
+
+The correction itself is the more valuable result. Storing one repeated image rather than distinct ones
+understates MongoDB's ingestion carbon by $2.4$ to $2.9\times$ and its storage amplification by $16$ to
+$25\times$. All three architectures change, but MongoDB alone changes for the worse; inline PostgreSQL and
+the hybrid become $19$--$25\%$ and $39$--$47\%$ \emph{cheaper} with distinct frames, which we report rather
+than dismiss as noise, noting that the compared payloads are matched only approximately and that size and
+distinctness are not fully separable in the pairing. What distinguishes MongoDB is the sign, and the cause is
+that it alone compresses \emph{across} rows. We report this prominently and against our own interest: the
+direction of our published result is confirmed and its magnitude is not.
 
 Taken together these give a result we consider more useful than the resolution bands we originally
 proposed. Resolution is a label for payload size, not the deciding variable, and the substitution fails in
-practice: at 1080p on one machine, our collage payload selects MongoDB and real camera output selects
-inline PostgreSQL. Same resolution, same host, same software, opposite recommendation. The framework is
+practice: at 1080p on one machine, and under an ingestion-only profile, our collage payload selects MongoDB
+and real camera output selects inline PostgreSQL. Same resolution, same host, same software, opposite
+recommendation. The framework is
 therefore now stated in measured payload size, with resolution as an indicative guide whose reliability is
 specific to the camera.
 
 \subsection*{3c. Separating structural claims from measured ones}
 
-Two claims are now identified as independent of our hardware entirely: the 16~MB BSON ceiling is a
-protocol limit, so no hardware makes bucketed time-series collections able to store 6K frames; and
-the ordering of per-byte costs follows from where each architecture places the payload, not from how
-fast the host runs.
+Two claims are now identified as independent of our hardware entirely: the 16~MiB BSON ceiling is a
+protocol limit, so under the default bucketing we tested no hardware makes time-series collections able to
+store 6K frames; and the ordering of per-byte costs follows from where each architecture places the payload,
+not from how fast the host runs. We separate these deliberately from the measured boundaries, and we
+distinguish the immutable document ceiling from the bucket-formation failure we observed, which depends on
+how the collection is configured.
 
 \subsection*{3d. Partial rebuttal: the single-host baseline is a design choice}
 
@@ -205,12 +230,16 @@ future work.
 \point{``The abstract should also explicitly acknowledge the main limitations of the research.''}
 
 \reply Accepted and implemented. The abstract now states, in the authors' own words, that the study
-is deliberately bounded and names four limitations: the single-host, single-client controlled
-baseline rather than a distributed multi-tenant deployment; a limited photographic corpus, with
-real-frame validation reaching 1080p; measurement under one national grid intensity, with the
-explicit note that the \emph{ranking} is grid-invariant because emissions scale linearly with that
-factor; and embodied-carbon and fleet-scale figures being first-order estimates from published
-factors rather than site-specific measurements.
+is deliberately bounded, and names its main limitations: the single-host, single-client controlled
+baseline rather than a distributed multi-tenant deployment; the measurement boundary, which covers
+the storage tier alone and excludes the deployment's capture and face-recognition pipeline; a
+limited photographic corpus, with real-frame validation reaching 1080p; a single integrated carbon
+measurement per cell, with run-to-run variability reaching $28\%$ on the smaller host; measurement
+under one national grid intensity, with the explicit note that the \emph{ranking} is grid-invariant
+because emissions scale linearly with that factor; the annual deployment figures being a scenario
+projection for that workload rather than a saving measured against the installation as it currently
+runs; and embodied-carbon and fleet-scale figures being first-order estimates from published factors
+rather than site-specific measurements.
 
 \section*{5. Declaration of AI-assisted technologies}
 
@@ -218,17 +247,25 @@ factors rather than site-specific measurements.
 should be transparently declared in accordance with the journal's editorial policies.''}
 
 \reply Declared. A \textbf{Use of AI-assisted technologies} statement has been added to Statements
-and Declarations, recording that generative AI tools were used \emph{solely for language
-editing}, that is grammar, clarity, and phrasing of author-written text, and that no AI tool was used to
+and Declarations, naming the three assistants used (Google Gemini, Anthropic Claude, and OpenAI Codex) and recording that they were used
+\emph{solely for language editing}, that is grammar, clarity, and phrasing of author-written text, and that no AI tool was used to
 generate, analyse, or interpret the experimental data, produce figures or tables, or draw the
 scientific conclusions. The authors reviewed and edited all such output and take full responsibility
 for the entire content. AI is not credited as an author.
 
 We took the opportunity to complete the declarations block, which was otherwise thin: Competing
-Interests, Data and Code Availability, and Ethics Approval have also been added. The ethics statement
-records that the new real-frame corpus involved no human participants and no personal data, was
-captured with no other person present, retained no biometric identifier, and that every saved frame
-was verified automatically to contain no detectable face before use.
+Interests, Data and Code Availability, and Ethics have also been added. The reproducibility artifact
+has been rebuilt for this revision so that it matches what the availability statement claims: it now
+carries the measurements from both hosts and all three cameras, the recorder, the figure-generation
+scripts for the new figures, and the full corpus of $8{,}724$ recorded frames, released as one archive
+per camera. The ethics statement
+states precisely what was done and is careful not to claim more than the evidence supports. It records
+that no recognition function was invoked and no enrolled identity or template was accessed; that recording
+was carried out with no other person present and no biometric template computed or stored; that every saved
+frame was passed through a named face detector at a stated threshold and none produced a detection; and
+that this is evidence the corpus contains \emph{no detectable faces}, not a proof that it contains no
+personal data, since a detector sweep cannot establish the latter. It states the basis on which the work
+was treated as exempt rather than asserting an approval that was not sought.
 
 \section*{Summary of changes}
 
@@ -239,11 +276,11 @@ Editor's point & Where addressed \\
 1. Positioning in the literature &
 New Discussion subsection ``Positioning against prior work''; Table~1 extended with a column stating what each prior study concludes and what changes here. \\[2pt]
 2. Dialogue with this journal &
-New Related Work subsection engaging six recent articles from this journal, each used to sharpen a specific methodological choice. \\[2pt]
+New Related Work subsection engaging six articles from this journal, spanning 2019--2025, each used to sharpen a specific methodological choice. \\[2pt]
 3. Applicability beyond our setup &
-New subsection deriving the mechanism behind the crossover and giving a measurement procedure for locating it elsewhere; the entire sweep repeated on a second machine and reported side by side; a real-case corpus from an operational deployment; a second infeasibility arising from memory rather than protocol; and the framework restated in measured payload size after resolution proved an unreliable proxy. \\[2pt]
+New subsection deriving the mechanism behind the crossover and giving a numbered calibration protocol for locating it elsewhere; the entire sweep repeated on a second machine and reported side by side; a real-case corpus from an operational deployment; a second infeasibility arising from memory rather than protocol; and the framework restated in measured payload size after resolution proved an unreliable proxy. \\[2pt]
 4. Limitations in the abstract &
-Abstract revised to name four limitations explicitly. \\[2pt]
+Abstract revised to name the study's main limitations explicitly, including the storage-tier measurement boundary and the scenario-projection status of the annual deployment figures. \\[2pt]
 5. AI declaration &
 Statements and Declarations rewritten, adding use of AI-assisted technologies, competing interests, data availability, and ethics approval. \\
 \bottomrule

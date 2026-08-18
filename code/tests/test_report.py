@@ -59,8 +59,10 @@ class TestReporterSkips(unittest.TestCase):
                    [{"project_name": "postgres_insert_6k", "emissions": "0.002"}])
         combined = Reporter(self.loc).build()
         row = self._row_for(combined, "6k")
-        self.assertNotEqual(row["postgres_carbon_mg"], "")      # 0.002 kg -> 2000 mg
-        self.assertAlmostEqual(float(row["postgres_carbon_mg"]), 2000.0, places=1)
+        # One tracker covers all five repetitions, so the reported figure is the
+        # amortised cost of a single run: 0.002 kg -> 2000 mg total -> 400 mg/run.
+        self.assertNotEqual(row["postgres_carbon_mg"], "")
+        self.assertAlmostEqual(float(row["postgres_carbon_mg"]), 400.0, places=1)
 
 
 if __name__ == "__main__":

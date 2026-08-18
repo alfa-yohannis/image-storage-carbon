@@ -3,7 +3,7 @@
 Two separate jobs, easy to confuse:
 
     Detection   - "there is a face, and it is here." Draws the green box.
-    Recognition - "this face belongs to Alfa." Needs example photos first.
+    Recognition - "this face belongs to a named, enrolled person." Needs example photos first.
 
 Detection always works. Recognition only names people you have enrolled by
 putting photos in the known_faces/ folder; anyone else is shown as "unknown".

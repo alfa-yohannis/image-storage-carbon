@@ -34,9 +34,9 @@ done
 # camera folder : resolutions it can serve : output folder
 # Tapo and Webcam 2 recorded at 1920x1080; Webcam 1 caps at 1280x720.
 CAMERAS=(
-  "Tapo_IP_Cam__192_168_43_46:360p 480p 720p 1080p:data_frames_tapo"
-  "Webcam_2___dev_video4:360p 480p 720p 1080p:data_frames_webcam2"
-  "Webcam_1___dev_video0:360p 480p 720p:data_frames_webcam1"
+  "Tapo_IP_Cam:360p 480p 720p 1080p:data_frames_tapo"
+  "Webcam_2:360p 480p 720p 1080p:data_frames_webcam2"
+  "Webcam_1:360p 480p 720p:data_frames_webcam1"
 )
 
 echo "=================================================================="

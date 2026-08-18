@@ -41,6 +41,7 @@ by accident, so nothing can cut the session short.
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 import threading
 import time
@@ -110,15 +111,29 @@ def describe_sizes(sizes: list[int]) -> str:
     )
 
 
+# A camera's display name often carries its address, e.g. "Tapo IP Cam
+# (192.168.1.100)". That address would then end up in every folder name and in
+# any corpus shared from it, so it is removed before the name is used.
+ADDRESS_PATTERN = re.compile(r"\b\d{1,3}(?:[._]\d{1,3}){3}\b|/dev/\S+|rtsp://\S+")
+
+
 def safe_name(text: str) -> str:
-    """Turn a camera name into something usable as a folder name."""
+    """Turn a camera name into something usable as a folder name.
+
+    Network and device addresses are stripped first: a recorded corpus is often
+    shared, and a folder called ``Tapo_IP_Cam__192_168_1_100`` carries the
+    camera's address with it wherever it goes.
+    """
+    text = ADDRESS_PATTERN.sub("", text)
     result = ""
     for character in text:
         if character.isalnum():
             result = result + character
         else:
             result = result + "_"
-    return result.strip("_")
+    while "__" in result:
+        result = result.replace("__", "_")
+    return result.strip("_") or "camera"
 
 
 def session_folder(camera_name: str, stamp: str) -> Path:
@@ -132,8 +147,8 @@ def group_folder(camera_name: str, stamp: str) -> Path:
     Every camera in the session shares the outer dated folder and gets its own
     subfolder inside it, so the recordings stay grouped as one session:
 
-        payloads/20260817-193000/Tapo_IP_Cam__192_168_43_46/
-        payloads/20260817-193000/Webcam_1__dev_video0/
+        payloads/20260817-193000/Tapo_IP_Cam/
+        payloads/20260817-193000/Webcam_1/
     """
     return PAYLOAD_ROOT / stamp / safe_name(camera_name)
 

@@ -1,0 +1,483 @@
+================================================================================
+                                   COMPLETED
+================================================================================
+
+CRITICAL REVIEW 02
+Manuscript: paper/main-marked.tex
+Review date: 2026-08-18
+Scope: internal consistency, reproducibility, numerical claims, and alignment with the local code/data/figures.
+
+Current-status legend: COMPLETED means the manuscript now addresses the finding in substance;
+PARTIALLY COMPLETED means it is disclosed or partly corrected but still needs a narrower claim or
+verification; OPEN means the requested correction remains outstanding.
+
+Overall assessment
+------------------
+The primary headline values in Tables 3--6 mostly reproduce data/threeway_summary.csv, and the
+manuscript compiles. However, the marked-up revision is not yet internally consistent enough to
+submit. The most important problems are not typographical: the carbon-measurement boundary does
+not match the units claimed in the paper; the claimed equivalence between fastest and lowest-carbon
+architectures is contradicted by the latest-frame results; the real-case camera identities and
+payload definitions are inconsistent with the released recorder documentation; and the current
+reproducibility artifact does not contain the newly claimed real-case code/data/figures.
+
+Findings requiring correction
+=============================
+
+1. HIGH -- Carbon tracker includes setup/warm-up work, not only the reported measured operation.
+STATUS: COMPLETED (the manuscript now explicitly defines and labels the value as an amortised
+cell cost, including setup, warm-up, reset, and accounting work; the underlying measurement is not
+an isolated warm-database operation).
+Manuscript lines 185--186 and Table 6, lines 293--313, say that each carbon value is the energy of
+one measured run (2,000 inserts, one 2,000-image retrieval, or one latest-frame read), obtained by
+dividing a tracker covering five runs by five. The implementation does not have that boundary:
+code/run.py:173--187 places the tracker around engine.run_insert/run_retrieval/run_point_read,
+and code/engine_base.py:139--150 shows that run_insert also performs warm-up inserts, resets the
+database before every run, storage-size queries, and row-count queries. run_retrieval similarly
+includes preparation, retrieval warm-ups, and cleanup (engine_base.py:156--175). These costs are
+then divided by five and presented as the cost of one measured operation. This affects the SCI,
+per-frame, cumulative, and annual values, not merely a label.
+
+Required action: either move the tracker inside the timed measured-run loop and explicitly exclude
+setup/warm-up work, or redefine the reported unit as an amortised cell cost including the stated
+setup. Recompute/rename all downstream values accordingly and document whether warm-up and reset
+energy is intended to be part of the operational footprint.
+
+2. HIGH -- Reported throughput and carbon use different insertion boundaries.
+STATUS: COMPLETED (the manuscript now discloses the pre-commit throughput boundary and says it is
+not used to explain the carbon ordering).
+The PostgreSQL and PostgreSQL+MinIO timers stop before conn.commit(): code/engine_postgres.py:88--105
+and code/engine_postgres_minio.py:103--123. The CarbonTracker, in contrast, continues through the
+commit and the surrounding reset/storage/accounting calls. Thus the manuscript compares a timed
+throughput that excludes commit against carbon that includes commit and setup. This is especially
+important for the hybrid, whose two-step write and transaction completion are part of the claimed
+operational trade-off (lines 179, 655--659).
+
+Required action: include commit in the reported insertion timing for all engines, or explicitly
+state that throughput is an application-side pre-commit measure and do not use it to explain the
+carbon ordering. Align the carbon and latency measurement regions before making performance/carbon
+causality claims.
+
+3. HIGH -- The statement that the fastest architecture is always the lowest-carbon architecture
+is false for the paper's own tables.
+STATUS: COMPLETED (the universal statement was replaced with operation-specific exceptions for
+latest-frame reads).
+Lines 526--529 claim that, for every operation and payload, the lowest-carbon architecture is also
+the fastest, and use this to infer that finishing sooner almost always means emitting less. Table 4
+(lines 260--267) and Table 8 (lines 348--355) provide counterexamples for latest-frame reads:
+
+  * 480p: PostgreSQL is fastest (0.97 ms), but MongoDB has lower carbon (0.03 mg versus 0.05 mg).
+  * 720p: PostgreSQL+MinIO is fastest (1.22 ms), but MongoDB has lower carbon (0.05 mg versus
+    0.06 mg).
+  * 360p: PostgreSQL+MinIO is fastest (1.09 ms), while MongoDB is lowest-carbon (0.03 mg versus
+    0.05 mg for PostMin).
+
+Energy is power integrated over time; lower elapsed time does not imply lower energy when power
+differs. Required action: remove the universal statement and report operation-specific winners,
+or provide a measured power/energy analysis that supports a narrower claim.
+
+4. HIGH -- “Greenest” changes between sections because the workload weighting changes without
+being made explicit early enough.
+STATUS: PARTIALLY COMPLETED (the manuscript now distinguishes equal-operation totals from
+ingestion-only deployment figures, but every headline “greenest/choice/crossover” statement still
+needs its objective stated explicitly).
+Table 9/lines 467--483 reports total carbon (insertion + bulk retrieval + latest-frame read), where
+the 1080p real Tapo run gives MongoDB 31.59 mg versus PostgreSQL 34.99 mg. Lines 456--458 therefore
+say MongoDB is greenest through 1080p. Table 14/lines 622--646 instead uses insertion-only carbon,
+where the same 0.149 MB payload gives PostgreSQL 0.0110 mg/frame versus MongoDB 0.0142 mg/frame,
+and lines 640--642 recommend PostgreSQL for continuous ingestion. Both results can be valid for
+different operation mixes, but the manuscript currently presents both as the architecture selected
+for “the” workload and uses different crossover interpretations (total versus insertion-only).
+
+Required action: name the objective in every “greenest/choice/crossover” statement and formalise the
+operation weights. Explain in the abstract, decision table, and real-case section that the result
+changes from MongoDB under the equal one-of-each-operation profile to PostgreSQL under write-only
+continuous retention.
+
+5. HIGH -- The two-host comparison is described as software-identical even though the environments
+are not software-identical.
+STATUS: PARTIALLY COMPLETED (the environment differences are now acknowledged, but the remaining
+hardware-independence wording for the real-frame ordering is still too strong).
+Lines 389, 397, and 506 say software versions/protocol are identical and that differences are
+attributable to the host. Table 11 (lines 490--506) lists different OS versions, Docker/Compose
+versions, and Python versions: Ubuntu 24.04.4/Docker 29.4.0/Compose 5.1.1/Python 3.14 on the
+controlled host versus Ubuntu 24.04.3/Docker 29.7.2/Compose 5.4.0/Python 3.14.7 on the validation
+host. The raw CSVs also record Linux 6.8.0-117 and Python 3.14.5 for the i9 host versus Linux
+6.8.0-90 and Python 3.14.7 for the i7 host.
+
+Required action: say that the database images and benchmark protocol were held constant, while OS,
+container runtime, Python patch level, SSD, CPU, and RAM differed. Do not attribute the entire
+difference to hardware. The claim that real-frame ordering is hardware-independent is also too
+strong: the real-frame runs are on the i7 host; the i9 host has the collage runs, not the same real
+corpus.
+
+6. HIGH -- The real-case camera identities are reversed relative to the recorder documentation and
+the data directories.
+STATUS: COMPLETED (the table now identifies the external 1080p and built-in 720p USB cameras
+correctly).
+Table 10 (lines 448--450) labels the 1920x1080, 2,988-frame, 157 KB stream as “USB camera 1” and
+the 1280x720, 2,891-frame, 69 KB stream as “USB camera 2.” The released
+code_realcase/README.md:117--139 says the opposite: Webcam 1 (/dev/video0) is the built-in
+1280x720 camera, while Webcam 2 (/dev/video4) is the external 1920x1080 camera. The benchmark
+directories support the documentation: data_frames_webcam1 has only through 720p, whereas
+data_frames_webcam2 has 1080p results.
+
+Required action: swap the USB-camera labels (and verify the frame counts/payload means), then
+recheck lines 432 and 516. The “12% at 1080p” comparison appears to use the networked-camera
+representative 0.149 MB versus the external-webcam representative 0.131 MB, but Table 10 reports
+164 KB and 157 KB; those are not the same comparison.
+
+7. HIGH -- “Mean payload” in Table 10 is not the payload recorded in the benchmark CSVs.
+STATUS: COMPLETED (the table now distinguishes mean recorded size from the resized/re-encoded
+benchmark payload and reports dispersion).
+Table 10 calls Payload the mean encoded size and reports 164 KB for the networked camera. The
+benchmark summary used in the manuscript records 0.148711 MB (about 149 KB) for Tapo 1080p and
+0.131483 MB (about 131 KB) for webcam2. This follows from code/payloads.py:103--105: the
+FrameSequenceSource reports the single frame closest to the mean, not the arithmetic mean. The
+same representative value is then written into the result CSVs by code/results.py:86--123.
+
+Required action: report the true mean (and preferably standard deviation/range) if Table 10 is to
+say “mean,” or call the benchmark value a representative/medoid payload. Recalculate the crossover
+and annual application using a clearly defined size statistic. This also explains why the text
+alternates between 0.149 MB and 164 KB for the same camera.
+
+8. HIGH -- The current reproducibility artifact does not contain the material claimed in the
+Data/Code statement.
+STATUS: OPEN (the manuscript still claims that the real-frame corpus and recorder are released,
+while the checked artifact remains the earlier collage package).
+Line 691 says the real-frame corpus and the recording tool are released with the artifact. The
+local zenodo/artifact.zip contains only code/, data/, figures/, and paper/ from the earlier collage
+study: it has no code_realcase/, data_frames_tapo/, data_frames_webcam1/, data_frames_webcam2/,
+data_fleet/, or the new real-case figure-generation inputs. Its paper/main.tex also has no
+real-case section. The archive therefore cannot reproduce Sections 4.8--5.5 or Figures 8--10.
+
+Required action: rebuild the anonymised artifact from the marked-up revision, including the
+recording/validation code, non-sensitive derived real-frame data or a documented regeneration
+procedure, all new figures, and the exact source/commit used. If privacy prevents releasing frames,
+do not say the corpus is released; provide aggregate hashes/statistics and a reproducible synthetic
+or public substitute instead. Also reconcile the stale upload note, which says the source asset is
+missing, with the actual archive, which does contain code/assets/Schwarzsee.jpg.
+
+9. MEDIUM-HIGH -- The repetition experiment does not support the wording “only MongoDB is affected”
+or “slightly cheaper” for PostgreSQL/MinIO.
+STATUS: PARTIALLY COMPLETED (the wording now acknowledges that all architectures change and
+emphasises MongoDB's opposite-direction effect; exact uncertainty and a fully matched-size design
+remain outstanding).
+Table 13 (lines 572--589) calls only MongoDB affected, but the measured repeated-to-distinct ratios
+for PostgreSQL and PostMin are 0.81/0.61 at about 0.09 MB and 0.75/0.53 at about 0.15 MB. Those are
+19--47% changes, not slight differences. Moreover, the “matched” payloads are not identical: the
+repeated values come from the i7 collage profiles while distinct values come from resized camera
+frames, and the manuscript itself admits at lines 458 that size and distinctness are not fully
+separable.
+
+Required action: change the caption/text to say that MongoDB shows the largest and opposite-direction
+change, while the other two also vary across the compared payloads; report exact byte sizes and
+uncertainty. Do not attribute all PostgreSQL/MinIO differences to harmless noise without repeated
+energy measurements or a tighter matched-size design.
+
+10. MEDIUM-HIGH -- The i7 “crossover” is asserted from a near-tie below the reported variability.
+STATUS: COMPLETED (the manuscript now calls the 1440p result a near-tie and does not treat it as
+an established precise crossover).
+At 1440p in Table 7 (line 411), PostMin is 0.1274 mg/frame and MongoDB is 0.1287 mg/frame: a 1.0%
+difference. The table footnote reports up to 28% run-to-run variability on the smaller host, and
+the carbon value itself is a single integrated measurement per cell. Lines 391, 417, and 552 still
+describe the hybrid as having overtaken MongoDB and use boldface to designate a definitive winner.
+
+Required action: call this a near-tie/inconclusive ordering, or provide independent repeated energy
+runs and uncertainty intervals. Do not claim that the smaller-host crossover is established at
+1.40 MB while simultaneously saying that no precise crossover can be reported.
+
+11. MEDIUM-HIGH -- The 6K “infeasible on any hardware/no tuning can remove it” claim is broader
+than the experiment.
+STATUS: PARTIALLY COMPLETED (the detailed BSON section is qualified to the tested configuration,
+but the abstract, conclusion, and contribution language remain broader than that qualification).
+The observed error is real and documented in data/skipped.csv: a 7.132 MB payload produced a
+22.436 MB bucket object and hit MongoDB error 10334. However, the test fixes one time-series schema,
+one metadata cardinality (all rows use device_id 1), default time-series bucketing settings, and a
+particular batch/workload. The manuscript establishes infeasibility for this tested native
+time-series configuration, not necessarily for every possible bucket-span/bucket-cardinality
+configuration or schema around the payload. The BSON document ceiling itself is immutable, but
+whether several frames are combined into one over-limit bucket is workload/configuration dependent.
+
+Required action: qualify lines 386, 553, 594, 669, and 677 as “under the tested native time-series
+schema/bucketing configuration,” report the relevant bucket settings, and separate the immutable
+16 MiB BSON limit from the empirically observed bucket-formation failure. Also use MiB consistently:
+the error says 16,793,600 bytes, i.e. 16 MiB, not 16 decimal MB.
+
+12. MEDIUM -- Embodied-storage arithmetic mixes GB and GiB.
+STATUS: COMPLETED (the manuscript now uses decimal GB consistently and recomputes the embodied
+figures accordingly).
+Line 361 says 2,000 5K frames occupy about 9.9 GB, while the raw payload is 5,333,253 bytes per
+frame. That is about 9.93 GiB (or 10.67 decimal GB). The reported PostgreSQL/Mongo storage values
+also correspond approximately to the CSV values expressed in MiB divided by 1024, i.e. GiB. The
+0.16 kg CO2eq/GB factor is then applied without stating whether GB or GiB is intended.
+
+Required action: choose decimal GB throughout or label the values GiB and convert the embodied
+intensity consistently. Recompute 4.8/1.6 kg if the source factor is defined in decimal GB.
+
+13. MEDIUM -- Privacy/ethics language overstates what a face detector establishes.
+STATUS: COMPLETED (the ethics statement now limits the claim to “no detectable faces” and explains
+what was captured, the detector threshold, and the institutional basis stated by the authors).
+Lines 438, 453, and 693 move from “no face was detected” to “no personal data,” “no identifiable
+person,” and “no human participants.” A detector sweep is evidence that no detectable face was
+present; it does not prove that frames contain no personal data or that the recording is outside
+human-subject/biometric-data oversight. This is especially sensitive because the source deployment
+is explicitly a face-recognition attendance system.
+
+Required action: state exactly what was captured, whether anyone was present, detector model and
+threshold, retention/deletion controls, and the institutional ethics/approval or exemption basis.
+Use “no detectable faces in the released/analysed corpus” unless a stronger legal/ethics conclusion
+is documented.
+
+14. MEDIUM -- The figures and manuscript metadata are stale relative to the marked-up text.
+STATUS: OPEN (the stale source counts, figure label, artifact metadata, and layout warnings remain).
+The compiled marked manuscript contains 10 figures and 15 tables, but the source comment at lines
+61--62 still says “15 tables and 7 figures.” Figure realframes_carbon.pdf contains the label
+“Synthetic collage (identical rows)” even though the marked text deliberately argues that the
+payload is genuine photographic content and avoids the term “synthetic.” The local artifact and
+README still describe the earlier six-figure package, while the current paper references the three
+new real-case/application figures.
+
+Required action: regenerate all PDFs and the artifact from one revision, replace the stale figure
+label with “deterministic collage,” update the source comment/documentation, and check the final
+PDF for overfull boxes. A fresh latexmk build succeeds but produces a 42-page PDF and overfull hboxes
+in the Related Work table (notably source lines 133 and 136); the earlier checklist claim of zero
+overfull boxes is no longer true.
+
+15. LOW-MEDIUM -- Reproducibility naming is misleading.
+STATUS: OPEN (the historical filename and stale upload note have not been reconciled).
+The code default is code/assets/Schwarzsee.jpg (code/config.py:125), while the manuscript and
+references identify the image as Durdle Door. The image visually appears to be the cited coastal
+scene, so this is not necessarily a data error, but a reader cannot infer the source from the file
+name and the stale upload note says the asset is absent. Rename the file or add an explicit README
+note explaining the historical filename and verify that the exact file hash used to generate the
+CSVs is recorded.
+
+Checks that passed
+==================
+* The primary carbon totals, cumulative 360p--5K values, grid rescaling, annual-frame multiplication,
+  and most headline percentages agree with data/threeway_summary.csv and the primary emissions.csv.
+* The primary MongoDB 6K skip is correctly recorded in data/skipped.csv with error 10334, and the
+  second-host MongoDB 4K failure is separately recorded in data_collage_i7/skipped.csv.
+* The marked-up LaTeX source compiles and the bibliography resolves after the normal latexmk/bibtex
+  cycle; the remaining build issue is layout (overfull/underfull boxes), not a fatal LaTeX error.
+
+Recommended correction order
+============================
+1. Fix the carbon measurement boundary and insertion timing, then regenerate all carbon-derived
+   tables/figures.
+2. Resolve total-vs-insertion workload weighting and remove the fastest=greenest claim.
+3. Correct the USB-camera labels and the mean-versus-representative payload definition.
+4. Rebuild the real-case artifact or revise the availability/replication claims.
+5. Reassess the weak 1440p i7 crossover, the universal 6K claim, embodied-carbon units, ethics
+   wording, and stale figure/layout metadata.
+
+
+SECOND PASS -- PAPER-FOCUSED AUDIT AND REVIEW01 CLOSURE
+========================================================
+This pass checks the manuscript as a paper: argument, literature positioning, scope of claims,
+generalizability, practical meaning, limitations, declarations, and presentation. It deliberately
+does not repeat the earlier code/data audit except where a paper statement depends on it.
+
+Overall closure judgement
+-------------------------
+Review01 is substantially addressed, but not fully closed. The manuscript now contains visible
+responses to all five editorial requests. The literature and ESD additions are real, the abstract
+now has limitations, and the manuscript includes a second-host comparison plus a worked deployment
+application. The remaining weaknesses are mainly claim calibration: the manuscript sometimes calls
+joint evidence a test of hardware/software independence, calls a scenario projection a deployment
+result, and describes a measurement procedure as a transferable framework without making the
+procedure sufficiently operational.
+
+Review01 item-by-item status
+----------------------------
+
+1. Positioning within the existing literature -- MOSTLY ADDRESSED, BUT STILL NEEDS TIGHTENING.
+Evidence: Table~\ref{tab:relwork} (lines 128--138) now compares prior benchmark conclusions with
+what changes in this study, and the Discussion contains a new “Positioning against prior work”
+passage (lines 663--671). The manuscript distinguishes scalar benchmarks, carbon-accounting
+methods, and the proposed decision instrument rather than only repeating its results.
+
+Remaining issue: the new positioning is a long bold paragraph rather than a navigable Discussion
+subsection, and several novelty statements are broader than the literature search shown in the
+paper. “None characterise”/“none report” and “the prior literature does not reach” are supported
+only by three representative benchmark rows and no search boundary. “We are unaware of” in the
+table caption is appropriately cautious, but the surrounding prose should use the same scope.
+“We reproduce” the scalar-literature engine ordering also needs to be framed as a qualitative
+comparison, since the prior studies and this workload are not identical experiments.
+
+Recommended action: make the positioning passage a real subsection, qualify universal literature
+negatives as “among the studies reviewed here,” and state the comparison dimensions and search
+scope. Keep the three-part contribution claim, but tie each part to the exact evidence and avoid
+calling a conditional comparison an accepted universal ordering.
+
+2. Dialogue with recent Environment Systems and Decisions publications -- PARTIALLY TO MOSTLY
+ADDRESSED.
+Evidence: lines 122--124 now engage six papers from the target journal, and the six entries are
+present in references.bib. The citations are connected to methodological choices: local criteria,
+sensitivity analysis, smart-home instrumentation, IoT operational integrity, and demand response.
+
+Remaining issue: the dialogue is mostly analogical rather than a close comparison of decision
+objects, indicators, system boundaries, or validation practices. Three of the six papers are from
+2019--2022, so calling all six “recent” in the response letter is imprecise in the context of the
+current revision. The statement that grid intensity is “the single most uncertain parameter in any
+carbon accounting” (line 122) is an unsupported universal claim; this paper does not quantify the
+uncertainty of RAPL measurement, workload mix, PUE, or embodied-carbon factors.
+
+Recommended action: describe them as selected ESD precedents, add one sentence for each explaining
+the methodological relationship and boundary, and replace “single most uncertain parameter in any
+carbon accounting” with the narrower claim actually shown by the grid sensitivity experiment.
+
+3. Practical/scientific value and applicability beyond the evaluated environment -- PARTIALLY
+ADDRESSED, with important overclaiming remaining.
+Evidence: the manuscript adds a fixed-cost/payload-cost mechanism and a local bracketing procedure
+(lines 561--594), a second-host experiment (lines 387--428), a real-camera corpus (lines 431--489),
+and a worked annual application (lines 598--646). It also explicitly says exact crossover payloads
+do not generalise (line 671), which is a good correction to the original scope.
+
+Remaining issue A: the proposed “procedure” is prose, not an operational decision protocol. It does
+not specify how many payload points to test, how to select the winner under uncertainty, how to set
+operation weights, or how to treat infeasible cells. A reader can understand the idea but cannot
+apply the framework reproducibly without reconstructing those choices.
+
+Remaining issue B: the evidence does not isolate all three dimensions named by the editor. The
+second-host comparison changes processor, memory, storage, OS point release, container runtime,
+Python patch level, and other environment details (lines 403--418 and 488--506). The real-frame
+validation is performed on the second host, not the controlled host, so it jointly changes payload
+and environment; it does not establish hardware-independent real-frame ordering. The sentence
+“The architectural ordering does not” (line 488) should be limited to the tested host/corpus pair.
+
+Remaining issue C: the annual deployment result is a scenario projection, not a measured saving in
+the operational system. The paper acknowledges this at lines 646--647 because the installation
+retains video rather than individual frames. The practical value is therefore a worked translation
+of measured rates to a plausible deployment, not evidence that the current installation would save
+the stated amount.
+
+Recommended action: add a short numbered protocol or algorithm for local calibration; state that
+the second-host and real-case experiments vary multiple factors jointly; and label the annual case
+as a “scenario projection for the deployment workload.” Reserve “hardware independent,” “software
+independent,” and “confirmed beyond our environment” for claims actually isolated by the design.
+
+4. Limitations in the abstract -- ADDRESSED, BUT NOT COMPLETE.
+Evidence: the abstract explicitly names the single-host/single-client baseline, limited corpus and
+1080p real-frame ceiling, one grid intensity, and first-order embodied/fleet estimates (line 87).
+This directly answers the editor's explicit request.
+
+Remaining issue: the abstract does not say that the measurements cover the storage/data tier only,
+not the deployment's face-recognition or inference pipeline, although that boundary is important in
+the real-case section (lines 431--432 and 673). It also omits the single integrated measurement per
+cell and the uncertainty/host variability that the paper later acknowledges. These omissions do not
+invalidate the response, but they leave the practical scope easier to overread than the body allows.
+
+Recommended action: add a compact limitation phrase stating that the real-case figures exclude
+capture/inference and represent a scenario projection, while preserving the abstract's current
+brevity.
+
+5. AI-use declaration -- MOSTLY ADDRESSED.
+Evidence: the Statements and Declarations section (line 691) says generative AI was used only for
+language editing, excludes data analysis, figures, tables, and conclusions, and records author
+review and responsibility. This is materially transparent and directly responds to review01.
+
+Remaining issue: the declaration says “Generative AI tools” but does not identify the tool or tools.
+The revision plan and response-letter draft specifically contemplated naming the tool. If the
+journal requires tool identification, the current wording is incomplete; if it does not, the
+purpose-and-boundary disclosure is otherwise adequate.
+
+Recommended action: name the actual tool(s) used, or deliberately state that no specific tool name
+is required by the journal's policy after checking the submission instructions.
+
+Paper-level inconsistencies remaining after the review01 revisions
+------------------------------------------------------------------
+
+P1. HIGH -- The paper's strongest generality language exceeds its evidence.
+STATUS: OPEN.
+The abstract says the ordering is confirmed in a second computing environment, the real-case host
+paragraph says the ordering does not change, and the conclusion says the real-case result is measured
+on a second computer (lines 87, 488, and 681). What is demonstrated is: the controlled collage
+ordering is compared across two non-identical environments, and the real-frame ordering is observed
+on the smaller environment across the tested cameras. The paper does not run the same real corpus on
+both hosts, nor hold the complete software environment constant. Reword “hardware independence” and
+“confirmed” as “consistent across the tested host/corpus combinations.”
+
+P2. HIGH -- The framework's decision objective is not consistently foregrounded in headline prose.
+STATUS: OPEN.
+The paper now correctly distinguishes equal one-insertion/one-bulk/one-point-read totals from
+ingestion-only continuous retention (abstract, Table~\ref{tab:decision}, and lines 640--646), but
+“greenest,” “choice,” and “crossover” still appear in places where the operation weights are not
+repeated. A reader can incorrectly treat MongoDB-through-1440p, the real-case 1080p result, and the
+annual PostgreSQL recommendation as contradictory. Every headline recommendation and figure
+caption should state whether it means equal-operation total, ingestion-only, read-heavy, or storage
+amplification objective.
+
+P3. MEDIUM-HIGH -- The 6K infeasibility qualification is not propagated consistently.
+STATUS: OPEN.
+Section~\ref{subsec:bson} carefully limits the empirical failure to the tested native time-series
+configuration and default bucketing, but the abstract, conclusion, and Discussion still use broader
+phrasing such as “cannot store 6K frames at all,” “no hardware,” and “hard infeasibility result.”
+The immutable BSON document ceiling is general; the observed multi-frame bucket failure is
+configuration-dependent. Use the qualified wording everywhere, especially in the abstract and final
+contribution claim.
+
+P4. MEDIUM -- The paper distinguishes a framework from a benchmark, but does not provide a compact
+formal decision rule.
+STATUS: OPEN.
+The prose model at lines 561--594 explains fixed versus payload-dependent cost and deliberately
+rejects a global linear fit. That is scientifically reasonable, but the paper should still give a
+minimal rule: measure payload, choose an operation profile, measure each architecture at bracketing
+payloads, compare means with uncertainty, and exclude infeasible cells. Without this, “transferable
+crossover rule” sounds stronger than the actual deliverable, which is a transferable calibration
+procedure.
+
+P5. MEDIUM -- The real-case evidence is not fully exposed in the main paper.
+STATUS: OPEN.
+The real-case table reports only the networked-camera comparison and only MongoDB's carbon/amplification
+columns (Table~\ref{tab:realframes}); the full three-architecture values and the second-camera
+summary are left to figures or prose. Since the paper uses these values to justify a changed
+architecture recommendation and a narrow payload crossover, add a compact supplementary table or
+make the full relevant values visible in the manuscript.
+
+Page-length constraint: this does not require a new workload-validation experiment or a full new
+section in the main paper. If the additional values are needed, place them in a supplement or the
+artifact and cite them briefly; otherwise, retain the current main-paper table and narrow the claim.
+
+P6. MEDIUM -- The privacy/ethics wording is improved but the availability claim remains fragile.
+STATUS: OPEN.
+The ethics paragraph correctly says that no detectable face is not proof of no personal data (lines
+693--694). However, the Data and Code Availability statement still says that the real corpus is
+released with the artifact and can be regenerated, while the actual artifact status was not aligned
+with that claim in the previous audit. Until the release is verified, change this to “derived
+statistics and recording procedure are provided” or rebuild the stated artifact before submission.
+
+P7. MEDIUM -- The paper's presentation still signals an unfinished marked revision.
+STATUS: OPEN.
+The literature positioning is embedded as bold inline text rather than a real subsection, the source
+comment still reports the old figure count, and the latest compilation retains overfull boxes in the
+Related Work table. These are not scientific errors, but they weaken the impression that review01's
+changes have been integrated into a final paper. Remove internal markup/comments as appropriate for
+the target submission, correct the metadata/counts, and resolve the table layout before sending.
+
+Final paper-focused verdict
+---------------------------
+The editor's five requests are visibly present in main-marked.tex, so review01 has not been ignored.
+Items 1, 2, and 3 should be described as substantially addressed but still requiring calibration of
+claims; item 4 is addressed but can better state the data-tier boundary; item 5 is addressed in
+substance but should name the AI tool if required. The paper is not yet ready to call those requests
+fully closed until P1--P7 are resolved, especially the distinction between a local calibration
+procedure and a universally transferable framework, and between a real deployment scenario and a
+measured deployment saving.
+
+Minimum revision path under the current page constraint
+--------------------------------------------------------
+The compiled marked PDF is already 44 A4 pages. Generalizability should therefore be addressed by
+compact revision rather than by adding another workload study. The minimum paper change is:
+
+1. Add a short, approximately 100--150-word calibration procedure: measure payload, define the
+   operation profile, test the architectures at bracketing payloads, repeat/report uncertainty, and
+   exclude infeasible cells.
+2. Replace “hardware independent,” “software independent,” and “transferable crossover rule” with
+   narrower evidence-based wording.
+3. State that broader scenes, concurrency, batch sizes, and held-out deployments are future work;
+   do not add those experiments to this revision.
+4. Remove repeated explanatory prose in the Discussion to offset the added calibration paragraph.
+
+No additional pages are required to give the editor a defensible generalizability response.
