@@ -160,6 +160,8 @@ def main() -> None:
     parser.add_argument("--version", default="2.0", help="version stamped into the filenames")
     parser.add_argument("--no-frames", action="store_true",
                         help="build only the main archive, skipping the recorded frames")
+    parser.add_argument("--supplementary", action="store_true",
+                        help="also write submission/supplementary_files.zip from the same staging")
     args = parser.parse_args()
     version = args.version
 
@@ -170,6 +172,17 @@ def main() -> None:
     write_zip(main_zip, staging, ".")
     count = sum(1 for _ in staging.rglob("*") if _.is_file())
     print(f"  {main_zip.name:38s} {megabytes(main_zip):>10s}  ({count} files)")
+
+    if args.supplementary:
+        # The portal takes the artifact in its own slot, alongside the public
+        # deposit. Both are written from this one staging tree: the v1.0 pair
+        # drifted apart, and the supplementary copy was the one left behind.
+        # The recorded frames are deliberately absent here - they are a
+        # gigabyte, and the deposit is where they belong.
+        supplementary = ROOT / "submission" / "supplementary_files.zip"
+        write_zip(supplementary, staging, ".")
+        print(f"  {supplementary.name:38s} {megabytes(supplementary):>10s}  ({count} files, no frames)")
+
     shutil.rmtree(staging.parent)
 
     if args.no_frames:

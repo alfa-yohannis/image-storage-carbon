@@ -44,6 +44,10 @@ unzip artifact-v2.0.zip            # code/ code_realcase/ data*/ figures/ paper/
 unzip 'frames-*-v2.0.zip'          # only if you want to re-run the real-case benchmark
 ```
 
+If you received this as a **supplementary file with the manuscript**, only the main archive is
+included; the four-way split above is how the public deposit is organised, and the frame archives
+are there.
+
 The frame archives are needed **only** to regenerate the real-case measurements from scratch.
 Every number and figure in the paper can be rebuilt from `artifact-v2.0.zip` alone, because the
 per-run CSVs it contains are the measurements themselves.

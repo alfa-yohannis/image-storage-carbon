@@ -5,8 +5,11 @@ Submission `35174617-3240-44d6-bb1c-fcc74ec1cd4f`, revision of v1.1.
 Rebuild everything here with:
 
 ```bash
-bash submission/make_paper_zip.sh     # -> paper.zip, and proves it compiles
+bash submission/make_paper_zip.sh                                  # -> paper.zip, and proves it compiles
+python3 zenodo/make_artifact.py --no-frames --supplementary        # -> supplementary_files.zip
 ```
+
+Drop `--no-frames` when you also need the three frame archives for the Zenodo deposit.
 
 The PDFs are copied from `../paper/` and `../reviews/` by hand; both are produced by
 `latexmk` in their own folders.
@@ -17,12 +20,20 @@ The PDFs are copied from `../paper/` and `../reviews/` by hand; both are produce
 |---|---|---|
 | **Manuscript file** | `paper.zip` | LaTeX source, *not* a PDF. The portal compiles it. Clean — no highlights, no tracked changes. |
 | **Point-by-point response** | `response-letter-01.pdf` | Anonymised, 7 pp. Required to be a PDF. |
+| **Supplementary files** | `supplementary_files.zip` | The reproducibility artifact, minus the recorded frames. Same content as the Zenodo main archive; the frames are a gigabyte and live in the deposit. |
 | **Related file** | `main-marked.pdf` | Optional. Green text is new or rewritten this revision. Never upload this as the manuscript. |
 | **Related files** | the two ATIGB conference papers | Editor-facing only, per the dual-publication answer. See `../declarations/dual_publication.txt`. |
 
 Form fields are filled from `../declarations/*.txt`. Those are collected separately and are
 **not** shown to reviewers, so the real names in them are correct there. Do not upload the
 `declarations/` folder itself, and do not put it in the Zenodo deposit.
+
+## Why `supplementary_files.zip` is built from the deposit staging
+
+The v1.0 pair drifted: `upload/supplementary_files.zip` and `zenodo/artifact.zip` were meant to be
+the same package, and by June they were not, the supplementary copy carrying an older `main.tex`.
+Both are now written from one staging tree in `make_artifact.py`, in the same invocation, so they
+cannot disagree. The only difference is the filename.
 
 ## Why `paper.zip` is laid out the way it is
 
