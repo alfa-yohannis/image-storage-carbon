@@ -21,6 +21,9 @@ These fields are collected separately and are **not shown to reviewers**, so rea
 affiliations, and funders are fine here (unlike in the manuscript).
 
 > ⚠️ **Before submitting**
+> - **Zenodo deposit:** the record must be updated to artifact **v2.0** before submitting. It is
+>   now four files (`artifact-v2.0.zip` plus one `frames-*-v2.0.zip` per camera), built by
+>   `../zenodo/make_artifact.py`; the record previously held only the pre-revision `artifact.zip`.
 > - `data_availability.txt`: anonymized review link **added** (Zenodo draft preview). ⚠️ Also verify the Zenodo **record metadata** (Creators/Authors, Title, Description) shows **no real names** — the preview page reveals them even though the files inside are clean.
 > - `author_contributions.txt`: confirm the A.Y./A.W. split matches reality.
 > - **Dual publication / Related Files:** select "Yes" for dual publication (see

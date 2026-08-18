@@ -57,9 +57,11 @@ elapsed, a running total, and an ETA — e.g.:
 ```
 code/
 ├── run.py                  # single entry point (CLI + auto-venv + orchestration + timing)
-├── report.py               # three-way aggregator -> data/threeway_summary.csv + figures/
+├── run_realcase.sh         # runs the sweep against recorded camera frames, one camera at a time
+├── report.py               # three-way aggregator -> threeway_summary.csv + the six sweep figures
+├── report_realcase.py      # the four revision figures (two corpora / two hosts)
 ├── config.py               # WorkloadProfile, Settings, Locations (data/ & figures/ paths)
-├── payloads.py             # MediaPayload + PayloadFactory
+├── payloads.py             # MediaPayload + PayloadFactory + PayloadSource (collage/frames/fleet)
 ├── carbon.py               # CarbonTracker (CodeCarbon context manager)
 ├── results.py              # ResultWriter (CSV)
 ├── engine_base.py          # StorageEngine ABC — shared measurement protocol
@@ -110,12 +112,25 @@ the old long keys (`6k_uhd_image`, `360p_sd_image`, …) still resolve.
 Per-resolution carbon is measured **directly** (one tracker per engine/dimension/resolution),
 not estimated. Filenames are namespaced, e.g. `results_mongo_insert_summary_4k.csv`.
 
+**What the tracker encloses.** Each tracker covers an operation's *entire* measurement cell:
+the untimed warm-up, the database reset performed before every repetition, the repetitions
+themselves, and the storage-size and row-count queries taken between them. `report.py` divides
+by the repetition count, so the reported figure is an **amortised per-run cost**, not the energy
+of one isolated operation against a warm database. Note also that the insertion *timer* stops
+before the transaction commits while the tracker continues through it, so throughput and carbon
+do not share a boundary and should not be used to explain one another.
+
 ## Failover (retry-then-skip)
 
 Some `(engine, resolution)` cells legitimately fail — most notably **MongoDB at
-6K**, because each sample is one BSON document and BSON caps a document at
-**16 MiB**, which a 6K JPEG can exceed. The harness does **not** try to predict
-this; it lets the write fail and handles it generically for *every* engine:
+6K**. The mechanism is worth stating precisely, because it is easy to get wrong: a 6K JPEG is
+about 7.1 MB and sits comfortably inside the **16 MiB** BSON document limit on its own. What
+breaches the limit is *bucketing*. A native time-series collection groups several measurements
+sharing a metadata value into one underlying bucket document, which is itself bound by the same
+16 MiB ceiling, and three multi-megabyte frames do not fit. The document ceiling is fixed by the
+BSON specification; whether frames are packed past it depends on the bucketing configuration,
+and we use the default. The harness does **not** try to predict this; it lets the write fail and
+handles it generically for *every* engine:
 
 - Each cell is measured into memory first and **persisted only after a fully
   clean attempt**, so a failure never leaves partial or duplicated CSV rows.

@@ -87,7 +87,9 @@ python3 app.py --only ipcam     # IP camera only
 
 The window also carries the recording controls: choose a camera or **All cameras**, press
 **Start recording**, and the clock runs until you press stop or the configured duration
-elapses. Recordings land in `payloads/<timestamp>/`, one subfolder per camera. **Leave the
+elapses. Recordings land in `payloads/<timestamp>/`, one subfolder per camera, named after the
+camera with any network or device address removed, so a shared corpus does not carry the
+camera's address in every path: `Tapo_IP_Cam`, `Webcam_1`, `Webcam_2`. **Leave the
 window open for the duration**, since closing it stops the recorders.
 
 | Setting in `.env` | Meaning |
@@ -134,9 +136,10 @@ without changing anything else.
 | Minimum | 640×480 — a 640×360 request returns 640×480 |
 | Colour | Yes |
 
-This is the only camera here that genuinely does 1080p. The app currently runs it at 720p
-because `WEBCAM_WIDTH`/`WEBCAM_HEIGHT` apply to both webcams at once; raise them if you want
-full resolution and can accept webcam 1 capping at 720p.
+This is the only webcam here that genuinely does 1080p. Set `WEBCAM_2_WIDTH=1920` and
+`WEBCAM_2_HEIGHT=1080` to use it: the per-camera variables override `WEBCAM_WIDTH`/`WEBCAM_HEIGHT`,
+which remain the fallback for both, so webcam 1 can stay at its 720p maximum. The corpus published
+with the paper was recorded that way, with this camera at 1920×1080 and webcam 1 at 1280×720.
 
 ### Not used — `/dev/video2`, laptop infrared sensor
 

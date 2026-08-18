@@ -1,3 +1,6 @@
-Ethics approval: Not applicable (this study involves no human participants or animals).
+Ethics approval: Not applicable. The study involves no human participants and no animals, and no ethics approval was sought; we state the basis rather than assert an approval that was not obtained.
+
+The study uses a corpus of camera frames recorded specifically for it from an operational face-recognition-based attendance system. No recognition function was invoked and no enrolled identity, template, or record was accessed; the cameras were read directly and only the resulting image files were used, as binary payloads for storage measurement. Recording was carried out by an author in a space with no other person present, and no biometric template was computed or stored at any point. Every saved frame was then passed through a face detector (YuNet, confidence threshold 0.35) and none produced a detection. We report that as what it is: evidence that the corpus contains no detectable faces, not a proof that it contains no personal data, since a detector sweep cannot establish the latter. The frames are retained only as the study artifact and were not used for identification, recognition, or tracking.
+
 Consent to participate: Not applicable.
 Consent for publication: Not applicable.
