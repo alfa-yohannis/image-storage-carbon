@@ -1,0 +1,199 @@
+% Online Resource 1: material moved out of the main text to meet the journal's length limit.
+% Build after the main paper, so that ../main.aux exists: references of the form
+% \ref{M-...} resolve to the main text's numbering through the xr package.
+\documentclass[11pt]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{amsmath,amssymb}
+\usepackage{xr}
+\externaldocument[M-]{../main}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\lstlistingname}{Listing}
+\AtBeginDocument{\renewcommand{\thelstlisting}{S\arabic{lstlisting}}}
+
+\lstdefinelanguage{MongoJS}{
+  morekeywords={db, var, let, const, function, return, true, false, null, new,
+    ISODate, BinData, createCollection, createIndex, insertMany, find, sort,
+    limit, aggregate, timeseries, timeField, metaField, granularity},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]"
+}
+\lstdefinelanguage{PgSQL}[]{SQL}{
+  morekeywords={BIGSERIAL,TIMESTAMPTZ,BYTEA,BIGINT,INTEGER,TEXT},
+  morecomment=[l]{--}
+}
+\lstset{
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{blue}\bfseries,
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{red},
+  showstringspaces=false,
+  breaklines=true,
+  frame=lines,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  numbersep=6pt,
+  xleftmargin=1.4em,
+  framexleftmargin=1.4em,
+  backgroundcolor=\color{lightgray!10},
+}
+
+\title{Online Resource 1\\[0.4em]
+\large Carbon Footprint and Carbon-Aware Selection of Document-Oriented, Relational, and Hybrid Object-Relational Storage for Image-Based Time-Series Workloads in Green IoT\\[0.4em]
+\normalsize Material moved from the main text: schemas and queries, the real-case deployment and its capture application, the two computing environments, and the second-host results in full}
+\author{[Authors hidden for double-blind review]}
+\date{}
+
+\begin{document}
+\maketitle
+
+\noindent Section, table and figure numbers marked ``main text'' refer to the manuscript; those prefixed with S refer to this document.
+
+\section{Schemas and queries}\label{sec:esm-schemas}
+This section gives, for each architecture, the schema and the three data operations used by the benchmark harness, exactly as issued (columns abbreviated for space). In PostgreSQL (Listing~\ref{lst:pg}) the image is held inline in a \texttt{BYTEA} column of a TimescaleDB hypertable, where TOAST relocates it out-of-line automatically: insertion is a batched parameterised \texttt{INSERT} (50 rows per round-trip), bulk retrieval is a single time-range \texttt{SELECT} streamed through a server-side cursor, and the latest-frame read is an indexed \texttt{ORDER BY ts DESC LIMIT 1}. In MongoDB (Listing~\ref{lst:mongo}) each frame is one document in a native time-series collection with the image inline as \texttt{BinData}; the equivalent operations are an \texttt{insertMany}, a time-range \texttt{find} projected to the payload, and a \texttt{find}/\texttt{sort}/\texttt{limit} for the latest frame. The hybrid (PostMin, Listing~\ref{lst:pm}) shares the relational schema but replaces \texttt{payload\_data BYTEA} with a \texttt{minio\_object\_key TEXT} reference: on insertion the image is uploaded to MinIO with \texttt{put\_object} and only the key is written to PostgreSQL, and each read first fetches the key from PostgreSQL and then streams the object from MinIO with \texttt{get\_object}.
+
+\begin{lstlisting}[language=PgSQL,caption={PostgreSQL-BYTEA (Postgre): TimescaleDB schema and the three data operations (image stored inline as \texttt{BYTEA}).},label={lst:pg}]
+-- Schema: hypertable with the image inline as BYTEA (TOAST stores it out-of-line)
+CREATE TABLE sensor_media (
+  sample_id BIGSERIAL NOT NULL, device_id BIGINT NOT NULL, ts TIMESTAMPTZ NOT NULL,
+  payload_data BYTEA NOT NULL, payload_size_bytes INTEGER NOT NULL,
+  width INTEGER, height INTEGER, mime_type TEXT NOT NULL,
+  PRIMARY KEY (ts, sample_id));
+SELECT create_hypertable('sensor_media', by_range('ts'));
+CREATE INDEX idx_device_ts_desc ON sensor_media (device_id, ts DESC);
+
+-- Insert: batched, 50 rows per round-trip
+INSERT INTO sensor_media (device_id, ts, payload_data, payload_size_bytes, ...)
+VALUES (%s, %s, %s, %s, ...);
+
+-- Bulk retrieval: every frame in a time range
+SELECT ts, payload_data FROM sensor_media
+WHERE device_id = %s AND ts >= %s AND ts <= %s ORDER BY ts;
+
+-- Latest-frame read
+SELECT ts, payload_data FROM sensor_media
+WHERE device_id = %s ORDER BY ts DESC LIMIT 1;
+\end{lstlisting}
+
+\begin{lstlisting}[language=MongoJS,caption={MongoDB (Mongo): native time-series collection schema and the same operations (image stored inline as \texttt{BinData}).},label={lst:mongo}]
+// Schema: native time-series collection, image inline as BinData
+db.createCollection("sensor_media", {
+  timeseries: { timeField: "ts", metaField: "meta", granularity: "seconds" } });
+db.sensor_media.createIndex({ "meta.device_id": 1, "ts": -1 });
+
+// Insert: batched, 50 documents per insertMany; each frame is one document
+db.sensor_media.insertMany([
+  { meta: { device_id: 1, profile: "4k", payload_kind: "image" },
+    ts: ISODate("..."), payload_data: BinData(0, "<jpeg bytes>"),
+    payload_size_bytes: 3138125, width: 3840, height: 2160, mime_type: "image/jpeg" },
+  /* ... */ ]);
+
+// Bulk retrieval: every frame in a time range
+db.sensor_media.find(
+  { "meta.device_id": 1, ts: { $gte: tMin, $lte: tMax } },
+  { ts: 1, payload_data: 1, _id: 0 }).sort({ ts: 1 });
+
+// Latest-frame read
+db.sensor_media.find({ "meta.device_id": 1 }).sort({ ts: -1 }).limit(1);
+\end{lstlisting}
+
+\begin{lstlisting}[language=PgSQL,caption={PostgreSQL+MinIO (PostMin): the relational schema stores a MinIO object key in place of the image, so each operation pairs a PostgreSQL query with a MinIO HTTP transfer (\texttt{put\_object}/\texttt{get\_object}).},label={lst:pm}]
+-- Schema: as Postgre, but the image is replaced by a MinIO object key
+CREATE TABLE sensor_media (
+  sample_id BIGSERIAL NOT NULL, device_id BIGINT NOT NULL, ts TIMESTAMPTZ NOT NULL,
+  minio_object_key TEXT NOT NULL, payload_size_bytes INTEGER NOT NULL,
+  width INTEGER, height INTEGER, mime_type TEXT NOT NULL,
+  PRIMARY KEY (ts, sample_id));
+SELECT create_hypertable('sensor_media', by_range('ts'));
+CREATE INDEX idx_device_ts_desc ON sensor_media (device_id, ts DESC);
+
+-- Insert: upload the image to MinIO (HTTP PUT), then store only its key in Postgre
+minio.put_object(bucket, key, image_bytes, length, content_type);  -- HTTP PUT
+INSERT INTO sensor_media (device_id, ts, minio_object_key, payload_size_bytes, ...)
+VALUES (%s, %s, %s, %s, ...);
+
+-- Bulk retrieval: read the keys in a time range, then stream each object from MinIO
+SELECT ts, minio_object_key FROM sensor_media
+WHERE device_id = %s AND ts >= %s AND ts <= %s ORDER BY ts;
+-- for each key:  minio.get_object(bucket, key)                    -- HTTP GET
+
+-- Latest-frame read: newest key from Postgre, then a single object fetch
+SELECT ts, minio_object_key FROM sensor_media
+WHERE device_id = %s ORDER BY ts DESC LIMIT 1;
+-- then:  minio.get_object(bucket, key)                            -- HTTP GET
+\end{lstlisting}
+
+\section{The real-case deployment and its capture application}\label{sec:esm-deployment}
+The real-frame corpus of Section~\ref{M-subsec:realframes} (main text) comes from a face-recognition-based attendance system in operational use, with one networked camera delivering H.264 video over RTSP and two USB cameras delivering Motion JPEG. Table~\ref{tab:esm-deployment} characterises it.
+
+\begin{table}[htbp]
+\centering
+\caption{The face-recognition-based attendance system used as the real-case deployment. Frames were captured simultaneously from all three cameras for ten minutes at 5~frames per second. ``Recorded size'' is the mean encoded size of the frames \emph{as captured}, with standard deviation, at each camera's native resolution. It is not the payload the benchmark stores: frames are resized to the target profile and re-encoded before measurement, which changes their size, and the benchmark's payload figures are reported in Section~\ref{M-subsec:realframes} of the main text. The external USB camera is the only one of the three able to capture 1080p; the built-in camera's sensor is limited to $1280\times720$.}\label{tab:esm-deployment}
+\small
+\begin{tabular}{@{}llrrr@{}}
+\toprule
+Camera & Transport & Native resolution & Frames & Recorded size (KB) \\
+\midrule
+Networked (IP) & H.264 / RTSP & $1920\times1080$ & 2{,}845 & $163.5\pm1.3$ \\
+USB, external  & Motion JPEG  & $1920\times1080$ & 2{,}988 & $156.7\pm0.2$ \\
+USB, built-in  & Motion JPEG  & $1280\times720$  & 2{,}891 & $\phantom{0}69.3\pm0.3$ \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\parbox{0.9\linewidth}{\footnotesize All 8{,}724 frames were verified byte-distinct, and every frame was checked automatically for the presence of a face before use; none was found. The capture rate of 5~frames per second is the installation's own operating setting. A higher rate would multiply stored frames, and hence storage carbon, in direct proportion; whether it would improve recognition is a question about the inference pipeline and is not evaluated here.}
+\end{table}
+
+\paragraph{The capture application.} Because the corpus must be reproducible by others, the recorder is provided with the artifact and specified here. It is a small application, of the kind an operator of such a deployment would actually run, and its design choices matter to the measurements it produces.
+
+Each camera is read by an independent worker thread that pulls frames continuously and retains only the most recent one. Reading continuously is not an optimisation but a correctness requirement for the networked camera: a client that reads intermittently allows unread frames to accumulate inside the stream, and the recording drifts progressively behind real time. Frames are then retained at a configured rate rather than at the rate the camera delivers, because the cameras ignore a request to run slower; the application therefore reads every frame and keeps every $n$th, which is the only way to record a chosen rate faithfully. USB cameras are opened in Motion JPEG mode deliberately: in the uncompressed alternative the bus limits 1080p capture to roughly 10~frames per second, whereas in-camera compression sustains 30. Each retained frame is encoded once, at the same quality~90 used for the collage payloads, so that the two corpora remain comparable.
+
+Two properties of the corpus follow from the design rather than from inspection after the fact. Every frame is independently captured and encoded, so no two rows share content, which is precisely the property the single-image collage lacks. And a face detector is run over every saved frame at the end of a recording session, reporting any frame in which a face is found, so that a corpus intended for release is verified rather than assumed to be free of personal data.
+
+\section{The two computing environments}\label{sec:esm-env}
+The controlled collage sweep ran on the larger host; the collage sweep was repeated on the smaller host, and the real-frame corpus was measured there only (Table~\ref{tab:esm-env2}).
+
+\begin{table}[htbp]
+\centering
+\caption{The two computing environments. They differ in processor class, core count, and memory, so agreement between them is stronger evidence than a repeated measurement on one machine; they also differ in operating-system point release, container runtime, and Python patch level, so the comparison does not isolate the processor.}\label{tab:esm-env2}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+Component & Controlled benchmark & Second host (collage repeat, real frames) \\
+\midrule
+CPU & Core i9-11900H, 8C/16T & Core i7-1165G7, 4C/8T \\
+    & 2.50--4.90~GHz & 2.80--4.70~GHz \\
+RAM & 30.99~GB & 15.30~GB \\
+SSD & 1.9~TB Samsung NVMe & 477~GB Samsung NVMe \\
+OS & Ubuntu 24.04.4 LTS & Ubuntu 24.04.3 LTS (Linux 6.8.0) \\
+Containers & Docker 29.4.0, Compose v5.1.1 & Docker 29.7.2, Compose v5.4.0 \\
+MongoDB cache & 30~GB & 14~GB \\
+Runtime & Python 3.14 & Python 3.14.7, CodeCarbon 3.2.7 \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\parbox{0.9\linewidth}{\footnotesize Database images are identical in both environments: TimescaleDB \texttt{latest-pg15}, MongoDB 7.0, MinIO \texttt{latest}. The MongoDB cache is set to the same near-total fraction of host memory in each case ($\approx$97\% and $\approx$92\%), so that WiredTiger's behaviour under memory pressure, which drives its high-resolution collapse, is preserved rather than altered. Holding that proportion constant is what makes the two environments comparable, but on the smaller host it left no headroom (Section~\ref{sec:esm-memory}). Neither host was configured with swap.}
+\end{table}
+
+\section{The same payloads on two machines, in full}\label{sec:esm-twohosts}
+This section gives the full account summarised in Section~\ref{M-subsec:twohosts} of the main text, whose Table~\ref{M-tab:twohosts} holds the values. Repeating the entire collage sweep on a second, markedly smaller machine tests whether the ordering and its crossover are properties of the architectures or of the host. The payload sizes are identical on both machines, as are the database images and the benchmark protocol. The environments are not identical in every respect: the operating-system point release, container runtime, Python patch level, and storage device differ as well as the processor and memory (Table~\ref{tab:esm-env2}). We therefore attribute the difference to the environment rather than to the processor alone, while noting that the components held constant are the ones that determine how each architecture handles the payload.
+
+Three things follow. The ordering at small payloads is unchanged: MongoDB has the lowest ingestion carbon at every payload up to $0.80$~MB on both machines, so the low-payload conclusion does not depend on the host. MongoDB's advantage is exhausted earlier on the smaller environment. At $1.40$~MB it emits $0.41\times$ the hybrid's amortised ingestion carbon on the larger machine, a clear margin, but $1.01\times$ on the smaller, where the two are within $1\%$ of one another. We do not read that as establishing a crossover at $1.40$~MB: a $1\%$ separation is well inside the run-to-run variability of that environment, and each carbon value is a single integrated measurement. What the pair does establish is that a margin of more than a factor of two on one machine has disappeared on the other at the same payload, which is larger than the variability and is the direction the mechanism predicts, since the hybrid's benefit is keeping bytes out of the database write path and a smaller host is where that path is most constrained. Third, and not anticipated, MongoDB ceases to be runnable on the smaller machine from 4K upward (Section~\ref{sec:esm-memory}), while inline PostgreSQL and the hybrid complete every payload to $7.13$~MB on the same host in the same session.
+
+\section{A second infeasibility: memory, not protocol, in full}\label{sec:esm-memory}
+Section~\ref{M-subsec:bson} of the main text reports a limit that no hardware raises: under the tested time-series configuration, bucketed documents breach the 16~MiB BSON ceiling at 6K. Repeating the measurements on the smaller host revealed a second limit, of a different kind, and it is worth reporting because a practitioner will meet it long before the first.
+
+On the 15.30~GB host, MongoDB completed 360p through 1440p and then stopped being runnable. Its ingest rate on that host falls steeply with payload, from $3{,}973$~rows/s at 360p to $28.9$~rows/s at 1440p, and at 4K it collapsed to between three and five rows per second, roughly a thousandfold below its low-resolution rate. The insertion then terminated with the client reporting a broken connection. The system journal records the cause: the kernel invoked the out-of-memory killer against the \texttt{mongod} process twice, under a global memory constraint rather than a container limit. The cell was retried once, killed again, and recorded as skipped. Inline PostgreSQL and the hybrid completed every resolution to 6K on the same host, in the same session, without incident.
+
+The mechanism follows directly from how the architectures place the payload. WiredTiger keeps documents uncompressed in cache, so one insertion run of 2{,}000 frames at 4K constitutes $5.8$~GB of live working set that quality-90 JPEG gives it no way to shrink. PostgreSQL relocates the same payload out of line through TOAST, and the hybrid never admits it to the database at all, so neither accumulates a comparable resident set. What is a tuning parameter at small payloads becomes, at large ones, the difference between an architecture that runs and one that does not.
+
+Two qualifications belong with this. The cache was configured at $14$~GB, the same proportion of host memory as the $30$~GB used on the larger machine, so the ratio was held constant rather than the absolute size; and the host carried no swap, so memory pressure produced termination rather than degradation. A more conservative cache would likely have completed the sweep more slowly. That, however, is the point: the configuration that is unremarkable on a well-provisioned host is not survivable on a modest one, and it is MongoDB alone among the three that is sensitive to the difference.
+
+\end{document}
