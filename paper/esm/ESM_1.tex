@@ -201,7 +201,30 @@ Two qualifications belong with this. The cache was configured at $14$~GB, the sa
 
 
 \section{Throughput, latency and supporting comparisons}\label{sec:esm-perf}
-The main text reports insertion throughput, storage amplification and read latency in its Tables~\ref{M-tab:write} and~\ref{M-tab:read}; this section gives the corresponding figures (Figures~\ref{fig:storage}--\ref{fig:pointread}), the split of cumulative carbon between insertion and reads (Figure~\ref{fig:breakdown}), the annual totals for the deployment of Section~\ref{M-subsec:applied} (Figure~\ref{fig:applied2}), and the matched-size comparison of repeated and distinct frames summarised in Section~\ref{M-subsec:realframes} (Table~\ref{tab:repetition}).
+The main text reports insertion throughput, storage amplification and read latency in its Tables~\ref{M-tab:write} and~\ref{M-tab:read}; this section gives the corresponding figures (Figures~\ref{fig:storage}--\ref{fig:pointread}), the split of cumulative carbon between insertion and reads (Figure~\ref{fig:breakdown}), the annual totals for the deployment of Section~\ref{M-subsec:applied} (Figure~\ref{fig:applied2}), and the matched-size comparison of repeated and distinct frames summarised in Section~\ref{M-subsec:realframes} (Table~\ref{tab:repetition}), and the latest-frame reads whose columns were dropped from the main text's Tables~\ref{M-tab:read} and~\ref{M-tab:dimcarbon} (Table~\ref{tab:esm-pointread}).
+
+\begin{table}[htbp]
+\centering
+\caption{Latest-frame reads: latency (ms, mean of five runs) and carbon per read (mg~CO\textsubscript{2}eq) on the larger host. Bold marks the best in each row and quantity; carbon is under 1~mg throughout.}\label{tab:esm-pointread}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+ & \multicolumn{3}{c}{Latency (ms)} & \multicolumn{3}{c}{Carbon (mg)} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Res. & Postgre & Mongo & PostMin & Postgre & Mongo & PostMin \\
+\midrule
+360p  & 1.27 & 3.37 & \textbf{1.09} & 0.04 & \textbf{0.03} & 0.05 \\
+480p  & \textbf{0.97} & 3.67 & 1.93 & 0.05 & \textbf{0.03} & 0.06 \\
+720p  & 1.78 & 4.30 & \textbf{1.22} & 0.06 & \textbf{0.05} & 0.06 \\
+1080p & 3.88 & 5.17 & \textbf{1.78} & 0.09 & 0.08 & \textbf{0.06} \\
+1440p & 6.52 & 7.74 & \textbf{1.80} & 0.13 & 0.11 & \textbf{0.06} \\
+4K    & 17.06 & 25.38 & \textbf{2.12} & 0.25 & 0.32 & \textbf{0.07} \\
+5K    & 29.55 & 69.83 & \textbf{3.31} & 0.39 & 0.88 & \textbf{0.09} \\
+6K    & 39.59 & -- & \textbf{5.15} & 0.51 & -- & \textbf{0.11} \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{figure}[htbp]
 \centering
