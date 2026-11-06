@@ -4,6 +4,8 @@
 \documentclass[11pt]{article}
 \usepackage[margin=2.5cm]{geometry}
 \usepackage{booktabs}
+\usepackage{graphicx}
+\graphicspath{{../../figures/}}
 \usepackage{array}
 \usepackage{xcolor}
 \usepackage{listings}
@@ -11,6 +13,7 @@
 \usepackage{xr}
 \externaldocument[M-]{../main}
 \renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
 \renewcommand{\thesection}{S\arabic{section}}
 \renewcommand{\lstlistingname}{Listing}
 \AtBeginDocument{\renewcommand{\thelstlisting}{S\arabic{lstlisting}}}
@@ -195,5 +198,67 @@ On the 15.30~GB host, MongoDB completed 360p through 1440p and then stopped bein
 The mechanism follows directly from how the architectures place the payload. WiredTiger keeps documents uncompressed in cache, so one insertion run of 2{,}000 frames at 4K constitutes $5.8$~GB of live working set that quality-90 JPEG gives it no way to shrink. PostgreSQL relocates the same payload out of line through TOAST, and the hybrid never admits it to the database at all, so neither accumulates a comparable resident set. What is a tuning parameter at small payloads becomes, at large ones, the difference between an architecture that runs and one that does not.
 
 Two qualifications belong with this. The cache was configured at $14$~GB, the same proportion of host memory as the $30$~GB used on the larger machine, so the ratio was held constant rather than the absolute size; and the host carried no swap, so memory pressure produced termination rather than degradation. A more conservative cache would likely have completed the sweep more slowly. That, however, is the point: the configuration that is unremarkable on a well-provisioned host is not survivable on a modest one, and it is MongoDB alone among the three that is sensitive to the difference.
+
+
+\section{Throughput, latency and supporting comparisons}\label{sec:esm-perf}
+The main text reports insertion throughput, storage amplification and read latency in its Tables~\ref{M-tab:write} and~\ref{M-tab:read}; this section gives the corresponding figures (Figures~\ref{fig:storage}--\ref{fig:pointread}), the split of cumulative carbon between insertion and reads (Figure~\ref{fig:breakdown}), the annual totals for the deployment of Section~\ref{M-subsec:applied} (Figure~\ref{fig:applied2}), and the matched-size comparison of repeated and distinct frames summarised in Section~\ref{M-subsec:realframes} (Table~\ref{tab:repetition}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{storage_amplification.pdf}
+\caption{Storage amplification (disk space used $\div$ raw image size; the dashed line marks $1.0\times$). PostgreSQL and the hybrid stay flat near $1.0\times$; MongoDB's reading rises to $3.0\times$ at 5K, with embodied-carbon consequences (main text, Section~\ref{M-subsec:carbon}). Its readings below $1.0\times$ at small payloads are single \texttt{collStats} values taken without a checkpoint and are uncertain (main text, Section~\ref{M-subsec:threats}). The axis is linear because those readings reach zero, which a logarithmic axis cannot show.}\label{fig:storage}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{insert_throughput.pdf}
+\caption{Insert throughput (records per second; mean$\pm$standard deviation over 5 runs), shown on a linear vertical axis (left) and a logarithmic one (right); the logarithmic panel makes the low-resolution behaviour visible. MongoDB dominates at low resolution but collapses at high resolution; the hybrid (PostMin) is flattest and leads from 4K. MongoDB is omitted at 6K (Section~\ref{M-subsec:bson}).}\label{fig:insert}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{retrieval_latency.pdf}
+\caption{Bulk-retrieval latency---the time to read back all 2{,}000 images in a range (milliseconds; mean$\pm$standard deviation), on linear (left) and logarithmic (right) axes. Inline PostgreSQL degrades steeply; the hybrid scales best.}\label{fig:retrieval}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{point_read_latency.pdf}
+\caption{Latest-frame read latency---the time to fetch the single most recent image (milliseconds; mean$\pm$standard deviation), on linear (left) and logarithmic (right) axes. The hybrid stays near-flat; the inline architectures climb with image size.}\label{fig:pointread}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\linewidth]{carbon_breakdown.pdf}
+\caption{Cumulative carbon over 360p--5K, split into insertion and read contributions. The hybrid's read share is small because objects stream over HTTP rather than through the database.}\label{fig:breakdown}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{applied_annual.pdf}
+\caption{Annual carbon for one camera of the deployment capturing continuously at 5~frames per second, counting ingestion alone and ingestion together with retrieval and latest-frame reads. The selection inverts between the two: a deployment that stores continuously and reads rarely, as this one does, is governed by the left-hand bars and selects PostgreSQL, whereas weighting reads equally would select MongoDB. This is why operating regime forms an axis of Table~\ref{M-tab:decision} alongside payload size.}\label{fig:applied2}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\caption{The effect of storing one repeated image rather than distinct ones, at matched payload size on the same host. Values are ingestion carbon in mg~CO\textsubscript{2}eq per frame, with MongoDB's storage amplification beneath. MongoDB shows by far the largest change, and the only one in the opposite direction: it costs more and stores more with distinct frames, whereas the other two cost less.}\label{tab:repetition}
+\small
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+ & \multicolumn{3}{c}{$\approx$0.09~MB per frame} & \multicolumn{3}{c}{$\approx$0.15~MB per frame} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Architecture & repeated & distinct & ratio & repeated & distinct & ratio \\
+\midrule
+Postgre & 0.0087 & 0.0070 & 0.81 & 0.0146 & 0.0110 & 0.75 \\
+PostMin & 0.0277 & 0.0168 & 0.61 & 0.0431 & 0.0228 & 0.53 \\
+\textbf{Mongo} & \textbf{0.0020} & \textbf{0.0048} & \textbf{2.43} & \textbf{0.0049} & \textbf{0.0142} & \textbf{2.90} \\
+\midrule
+Mongo amplification & 0.011 & 0.274 & 24.9 & 0.059 & 0.924 & 15.7 \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\parbox{0.92\linewidth}{\footnotesize PostgreSQL and the hybrid become \emph{cheaper} with distinct frames, by $19$--$25\%$ and $39$--$47\%$ respectively. These are not negligible differences, and we do not attribute them to noise; the compared payloads are matched only approximately, at $0.093$ against $0.088$~MB and $0.164$ against $0.149$~MB, size and distinctness are not fully separable in this pairing, and each value is a single integrated measurement, so no per-cell interval is available. What distinguishes MongoDB is the \emph{sign}: it is the only architecture that becomes more expensive, and it does so while its storage amplification rises by more than an order of magnitude. This is consistent with cross-row compression: MongoDB alone groups many frames into one bucket document, where repeated content can be compressed together, whereas TOAST compresses per value and MinIO stores per object. The amplification ratios rest on single readings that are uncertain at small payloads (main text, Section~\ref{M-subsec:threats}).}
+\end{table}
 
 \end{document}
