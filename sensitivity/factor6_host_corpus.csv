@@ -1,0 +1,13 @@
+dataset,label,mix,greenest_by_payload
+i9_collage,"i9, collage",ingestion-only,Mongo 360p--1440p; PostMin 4K--6K
+i9_collage,"i9, collage",equal-weight,Mongo 360p--1440p; PostMin 4K--6K
+i7_collage,"i7, collage",ingestion-only,Mongo 360p--1080p; PostMin 1440p--6K
+i7_collage,"i7, collage",equal-weight,Mongo 360p--1080p; PostMin 1440p--6K
+i7_networked,"i7, networked camera",ingestion-only,Mongo 360p--720p; Postgre 1080p
+i7_networked,"i7, networked camera",equal-weight,Mongo 360p--1080p
+i7_builtin,"i7, built-in camera",ingestion-only,Mongo 360p--720p
+i7_builtin,"i7, built-in camera",equal-weight,Mongo 360p--720p
+i7_usb,"i7, USB camera",ingestion-only,Mongo 360p--1080p
+i7_usb,"i7, USB camera",equal-weight,Mongo 360p--1080p
+i7_fleet,"i7, three cameras interleaved",ingestion-only,Mongo 1080p
+i7_fleet,"i7, three cameras interleaved",equal-weight,Mongo 1080p

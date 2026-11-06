@@ -1,0 +1,49 @@
+case,payload_mb,grid,g_per_kwh,pue,cameras,greenest,greenest_kg_yr,runner_up,saving_vs_runner_up_kg_yr,saving_vs_runner_up_pct,costliest,saving_vs_costliest_kg_yr,saving_vs_costliest_pct
+deployment payload,0.149,Indonesia,676,1.0,1,Postgre,1.73,Mongo,0.51,22.6%,PostMin,1.86,51.8%
+deployment payload,0.149,Indonesia,676,1.0,10,Postgre,17.32,Mongo,5.06,22.6%,PostMin,18.65,51.8%
+deployment payload,0.149,Indonesia,676,1.0,100,Postgre,173.22,Mongo,50.64,22.6%,PostMin,186.48,51.8%
+deployment payload,0.149,Indonesia,676,1.0,1000,Postgre,1732.18,Mongo,506.37,22.6%,PostMin,1864.80,51.8%
+deployment payload,0.149,Indonesia,676,1.5,1,Postgre,2.60,Mongo,0.76,22.6%,PostMin,2.80,51.8%
+deployment payload,0.149,Indonesia,676,1.5,10,Postgre,25.98,Mongo,7.60,22.6%,PostMin,27.97,51.8%
+deployment payload,0.149,Indonesia,676,1.5,100,Postgre,259.83,Mongo,75.96,22.6%,PostMin,279.72,51.8%
+deployment payload,0.149,Indonesia,676,1.5,1000,Postgre,2598.27,Mongo,759.56,22.6%,PostMin,2797.20,51.8%
+deployment payload,0.149,EU-27 average,230,1.0,1,Postgre,0.59,Mongo,0.17,22.6%,PostMin,0.63,51.8%
+deployment payload,0.149,EU-27 average,230,1.0,10,Postgre,5.89,Mongo,1.72,22.6%,PostMin,6.34,51.8%
+deployment payload,0.149,EU-27 average,230,1.0,100,Postgre,58.94,Mongo,17.23,22.6%,PostMin,63.45,51.8%
+deployment payload,0.149,EU-27 average,230,1.0,1000,Postgre,589.35,Mongo,172.29,22.6%,PostMin,634.47,51.8%
+deployment payload,0.149,EU-27 average,230,1.5,1,Postgre,0.88,Mongo,0.26,22.6%,PostMin,0.95,51.8%
+deployment payload,0.149,EU-27 average,230,1.5,10,Postgre,8.84,Mongo,2.58,22.6%,PostMin,9.52,51.8%
+deployment payload,0.149,EU-27 average,230,1.5,100,Postgre,88.40,Mongo,25.84,22.6%,PostMin,95.17,51.8%
+deployment payload,0.149,EU-27 average,230,1.5,1000,Postgre,884.03,Mongo,258.43,22.6%,PostMin,951.71,51.8%
+deployment payload,0.149,Sweden,41,1.0,1,Postgre,0.11,Mongo,0.03,22.6%,PostMin,0.11,51.8%
+deployment payload,0.149,Sweden,41,1.0,10,Postgre,1.05,Mongo,0.31,22.6%,PostMin,1.13,51.8%
+deployment payload,0.149,Sweden,41,1.0,100,Postgre,10.51,Mongo,3.07,22.6%,PostMin,11.31,51.8%
+deployment payload,0.149,Sweden,41,1.0,1000,Postgre,105.06,Mongo,30.71,22.6%,PostMin,113.10,51.8%
+deployment payload,0.149,Sweden,41,1.5,1,Postgre,0.16,Mongo,0.05,22.6%,PostMin,0.17,51.8%
+deployment payload,0.149,Sweden,41,1.5,10,Postgre,1.58,Mongo,0.46,22.6%,PostMin,1.70,51.8%
+deployment payload,0.149,Sweden,41,1.5,100,Postgre,15.76,Mongo,4.61,22.6%,PostMin,16.97,51.8%
+deployment payload,0.149,Sweden,41,1.5,1000,Postgre,157.59,Mongo,46.07,22.6%,PostMin,169.65,51.8%
+4K collage payload,2.993,Indonesia,676,1.0,1,PostMin,36.58,Postgre,26.38,41.9%,Mongo,43.24,54.2%
+4K collage payload,2.993,Indonesia,676,1.0,10,PostMin,365.77,Postgre,263.81,41.9%,Mongo,432.38,54.2%
+4K collage payload,2.993,Indonesia,676,1.0,100,PostMin,3657.75,Postgre,2638.07,41.9%,Mongo,4323.82,54.2%
+4K collage payload,2.993,Indonesia,676,1.0,1000,PostMin,36577.46,Postgre,26380.75,41.9%,Mongo,43238.24,54.2%
+4K collage payload,2.993,Indonesia,676,1.5,1,PostMin,54.87,Postgre,39.57,41.9%,Mongo,64.86,54.2%
+4K collage payload,2.993,Indonesia,676,1.5,10,PostMin,548.66,Postgre,395.71,41.9%,Mongo,648.57,54.2%
+4K collage payload,2.993,Indonesia,676,1.5,100,PostMin,5486.62,Postgre,3957.11,41.9%,Mongo,6485.74,54.2%
+4K collage payload,2.993,Indonesia,676,1.5,1000,PostMin,54866.20,Postgre,39571.12,41.9%,Mongo,64857.36,54.2%
+4K collage payload,2.993,EU-27 average,230,1.0,1,PostMin,12.44,Postgre,8.98,41.9%,Mongo,14.71,54.2%
+4K collage payload,2.993,EU-27 average,230,1.0,10,PostMin,124.45,Postgre,89.76,41.9%,Mongo,147.11,54.2%
+4K collage payload,2.993,EU-27 average,230,1.0,100,PostMin,1244.50,Postgre,897.57,41.9%,Mongo,1471.12,54.2%
+4K collage payload,2.993,EU-27 average,230,1.0,1000,PostMin,12445.00,Postgre,8975.70,41.9%,Mongo,14711.23,54.2%
+4K collage payload,2.993,EU-27 average,230,1.5,1,PostMin,18.67,Postgre,13.46,41.9%,Mongo,22.07,54.2%
+4K collage payload,2.993,EU-27 average,230,1.5,10,PostMin,186.67,Postgre,134.64,41.9%,Mongo,220.67,54.2%
+4K collage payload,2.993,EU-27 average,230,1.5,100,PostMin,1866.75,Postgre,1346.35,41.9%,Mongo,2206.69,54.2%
+4K collage payload,2.993,EU-27 average,230,1.5,1000,PostMin,18667.49,Postgre,13463.55,41.9%,Mongo,22066.85,54.2%
+4K collage payload,2.993,Sweden,41,1.0,1,PostMin,2.22,Postgre,1.60,41.9%,Mongo,2.62,54.2%
+4K collage payload,2.993,Sweden,41,1.0,10,PostMin,22.18,Postgre,16.00,41.9%,Mongo,26.22,54.2%
+4K collage payload,2.993,Sweden,41,1.0,100,PostMin,221.85,Postgre,160.00,41.9%,Mongo,262.24,54.2%
+4K collage payload,2.993,Sweden,41,1.0,1000,PostMin,2218.46,Postgre,1600.02,41.9%,Mongo,2622.44,54.2%
+4K collage payload,2.993,Sweden,41,1.5,1,PostMin,3.33,Postgre,2.40,41.9%,Mongo,3.93,54.2%
+4K collage payload,2.993,Sweden,41,1.5,10,PostMin,33.28,Postgre,24.00,41.9%,Mongo,39.34,54.2%
+4K collage payload,2.993,Sweden,41,1.5,100,PostMin,332.77,Postgre,240.00,41.9%,Mongo,393.37,54.2%
+4K collage payload,2.993,Sweden,41,1.5,1000,PostMin,3327.68,Postgre,2400.02,41.9%,Mongo,3933.66,54.2%

@@ -1,0 +1,673 @@
+dataset,profile,mix,amplification,factor,kg_per_gb,retention_days,greenest_operational,greenest_with_embodied,changes,embodied_over_operational,breakeven_retention_days,Postgre_operational_kg_yr,PostMin_operational_kg_yr,Mongo_operational_kg_yr,Postgre_embodied_kg_yr,PostMin_embodied_kg_yr,Mongo_embodied_kg_yr
+i9_collage,360p,ingestion-only,measured,HDD,0.02,30,Mongo,Mongo,no,0.0,never,2.142,13.181,0.427,5.03,4.83,0.00
+i9_collage,360p,ingestion-only,measured,HDD,0.02,90,Mongo,Mongo,no,0.0,never,2.142,13.181,0.427,15.09,14.48,0.01
+i9_collage,360p,ingestion-only,measured,HDD,0.02,365,Mongo,Mongo,no,0.1,never,2.142,13.181,0.427,61.19,58.72,0.05
+i9_collage,360p,ingestion-only,measured,SSD,0.16,30,Mongo,Mongo,no,0.1,never,2.142,13.181,0.427,40.24,38.61,0.03
+i9_collage,360p,ingestion-only,measured,SSD,0.16,90,Mongo,Mongo,no,0.2,never,2.142,13.181,0.427,120.71,115.83,0.09
+i9_collage,360p,ingestion-only,measured,SSD,0.16,365,Mongo,Mongo,no,0.9,never,2.142,13.181,0.427,489.55,469.74,0.37
+i9_collage,360p,ingestion-only,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,11.3,never,2.142,13.181,0.427,5.03,4.83,4.81
+i9_collage,360p,ingestion-only,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,33.8,never,2.142,13.181,0.427,15.09,14.48,14.44
+i9_collage,360p,ingestion-only,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,137.1,never,2.142,13.181,0.427,61.19,58.72,58.55
+i9_collage,360p,ingestion-only,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,90.2,never,2.142,13.181,0.427,40.24,38.61,38.50
+i9_collage,360p,ingestion-only,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,270.5,never,2.142,13.181,0.427,120.71,115.83,115.49
+i9_collage,360p,ingestion-only,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,1097.2,never,2.142,13.181,0.427,489.55,469.74,468.38
+i9_collage,360p,equal-weight,measured,HDD,0.02,30,Mongo,Mongo,no,0.0,never,3.013,14.715,0.633,5.03,4.83,0.00
+i9_collage,360p,equal-weight,measured,HDD,0.02,90,Mongo,Mongo,no,0.0,never,3.013,14.715,0.633,15.09,14.48,0.01
+i9_collage,360p,equal-weight,measured,HDD,0.02,365,Mongo,Mongo,no,0.1,never,3.013,14.715,0.633,61.19,58.72,0.05
+i9_collage,360p,equal-weight,measured,SSD,0.16,30,Mongo,Mongo,no,0.0,never,3.013,14.715,0.633,40.24,38.61,0.03
+i9_collage,360p,equal-weight,measured,SSD,0.16,90,Mongo,Mongo,no,0.1,never,3.013,14.715,0.633,120.71,115.83,0.09
+i9_collage,360p,equal-weight,measured,SSD,0.16,365,Mongo,Mongo,no,0.6,never,3.013,14.715,0.633,489.55,469.74,0.37
+i9_collage,360p,equal-weight,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,7.6,never,3.013,14.715,0.633,5.03,4.83,4.81
+i9_collage,360p,equal-weight,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,22.8,never,3.013,14.715,0.633,15.09,14.48,14.44
+i9_collage,360p,equal-weight,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,92.5,never,3.013,14.715,0.633,61.19,58.72,58.55
+i9_collage,360p,equal-weight,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,60.8,never,3.013,14.715,0.633,40.24,38.61,38.50
+i9_collage,360p,equal-weight,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,182.5,never,3.013,14.715,0.633,120.71,115.83,115.49
+i9_collage,360p,equal-weight,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,740.1,never,3.013,14.715,0.633,489.55,469.74,468.38
+i9_collage,480p,ingestion-only,measured,HDD,0.02,30,Mongo,Mongo,no,0.0,never,3.148,21.938,0.698,8.89,8.54,0.00
+i9_collage,480p,ingestion-only,measured,HDD,0.02,90,Mongo,Mongo,no,0.0,never,3.148,21.938,0.698,26.68,25.61,0.00
+i9_collage,480p,ingestion-only,measured,HDD,0.02,365,Mongo,Mongo,no,0.0,never,3.148,21.938,0.698,108.19,103.84,0.00
+i9_collage,480p,ingestion-only,measured,SSD,0.16,30,Mongo,Mongo,no,0.0,never,3.148,21.938,0.698,71.14,68.28,0.00
+i9_collage,480p,ingestion-only,measured,SSD,0.16,90,Mongo,Mongo,no,0.0,never,3.148,21.938,0.698,213.41,204.84,0.00
+i9_collage,480p,ingestion-only,measured,SSD,0.16,365,Mongo,Mongo,no,0.0,never,3.148,21.938,0.698,865.51,830.76,0.00
+i9_collage,480p,ingestion-only,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,12.2,never,3.148,21.938,0.698,8.89,8.54,8.52
+i9_collage,480p,ingestion-only,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,36.6,never,3.148,21.938,0.698,26.68,25.61,25.56
+i9_collage,480p,ingestion-only,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,148.5,never,3.148,21.938,0.698,108.19,103.84,103.68
+i9_collage,480p,ingestion-only,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,97.6,never,3.148,21.938,0.698,71.14,68.28,68.17
+i9_collage,480p,ingestion-only,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,292.9,never,3.148,21.938,0.698,213.41,204.84,204.52
+i9_collage,480p,ingestion-only,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,1188.0,never,3.148,21.938,0.698,865.51,830.76,829.43
+i9_collage,480p,equal-weight,measured,HDD,0.02,30,Mongo,Mongo,no,0.0,never,4.630,23.507,1.170,8.89,8.54,0.00
+i9_collage,480p,equal-weight,measured,HDD,0.02,90,Mongo,Mongo,no,0.0,never,4.630,23.507,1.170,26.68,25.61,0.00
+i9_collage,480p,equal-weight,measured,HDD,0.02,365,Mongo,Mongo,no,0.0,never,4.630,23.507,1.170,108.19,103.84,0.00
+i9_collage,480p,equal-weight,measured,SSD,0.16,30,Mongo,Mongo,no,0.0,never,4.630,23.507,1.170,71.14,68.28,0.00
+i9_collage,480p,equal-weight,measured,SSD,0.16,90,Mongo,Mongo,no,0.0,never,4.630,23.507,1.170,213.41,204.84,0.00
+i9_collage,480p,equal-weight,measured,SSD,0.16,365,Mongo,Mongo,no,0.0,never,4.630,23.507,1.170,865.51,830.76,0.00
+i9_collage,480p,equal-weight,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,7.3,never,4.630,23.507,1.170,8.89,8.54,8.52
+i9_collage,480p,equal-weight,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,21.8,never,4.630,23.507,1.170,26.68,25.61,25.56
+i9_collage,480p,equal-weight,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,88.6,never,4.630,23.507,1.170,108.19,103.84,103.68
+i9_collage,480p,equal-weight,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,58.3,never,4.630,23.507,1.170,71.14,68.28,68.17
+i9_collage,480p,equal-weight,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,174.8,never,4.630,23.507,1.170,213.41,204.84,204.52
+i9_collage,480p,equal-weight,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,708.9,never,4.630,23.507,1.170,865.51,830.76,829.43
+i9_collage,720p,ingestion-only,measured,HDD,0.02,30,Mongo,Mongo,no,1.0,never,7.413,23.239,1.942,19.66,18.93,1.90
+i9_collage,720p,ingestion-only,measured,HDD,0.02,90,Mongo,Mongo,no,2.9,never,7.413,23.239,1.942,58.98,56.79,5.70
+i9_collage,720p,ingestion-only,measured,HDD,0.02,365,Mongo,Mongo,no,11.9,never,7.413,23.239,1.942,239.21,230.30,23.13
+i9_collage,720p,ingestion-only,measured,SSD,0.16,30,Mongo,Mongo,no,7.8,never,7.413,23.239,1.942,157.29,151.43,15.21
+i9_collage,720p,ingestion-only,measured,SSD,0.16,90,Mongo,Mongo,no,23.5,never,7.413,23.239,1.942,471.86,454.29,45.62
+i9_collage,720p,ingestion-only,measured,SSD,0.16,365,Mongo,Mongo,no,95.3,never,7.413,23.239,1.942,1913.66,1842.41,185.03
+i9_collage,720p,ingestion-only,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,9.7,never,7.413,23.239,1.942,19.66,18.93,18.92
+i9_collage,720p,ingestion-only,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,29.2,never,7.413,23.239,1.942,58.98,56.79,56.75
+i9_collage,720p,ingestion-only,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,118.5,never,7.413,23.239,1.942,239.21,230.30,230.14
+i9_collage,720p,ingestion-only,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,77.9,never,7.413,23.239,1.942,157.29,151.43,151.33
+i9_collage,720p,ingestion-only,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,233.7,never,7.413,23.239,1.942,471.86,454.29,453.98
+i9_collage,720p,ingestion-only,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,947.8,never,7.413,23.239,1.942,1913.66,1842.41,1841.12
+i9_collage,720p,equal-weight,measured,HDD,0.02,30,Mongo,Mongo,no,0.6,never,10.532,25.038,3.063,19.66,18.93,1.90
+i9_collage,720p,equal-weight,measured,HDD,0.02,90,Mongo,Mongo,no,1.9,never,10.532,25.038,3.063,58.98,56.79,5.70
+i9_collage,720p,equal-weight,measured,HDD,0.02,365,Mongo,Mongo,no,7.6,never,10.532,25.038,3.063,239.21,230.30,23.13
+i9_collage,720p,equal-weight,measured,SSD,0.16,30,Mongo,Mongo,no,5.0,never,10.532,25.038,3.063,157.29,151.43,15.21
+i9_collage,720p,equal-weight,measured,SSD,0.16,90,Mongo,Mongo,no,14.9,never,10.532,25.038,3.063,471.86,454.29,45.62
+i9_collage,720p,equal-weight,measured,SSD,0.16,365,Mongo,Mongo,no,60.4,never,10.532,25.038,3.063,1913.66,1842.41,185.03
+i9_collage,720p,equal-weight,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,6.2,never,10.532,25.038,3.063,19.66,18.93,18.92
+i9_collage,720p,equal-weight,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,18.5,never,10.532,25.038,3.063,58.98,56.79,56.75
+i9_collage,720p,equal-weight,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,75.1,never,10.532,25.038,3.063,239.21,230.30,230.14
+i9_collage,720p,equal-weight,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,49.4,never,10.532,25.038,3.063,157.29,151.43,151.33
+i9_collage,720p,equal-weight,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,148.2,never,10.532,25.038,3.063,471.86,454.29,453.98
+i9_collage,720p,equal-weight,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,601.1,never,10.532,25.038,3.063,1913.66,1842.41,1841.12
+i9_collage,1080p,ingestion-only,measured,HDD,0.02,30,Mongo,Mongo,no,0.9,never,16.310,26.903,4.541,43.32,41.72,4.19
+i9_collage,1080p,ingestion-only,measured,HDD,0.02,90,Mongo,Mongo,no,2.8,never,16.310,26.903,4.541,129.97,125.15,12.57
+i9_collage,1080p,ingestion-only,measured,HDD,0.02,365,Mongo,Mongo,no,11.2,never,16.310,26.903,4.541,527.08,507.55,50.99
+i9_collage,1080p,ingestion-only,measured,SSD,0.16,30,Mongo,Mongo,no,7.4,never,16.310,26.903,4.541,346.57,333.73,33.53
+i9_collage,1080p,ingestion-only,measured,SSD,0.16,90,Mongo,Mongo,no,22.2,never,16.310,26.903,4.541,1039.72,1001.19,100.59
+i9_collage,1080p,ingestion-only,measured,SSD,0.16,365,Mongo,Mongo,no,89.8,never,16.310,26.903,4.541,4216.65,4060.37,407.94
+i9_collage,1080p,ingestion-only,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,9.2,never,16.310,26.903,4.541,43.32,41.72,41.70
+i9_collage,1080p,ingestion-only,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,27.6,never,16.310,26.903,4.541,129.97,125.15,125.11
+i9_collage,1080p,ingestion-only,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,111.7,never,16.310,26.903,4.541,527.08,507.55,507.39
+i9_collage,1080p,ingestion-only,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,73.5,never,16.310,26.903,4.541,346.57,333.73,333.63
+i9_collage,1080p,ingestion-only,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,220.4,never,16.310,26.903,4.541,1039.72,1001.19,1000.89
+i9_collage,1080p,ingestion-only,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,893.9,never,16.310,26.903,4.541,4216.65,4060.37,4059.15
+i9_collage,1080p,equal-weight,measured,HDD,0.02,30,Mongo,Mongo,no,0.6,never,23.768,29.211,7.211,43.32,41.72,4.19
+i9_collage,1080p,equal-weight,measured,HDD,0.02,90,Mongo,Mongo,no,1.7,never,23.768,29.211,7.211,129.97,125.15,12.57
+i9_collage,1080p,equal-weight,measured,HDD,0.02,365,Mongo,Mongo,no,7.1,never,23.768,29.211,7.211,527.08,507.55,50.99
+i9_collage,1080p,equal-weight,measured,SSD,0.16,30,Mongo,Mongo,no,4.6,never,23.768,29.211,7.211,346.57,333.73,33.53
+i9_collage,1080p,equal-weight,measured,SSD,0.16,90,Mongo,Mongo,no,13.9,never,23.768,29.211,7.211,1039.72,1001.19,100.59
+i9_collage,1080p,equal-weight,measured,SSD,0.16,365,Mongo,Mongo,no,56.6,never,23.768,29.211,7.211,4216.65,4060.37,407.94
+i9_collage,1080p,equal-weight,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,5.8,never,23.768,29.211,7.211,43.32,41.72,41.70
+i9_collage,1080p,equal-weight,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,17.4,never,23.768,29.211,7.211,129.97,125.15,125.11
+i9_collage,1080p,equal-weight,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,70.4,never,23.768,29.211,7.211,527.08,507.55,507.39
+i9_collage,1080p,equal-weight,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,46.3,never,23.768,29.211,7.211,346.57,333.73,333.63
+i9_collage,1080p,equal-weight,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,138.8,never,23.768,29.211,7.211,1039.72,1001.19,1000.89
+i9_collage,1080p,equal-weight,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,562.9,never,23.768,29.211,7.211,4216.65,4060.37,4059.15
+i9_collage,1440p,ingestion-only,measured,HDD,0.02,30,Mongo,Mongo,no,1.6,never,29.007,29.016,11.881,75.36,72.55,19.53
+i9_collage,1440p,ingestion-only,measured,HDD,0.02,90,Mongo,Mongo,no,4.9,never,29.007,29.016,11.881,226.08,217.64,58.58
+i9_collage,1440p,ingestion-only,measured,HDD,0.02,365,Mongo,Mongo,no,20.0,never,29.007,29.016,11.881,916.89,882.65,237.56
+i9_collage,1440p,ingestion-only,measured,SSD,0.16,30,Mongo,Mongo,no,13.1,never,29.007,29.016,11.881,602.89,580.37,156.21
+i9_collage,1440p,ingestion-only,measured,SSD,0.16,90,Mongo,Mongo,no,39.4,never,29.007,29.016,11.881,1808.67,1741.12,468.62
+i9_collage,1440p,ingestion-only,measured,SSD,0.16,365,Mongo,Mongo,no,160.0,never,29.007,29.016,11.881,7335.15,7061.23,1900.50
+i9_collage,1440p,ingestion-only,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,6.1,never,29.007,29.016,11.881,75.36,72.55,72.53
+i9_collage,1440p,ingestion-only,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,18.3,never,29.007,29.016,11.881,226.08,217.64,217.60
+i9_collage,1440p,ingestion-only,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,74.3,never,29.007,29.016,11.881,916.89,882.65,882.48
+i9_collage,1440p,ingestion-only,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,48.8,never,29.007,29.016,11.881,602.89,580.37,580.26
+i9_collage,1440p,ingestion-only,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,146.5,never,29.007,29.016,11.881,1808.67,1741.12,1740.78
+i9_collage,1440p,ingestion-only,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,594.2,never,29.007,29.016,11.881,7335.15,7061.23,7059.82
+i9_collage,1440p,equal-weight,measured,HDD,0.02,30,Mongo,Mongo,no,1.2,never,40.875,32.088,16.534,75.36,72.55,19.53
+i9_collage,1440p,equal-weight,measured,HDD,0.02,90,Mongo,Mongo,no,3.5,never,40.875,32.088,16.534,226.08,217.64,58.58
+i9_collage,1440p,equal-weight,measured,HDD,0.02,365,Mongo,Mongo,no,14.4,never,40.875,32.088,16.534,916.89,882.65,237.56
+i9_collage,1440p,equal-weight,measured,SSD,0.16,30,Mongo,Mongo,no,9.4,never,40.875,32.088,16.534,602.89,580.37,156.21
+i9_collage,1440p,equal-weight,measured,SSD,0.16,90,Mongo,Mongo,no,28.3,never,40.875,32.088,16.534,1808.67,1741.12,468.62
+i9_collage,1440p,equal-weight,measured,SSD,0.16,365,Mongo,Mongo,no,114.9,never,40.875,32.088,16.534,7335.15,7061.23,1900.50
+i9_collage,1440p,equal-weight,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,4.4,never,40.875,32.088,16.534,75.36,72.55,72.53
+i9_collage,1440p,equal-weight,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,13.2,never,40.875,32.088,16.534,226.08,217.64,217.60
+i9_collage,1440p,equal-weight,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,53.4,never,40.875,32.088,16.534,916.89,882.65,882.48
+i9_collage,1440p,equal-weight,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,35.1,never,40.875,32.088,16.534,602.89,580.37,580.26
+i9_collage,1440p,equal-weight,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,105.3,never,40.875,32.088,16.534,1808.67,1741.12,1740.78
+i9_collage,1440p,equal-weight,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,427.0,never,40.875,32.088,16.534,7335.15,7061.23,7059.82
+i9_collage,4K,ingestion-only,measured,HDD,0.02,30,PostMin,PostMin,no,4.2,never,62.958,36.577,79.816,161.01,155.16,246.14
+i9_collage,4K,ingestion-only,measured,HDD,0.02,90,PostMin,PostMin,no,12.7,never,62.958,36.577,79.816,483.03,465.48,738.41
+i9_collage,4K,ingestion-only,measured,HDD,0.02,365,PostMin,PostMin,no,51.6,never,62.958,36.577,79.816,1958.94,1887.78,2994.66
+i9_collage,4K,ingestion-only,measured,SSD,0.16,30,PostMin,PostMin,no,33.9,never,62.958,36.577,79.816,1288.07,1241.28,1969.09
+i9_collage,4K,ingestion-only,measured,SSD,0.16,90,PostMin,PostMin,no,101.8,never,62.958,36.577,79.816,3864.21,3723.83,5907.27
+i9_collage,4K,ingestion-only,measured,SSD,0.16,365,PostMin,PostMin,no,412.9,never,62.958,36.577,79.816,15671.50,15102.20,23957.25
+i9_collage,4K,ingestion-only,floor 1.0,HDD,0.02,30,PostMin,PostMin,no,4.2,never,62.958,36.577,79.816,161.01,155.16,246.14
+i9_collage,4K,ingestion-only,floor 1.0,HDD,0.02,90,PostMin,PostMin,no,12.7,never,62.958,36.577,79.816,483.03,465.48,738.41
+i9_collage,4K,ingestion-only,floor 1.0,HDD,0.02,365,PostMin,PostMin,no,51.6,never,62.958,36.577,79.816,1958.94,1887.78,2994.66
+i9_collage,4K,ingestion-only,floor 1.0,SSD,0.16,30,PostMin,PostMin,no,33.9,never,62.958,36.577,79.816,1288.07,1241.28,1969.09
+i9_collage,4K,ingestion-only,floor 1.0,SSD,0.16,90,PostMin,PostMin,no,101.8,never,62.958,36.577,79.816,3864.21,3723.83,5907.27
+i9_collage,4K,ingestion-only,floor 1.0,SSD,0.16,365,PostMin,PostMin,no,412.9,never,62.958,36.577,79.816,15671.50,15102.20,23957.25
+i9_collage,4K,equal-weight,measured,HDD,0.02,30,PostMin,PostMin,no,3.7,never,88.931,41.441,90.501,161.01,155.16,246.14
+i9_collage,4K,equal-weight,measured,HDD,0.02,90,PostMin,PostMin,no,11.2,never,88.931,41.441,90.501,483.03,465.48,738.41
+i9_collage,4K,equal-weight,measured,HDD,0.02,365,PostMin,PostMin,no,45.6,never,88.931,41.441,90.501,1958.94,1887.78,2994.66
+i9_collage,4K,equal-weight,measured,SSD,0.16,30,PostMin,PostMin,no,30.0,never,88.931,41.441,90.501,1288.07,1241.28,1969.09
+i9_collage,4K,equal-weight,measured,SSD,0.16,90,PostMin,PostMin,no,89.9,never,88.931,41.441,90.501,3864.21,3723.83,5907.27
+i9_collage,4K,equal-weight,measured,SSD,0.16,365,PostMin,PostMin,no,364.4,never,88.931,41.441,90.501,15671.50,15102.20,23957.25
+i9_collage,4K,equal-weight,floor 1.0,HDD,0.02,30,PostMin,PostMin,no,3.7,never,88.931,41.441,90.501,161.01,155.16,246.14
+i9_collage,4K,equal-weight,floor 1.0,HDD,0.02,90,PostMin,PostMin,no,11.2,never,88.931,41.441,90.501,483.03,465.48,738.41
+i9_collage,4K,equal-weight,floor 1.0,HDD,0.02,365,PostMin,PostMin,no,45.6,never,88.931,41.441,90.501,1958.94,1887.78,2994.66
+i9_collage,4K,equal-weight,floor 1.0,SSD,0.16,30,PostMin,PostMin,no,30.0,never,88.931,41.441,90.501,1288.07,1241.28,1969.09
+i9_collage,4K,equal-weight,floor 1.0,SSD,0.16,90,PostMin,PostMin,no,89.9,never,88.931,41.441,90.501,3864.21,3723.83,5907.27
+i9_collage,4K,equal-weight,floor 1.0,SSD,0.16,365,PostMin,PostMin,no,364.4,never,88.931,41.441,90.501,15671.50,15102.20,23957.25
+i9_collage,5K,ingestion-only,measured,HDD,0.02,30,PostMin,PostMin,no,3.6,never,108.186,73.577,183.975,273.58,263.69,791.95
+i9_collage,5K,ingestion-only,measured,HDD,0.02,90,PostMin,PostMin,no,10.8,never,108.186,73.577,183.975,820.75,791.08,2375.86
+i9_collage,5K,ingestion-only,measured,HDD,0.02,365,PostMin,PostMin,no,43.6,never,108.186,73.577,183.975,3328.58,3208.28,9635.43
+i9_collage,5K,ingestion-only,measured,SSD,0.16,30,PostMin,PostMin,no,28.7,never,108.186,73.577,183.975,2188.65,2109.55,6335.62
+i9_collage,5K,ingestion-only,measured,SSD,0.16,90,PostMin,PostMin,no,86.0,never,108.186,73.577,183.975,6565.96,6328.66,19006.87
+i9_collage,5K,ingestion-only,measured,SSD,0.16,365,PostMin,PostMin,no,348.8,never,108.186,73.577,183.975,26628.63,25666.24,77083.41
+i9_collage,5K,ingestion-only,floor 1.0,HDD,0.02,30,PostMin,PostMin,no,3.6,never,108.186,73.577,183.975,273.58,263.69,791.95
+i9_collage,5K,ingestion-only,floor 1.0,HDD,0.02,90,PostMin,PostMin,no,10.8,never,108.186,73.577,183.975,820.75,791.08,2375.86
+i9_collage,5K,ingestion-only,floor 1.0,HDD,0.02,365,PostMin,PostMin,no,43.6,never,108.186,73.577,183.975,3328.58,3208.28,9635.43
+i9_collage,5K,ingestion-only,floor 1.0,SSD,0.16,30,PostMin,PostMin,no,28.7,never,108.186,73.577,183.975,2188.65,2109.55,6335.62
+i9_collage,5K,ingestion-only,floor 1.0,SSD,0.16,90,PostMin,PostMin,no,86.0,never,108.186,73.577,183.975,6565.96,6328.66,19006.87
+i9_collage,5K,ingestion-only,floor 1.0,SSD,0.16,365,PostMin,PostMin,no,348.8,never,108.186,73.577,183.975,26628.63,25666.24,77083.41
+i9_collage,5K,equal-weight,measured,HDD,0.02,30,PostMin,PostMin,no,3.3,never,155.576,80.631,213.884,273.58,263.69,791.95
+i9_collage,5K,equal-weight,measured,HDD,0.02,90,PostMin,PostMin,no,9.8,never,155.576,80.631,213.884,820.75,791.08,2375.86
+i9_collage,5K,equal-weight,measured,HDD,0.02,365,PostMin,PostMin,no,39.8,never,155.576,80.631,213.884,3328.58,3208.28,9635.43
+i9_collage,5K,equal-weight,measured,SSD,0.16,30,PostMin,PostMin,no,26.2,never,155.576,80.631,213.884,2188.65,2109.55,6335.62
+i9_collage,5K,equal-weight,measured,SSD,0.16,90,PostMin,PostMin,no,78.5,never,155.576,80.631,213.884,6565.96,6328.66,19006.87
+i9_collage,5K,equal-weight,measured,SSD,0.16,365,PostMin,PostMin,no,318.3,never,155.576,80.631,213.884,26628.63,25666.24,77083.41
+i9_collage,5K,equal-weight,floor 1.0,HDD,0.02,30,PostMin,PostMin,no,3.3,never,155.576,80.631,213.884,273.58,263.69,791.95
+i9_collage,5K,equal-weight,floor 1.0,HDD,0.02,90,PostMin,PostMin,no,9.8,never,155.576,80.631,213.884,820.75,791.08,2375.86
+i9_collage,5K,equal-weight,floor 1.0,HDD,0.02,365,PostMin,PostMin,no,39.8,never,155.576,80.631,213.884,3328.58,3208.28,9635.43
+i9_collage,5K,equal-weight,floor 1.0,SSD,0.16,30,PostMin,PostMin,no,26.2,never,155.576,80.631,213.884,2188.65,2109.55,6335.62
+i9_collage,5K,equal-weight,floor 1.0,SSD,0.16,90,PostMin,PostMin,no,78.5,never,155.576,80.631,213.884,6565.96,6328.66,19006.87
+i9_collage,5K,equal-weight,floor 1.0,SSD,0.16,365,PostMin,PostMin,no,318.3,never,155.576,80.631,213.884,26628.63,25666.24,77083.41
+i9_collage,6K,ingestion-only,measured,HDD,0.02,30,PostMin,PostMin,no,4.3,never,151.907,85.559,,383.67,369.73,
+i9_collage,6K,ingestion-only,measured,HDD,0.02,90,PostMin,PostMin,no,13.0,never,151.907,85.559,,1151.00,1109.18,
+i9_collage,6K,ingestion-only,measured,HDD,0.02,365,PostMin,PostMin,no,52.6,never,151.907,85.559,,4667.93,4498.35,
+i9_collage,6K,ingestion-only,measured,SSD,0.16,30,PostMin,PostMin,no,34.6,never,151.907,85.559,,3069.33,2957.82,
+i9_collage,6K,ingestion-only,measured,SSD,0.16,90,PostMin,PostMin,no,103.7,never,151.907,85.559,,9207.98,8873.45,
+i9_collage,6K,ingestion-only,measured,SSD,0.16,365,PostMin,PostMin,no,420.6,never,151.907,85.559,,37343.46,35986.76,
+i9_collage,6K,ingestion-only,floor 1.0,HDD,0.02,30,PostMin,PostMin,no,4.3,never,151.907,85.559,,383.67,369.73,
+i9_collage,6K,ingestion-only,floor 1.0,HDD,0.02,90,PostMin,PostMin,no,13.0,never,151.907,85.559,,1151.00,1109.18,
+i9_collage,6K,ingestion-only,floor 1.0,HDD,0.02,365,PostMin,PostMin,no,52.6,never,151.907,85.559,,4667.93,4498.35,
+i9_collage,6K,ingestion-only,floor 1.0,SSD,0.16,30,PostMin,PostMin,no,34.6,never,151.907,85.559,,3069.33,2957.82,
+i9_collage,6K,ingestion-only,floor 1.0,SSD,0.16,90,PostMin,PostMin,no,103.7,never,151.907,85.559,,9207.98,8873.45,
+i9_collage,6K,ingestion-only,floor 1.0,SSD,0.16,365,PostMin,PostMin,no,420.6,never,151.907,85.559,,37343.46,35986.76,
+i9_collage,6K,equal-weight,measured,HDD,0.02,30,PostMin,PostMin,no,3.9,never,219.311,95.743,,383.67,369.73,
+i9_collage,6K,equal-weight,measured,HDD,0.02,90,PostMin,PostMin,no,11.6,never,219.311,95.743,,1151.00,1109.18,
+i9_collage,6K,equal-weight,measured,HDD,0.02,365,PostMin,PostMin,no,47.0,never,219.311,95.743,,4667.93,4498.35,
+i9_collage,6K,equal-weight,measured,SSD,0.16,30,PostMin,PostMin,no,30.9,never,219.311,95.743,,3069.33,2957.82,
+i9_collage,6K,equal-weight,measured,SSD,0.16,90,PostMin,PostMin,no,92.7,never,219.311,95.743,,9207.98,8873.45,
+i9_collage,6K,equal-weight,measured,SSD,0.16,365,PostMin,PostMin,no,375.9,never,219.311,95.743,,37343.46,35986.76,
+i9_collage,6K,equal-weight,floor 1.0,HDD,0.02,30,PostMin,PostMin,no,3.9,never,219.311,95.743,,383.67,369.73,
+i9_collage,6K,equal-weight,floor 1.0,HDD,0.02,90,PostMin,PostMin,no,11.6,never,219.311,95.743,,1151.00,1109.18,
+i9_collage,6K,equal-weight,floor 1.0,HDD,0.02,365,PostMin,PostMin,no,47.0,never,219.311,95.743,,4667.93,4498.35,
+i9_collage,6K,equal-weight,floor 1.0,SSD,0.16,30,PostMin,PostMin,no,30.9,never,219.311,95.743,,3069.33,2957.82,
+i9_collage,6K,equal-weight,floor 1.0,SSD,0.16,90,PostMin,PostMin,no,92.7,never,219.311,95.743,,9207.98,8873.45,
+i9_collage,6K,equal-weight,floor 1.0,SSD,0.16,365,PostMin,PostMin,no,375.9,never,219.311,95.743,,37343.46,35986.76,
+i7_collage,360p,ingestion-only,measured,HDD,0.02,30,Mongo,Mongo,no,0.2,never,1.372,4.364,0.309,5.03,4.83,0.05
+i7_collage,360p,ingestion-only,measured,HDD,0.02,90,Mongo,Mongo,no,0.5,never,1.372,4.364,0.309,15.09,14.48,0.15
+i7_collage,360p,ingestion-only,measured,HDD,0.02,365,Mongo,Mongo,no,2.0,never,1.372,4.364,0.309,61.19,58.72,0.63
+i7_collage,360p,ingestion-only,measured,SSD,0.16,30,Mongo,Mongo,no,1.3,never,1.372,4.364,0.309,40.24,38.61,0.41
+i7_collage,360p,ingestion-only,measured,SSD,0.16,90,Mongo,Mongo,no,4.0,never,1.372,4.364,0.309,120.71,115.83,1.24
+i7_collage,360p,ingestion-only,measured,SSD,0.16,365,Mongo,Mongo,no,16.2,never,1.372,4.364,0.309,489.55,469.74,5.01
+i7_collage,360p,ingestion-only,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,15.6,never,1.372,4.364,0.309,5.03,4.83,4.81
+i7_collage,360p,ingestion-only,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,46.8,never,1.372,4.364,0.309,15.09,14.48,14.44
+i7_collage,360p,ingestion-only,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,189.6,never,1.372,4.364,0.309,61.19,58.72,58.55
+i7_collage,360p,ingestion-only,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,124.7,never,1.372,4.364,0.309,40.24,38.61,38.50
+i7_collage,360p,ingestion-only,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,374.0,never,1.372,4.364,0.309,120.71,115.83,115.49
+i7_collage,360p,ingestion-only,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,1517.0,never,1.372,4.364,0.309,489.55,469.74,468.38
+i7_collage,360p,equal-weight,measured,HDD,0.02,30,Mongo,Mongo,no,0.1,never,1.952,5.403,0.444,5.03,4.83,0.05
+i7_collage,360p,equal-weight,measured,HDD,0.02,90,Mongo,Mongo,no,0.3,never,1.952,5.403,0.444,15.09,14.48,0.15
+i7_collage,360p,equal-weight,measured,HDD,0.02,365,Mongo,Mongo,no,1.4,never,1.952,5.403,0.444,61.19,58.72,0.63
+i7_collage,360p,equal-weight,measured,SSD,0.16,30,Mongo,Mongo,no,0.9,never,1.952,5.403,0.444,40.24,38.61,0.41
+i7_collage,360p,equal-weight,measured,SSD,0.16,90,Mongo,Mongo,no,2.8,never,1.952,5.403,0.444,120.71,115.83,1.24
+i7_collage,360p,equal-weight,measured,SSD,0.16,365,Mongo,Mongo,no,11.3,never,1.952,5.403,0.444,489.55,469.74,5.01
+i7_collage,360p,equal-weight,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,10.8,never,1.952,5.403,0.444,5.03,4.83,4.81
+i7_collage,360p,equal-weight,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,32.5,never,1.952,5.403,0.444,15.09,14.48,14.44
+i7_collage,360p,equal-weight,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,131.9,never,1.952,5.403,0.444,61.19,58.72,58.55
+i7_collage,360p,equal-weight,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,86.7,never,1.952,5.403,0.444,40.24,38.61,38.50
+i7_collage,360p,equal-weight,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,260.2,never,1.952,5.403,0.444,120.71,115.83,115.49
+i7_collage,360p,equal-weight,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,1055.3,never,1.952,5.403,0.444,489.55,469.74,468.38
+i7_collage,480p,ingestion-only,measured,HDD,0.02,30,Mongo,Mongo,no,0.7,never,2.300,6.791,0.771,8.89,8.54,0.51
+i7_collage,480p,ingestion-only,measured,HDD,0.02,90,Mongo,Mongo,no,2.0,never,2.300,6.791,0.771,26.68,25.61,1.52
+i7_collage,480p,ingestion-only,measured,HDD,0.02,365,Mongo,Mongo,no,8.0,never,2.300,6.791,0.771,108.19,103.84,6.15
+i7_collage,480p,ingestion-only,measured,SSD,0.16,30,Mongo,Mongo,no,5.2,never,2.300,6.791,0.771,71.14,68.28,4.04
+i7_collage,480p,ingestion-only,measured,SSD,0.16,90,Mongo,Mongo,no,15.7,never,2.300,6.791,0.771,213.41,204.84,12.13
+i7_collage,480p,ingestion-only,measured,SSD,0.16,365,Mongo,Mongo,no,63.8,never,2.300,6.791,0.771,865.51,830.76,49.19
+i7_collage,480p,ingestion-only,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,11.0,never,2.300,6.791,0.771,8.89,8.54,8.52
+i7_collage,480p,ingestion-only,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,33.1,never,2.300,6.791,0.771,26.68,25.61,25.56
+i7_collage,480p,ingestion-only,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,134.4,never,2.300,6.791,0.771,108.19,103.84,103.68
+i7_collage,480p,ingestion-only,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,88.4,never,2.300,6.791,0.771,71.14,68.28,68.17
+i7_collage,480p,ingestion-only,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,265.2,never,2.300,6.791,0.771,213.41,204.84,204.52
+i7_collage,480p,ingestion-only,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,1075.5,never,2.300,6.791,0.771,865.51,830.76,829.43
+i7_collage,480p,equal-weight,measured,HDD,0.02,30,Mongo,Mongo,no,0.5,never,3.342,7.895,1.095,8.89,8.54,0.51
+i7_collage,480p,equal-weight,measured,HDD,0.02,90,Mongo,Mongo,no,1.4,never,3.342,7.895,1.095,26.68,25.61,1.52
+i7_collage,480p,equal-weight,measured,HDD,0.02,365,Mongo,Mongo,no,5.6,never,3.342,7.895,1.095,108.19,103.84,6.15
+i7_collage,480p,equal-weight,measured,SSD,0.16,30,Mongo,Mongo,no,3.7,never,3.342,7.895,1.095,71.14,68.28,4.04
+i7_collage,480p,equal-weight,measured,SSD,0.16,90,Mongo,Mongo,no,11.1,never,3.342,7.895,1.095,213.41,204.84,12.13
+i7_collage,480p,equal-weight,measured,SSD,0.16,365,Mongo,Mongo,no,44.9,never,3.342,7.895,1.095,865.51,830.76,49.19
+i7_collage,480p,equal-weight,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,7.8,never,3.342,7.895,1.095,8.89,8.54,8.52
+i7_collage,480p,equal-weight,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,23.4,never,3.342,7.895,1.095,26.68,25.61,25.56
+i7_collage,480p,equal-weight,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,94.7,never,3.342,7.895,1.095,108.19,103.84,103.68
+i7_collage,480p,equal-weight,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,62.3,never,3.342,7.895,1.095,71.14,68.28,68.17
+i7_collage,480p,equal-weight,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,186.9,never,3.342,7.895,1.095,213.41,204.84,204.52
+i7_collage,480p,equal-weight,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,757.8,never,3.342,7.895,1.095,865.51,830.76,829.43
+i7_collage,720p,ingestion-only,measured,HDD,0.02,30,Mongo,Mongo,no,0.7,never,4.955,9.582,2.909,19.66,18.93,1.89
+i7_collage,720p,ingestion-only,measured,HDD,0.02,90,Mongo,Mongo,no,2.0,never,4.955,9.582,2.909,58.98,56.79,5.68
+i7_collage,720p,ingestion-only,measured,HDD,0.02,365,Mongo,Mongo,no,7.9,never,4.955,9.582,2.909,239.21,230.30,23.04
+i7_collage,720p,ingestion-only,measured,SSD,0.16,30,Mongo,Mongo,no,5.2,never,4.955,9.582,2.909,157.29,151.43,15.15
+i7_collage,720p,ingestion-only,measured,SSD,0.16,90,Mongo,Mongo,no,15.6,never,4.955,9.582,2.909,471.86,454.29,45.44
+i7_collage,720p,ingestion-only,measured,SSD,0.16,365,Mongo,Mongo,no,63.4,never,4.955,9.582,2.909,1913.66,1842.41,184.30
+i7_collage,720p,ingestion-only,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,6.5,never,4.955,9.582,2.909,19.66,18.93,18.92
+i7_collage,720p,ingestion-only,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,19.5,never,4.955,9.582,2.909,58.98,56.79,56.75
+i7_collage,720p,ingestion-only,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,79.1,never,4.955,9.582,2.909,239.21,230.30,230.14
+i7_collage,720p,ingestion-only,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,52.0,never,4.955,9.582,2.909,157.29,151.43,151.33
+i7_collage,720p,ingestion-only,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,156.1,never,4.955,9.582,2.909,471.86,454.29,453.98
+i7_collage,720p,ingestion-only,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,632.9,never,4.955,9.582,2.909,1913.66,1842.41,1841.12
+i7_collage,720p,equal-weight,measured,HDD,0.02,30,Mongo,Mongo,no,0.5,never,7.191,10.930,3.687,19.66,18.93,1.89
+i7_collage,720p,equal-weight,measured,HDD,0.02,90,Mongo,Mongo,no,1.5,never,7.191,10.930,3.687,58.98,56.79,5.68
+i7_collage,720p,equal-weight,measured,HDD,0.02,365,Mongo,Mongo,no,6.2,never,7.191,10.930,3.687,239.21,230.30,23.04
+i7_collage,720p,equal-weight,measured,SSD,0.16,30,Mongo,Mongo,no,4.1,never,7.191,10.930,3.687,157.29,151.43,15.15
+i7_collage,720p,equal-weight,measured,SSD,0.16,90,Mongo,Mongo,no,12.3,never,7.191,10.930,3.687,471.86,454.29,45.44
+i7_collage,720p,equal-weight,measured,SSD,0.16,365,Mongo,Mongo,no,50.0,never,7.191,10.930,3.687,1913.66,1842.41,184.30
+i7_collage,720p,equal-weight,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,5.1,never,7.191,10.930,3.687,19.66,18.93,18.92
+i7_collage,720p,equal-weight,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,15.4,never,7.191,10.930,3.687,58.98,56.79,56.75
+i7_collage,720p,equal-weight,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,62.4,never,7.191,10.930,3.687,239.21,230.30,230.14
+i7_collage,720p,equal-weight,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,41.0,never,7.191,10.930,3.687,157.29,151.43,151.33
+i7_collage,720p,equal-weight,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,123.1,never,7.191,10.930,3.687,471.86,454.29,453.98
+i7_collage,720p,equal-weight,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,499.3,never,7.191,10.930,3.687,1913.66,1842.41,1841.12
+i7_collage,1080p,ingestion-only,measured,HDD,0.02,30,Mongo,Mongo,no,0.7,never,11.794,14.635,5.750,43.32,41.72,4.21
+i7_collage,1080p,ingestion-only,measured,HDD,0.02,90,Mongo,Mongo,no,2.2,never,11.794,14.635,5.750,129.97,125.15,12.62
+i7_collage,1080p,ingestion-only,measured,HDD,0.02,365,Mongo,Mongo,no,8.9,never,11.794,14.635,5.750,527.08,507.55,51.20
+i7_collage,1080p,ingestion-only,measured,SSD,0.16,30,Mongo,Mongo,no,5.9,never,11.794,14.635,5.750,346.57,333.73,33.66
+i7_collage,1080p,ingestion-only,measured,SSD,0.16,90,Mongo,Mongo,no,17.6,never,11.794,14.635,5.750,1039.72,1001.19,100.99
+i7_collage,1080p,ingestion-only,measured,SSD,0.16,365,Mongo,Mongo,no,71.2,never,11.794,14.635,5.750,4216.65,4060.37,409.57
+i7_collage,1080p,ingestion-only,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,7.3,never,11.794,14.635,5.750,43.32,41.72,41.70
+i7_collage,1080p,ingestion-only,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,21.8,never,11.794,14.635,5.750,129.97,125.15,125.11
+i7_collage,1080p,ingestion-only,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,88.2,never,11.794,14.635,5.750,527.08,507.55,507.39
+i7_collage,1080p,ingestion-only,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,58.0,never,11.794,14.635,5.750,346.57,333.73,333.63
+i7_collage,1080p,ingestion-only,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,174.1,never,11.794,14.635,5.750,1039.72,1001.19,1000.89
+i7_collage,1080p,ingestion-only,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,706.0,never,11.794,14.635,5.750,4216.65,4060.37,4059.15
+i7_collage,1080p,equal-weight,measured,HDD,0.02,30,Mongo,Mongo,no,0.5,never,17.967,16.617,8.028,43.32,41.72,4.21
+i7_collage,1080p,equal-weight,measured,HDD,0.02,90,Mongo,Mongo,no,1.6,never,17.967,16.617,8.028,129.97,125.15,12.62
+i7_collage,1080p,equal-weight,measured,HDD,0.02,365,Mongo,Mongo,no,6.4,never,17.967,16.617,8.028,527.08,507.55,51.20
+i7_collage,1080p,equal-weight,measured,SSD,0.16,30,Mongo,Mongo,no,4.2,never,17.967,16.617,8.028,346.57,333.73,33.66
+i7_collage,1080p,equal-weight,measured,SSD,0.16,90,Mongo,Mongo,no,12.6,never,17.967,16.617,8.028,1039.72,1001.19,100.99
+i7_collage,1080p,equal-weight,measured,SSD,0.16,365,Mongo,Mongo,no,51.0,never,17.967,16.617,8.028,4216.65,4060.37,409.57
+i7_collage,1080p,equal-weight,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,5.2,never,17.967,16.617,8.028,43.32,41.72,41.70
+i7_collage,1080p,equal-weight,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,15.6,never,17.967,16.617,8.028,129.97,125.15,125.11
+i7_collage,1080p,equal-weight,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,63.2,never,17.967,16.617,8.028,527.08,507.55,507.39
+i7_collage,1080p,equal-weight,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,41.6,never,17.967,16.617,8.028,346.57,333.73,333.63
+i7_collage,1080p,equal-weight,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,124.7,never,17.967,16.617,8.028,1039.72,1001.19,1000.89
+i7_collage,1080p,equal-weight,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,505.7,never,17.967,16.617,8.028,4216.65,4060.37,4059.15
+i7_collage,1440p,ingestion-only,measured,HDD,0.02,30,PostMin,Mongo,yes,3.6,0.1,29.781,20.087,20.286,75.36,72.55,19.56
+i7_collage,1440p,ingestion-only,measured,HDD,0.02,90,PostMin,Mongo,yes,10.8,0.1,29.781,20.087,20.286,226.08,217.64,58.69
+i7_collage,1440p,ingestion-only,measured,HDD,0.02,365,PostMin,Mongo,yes,43.9,0.1,29.781,20.087,20.286,916.89,882.65,238.00
+i7_collage,1440p,ingestion-only,measured,SSD,0.16,30,PostMin,Mongo,yes,28.9,0.0,29.781,20.087,20.286,602.89,580.37,156.50
+i7_collage,1440p,ingestion-only,measured,SSD,0.16,90,PostMin,Mongo,yes,86.7,0.0,29.781,20.087,20.286,1808.67,1741.12,469.49
+i7_collage,1440p,ingestion-only,measured,SSD,0.16,365,PostMin,Mongo,yes,351.5,0.0,29.781,20.087,20.286,7335.15,7061.23,1904.03
+i7_collage,1440p,ingestion-only,floor 1.0,HDD,0.02,30,PostMin,PostMin,no,3.6,never,29.781,20.087,20.286,75.36,72.55,72.53
+i7_collage,1440p,ingestion-only,floor 1.0,HDD,0.02,90,PostMin,PostMin,no,10.8,never,29.781,20.087,20.286,226.08,217.64,217.60
+i7_collage,1440p,ingestion-only,floor 1.0,HDD,0.02,365,PostMin,PostMin,no,43.9,never,29.781,20.087,20.286,916.89,882.65,882.48
+i7_collage,1440p,ingestion-only,floor 1.0,SSD,0.16,30,PostMin,PostMin,no,28.9,never,29.781,20.087,20.286,602.89,580.37,580.26
+i7_collage,1440p,ingestion-only,floor 1.0,SSD,0.16,90,PostMin,Mongo,yes,86.7,never,29.781,20.087,20.286,1808.67,1741.12,1740.78
+i7_collage,1440p,ingestion-only,floor 1.0,SSD,0.16,365,PostMin,Mongo,yes,351.5,never,29.781,20.087,20.286,7335.15,7061.23,7059.82
+i7_collage,1440p,equal-weight,measured,HDD,0.02,30,PostMin,Mongo,yes,3.3,4.0,40.146,22.163,29.199,75.36,72.55,19.56
+i7_collage,1440p,equal-weight,measured,HDD,0.02,90,PostMin,Mongo,yes,9.8,4.0,40.146,22.163,29.199,226.08,217.64,58.69
+i7_collage,1440p,equal-weight,measured,HDD,0.02,365,PostMin,Mongo,yes,39.8,4.0,40.146,22.163,29.199,916.89,882.65,238.00
+i7_collage,1440p,equal-weight,measured,SSD,0.16,30,PostMin,Mongo,yes,26.2,0.5,40.146,22.163,29.199,602.89,580.37,156.50
+i7_collage,1440p,equal-weight,measured,SSD,0.16,90,PostMin,Mongo,yes,78.6,0.5,40.146,22.163,29.199,1808.67,1741.12,469.49
+i7_collage,1440p,equal-weight,measured,SSD,0.16,365,PostMin,Mongo,yes,318.6,0.5,40.146,22.163,29.199,7335.15,7061.23,1904.03
+i7_collage,1440p,equal-weight,floor 1.0,HDD,0.02,30,PostMin,PostMin,no,3.3,never,40.146,22.163,29.199,75.36,72.55,72.53
+i7_collage,1440p,equal-weight,floor 1.0,HDD,0.02,90,PostMin,PostMin,no,9.8,never,40.146,22.163,29.199,226.08,217.64,217.60
+i7_collage,1440p,equal-weight,floor 1.0,HDD,0.02,365,PostMin,PostMin,no,39.8,never,40.146,22.163,29.199,916.89,882.65,882.48
+i7_collage,1440p,equal-weight,floor 1.0,SSD,0.16,30,PostMin,PostMin,no,26.2,never,40.146,22.163,29.199,602.89,580.37,580.26
+i7_collage,1440p,equal-weight,floor 1.0,SSD,0.16,90,PostMin,PostMin,no,78.6,never,40.146,22.163,29.199,1808.67,1741.12,1740.78
+i7_collage,1440p,equal-weight,floor 1.0,SSD,0.16,365,PostMin,PostMin,no,318.6,never,40.146,22.163,29.199,7335.15,7061.23,7059.82
+i7_collage,4K,ingestion-only,measured,HDD,0.02,30,PostMin,PostMin,no,4.5,never,69.394,34.469,,161.01,155.16,
+i7_collage,4K,ingestion-only,measured,HDD,0.02,90,PostMin,PostMin,no,13.5,never,69.394,34.469,,483.03,465.48,
+i7_collage,4K,ingestion-only,measured,HDD,0.02,365,PostMin,PostMin,no,54.8,never,69.394,34.469,,1958.94,1887.78,
+i7_collage,4K,ingestion-only,measured,SSD,0.16,30,PostMin,PostMin,no,36.0,never,69.394,34.469,,1288.07,1241.28,
+i7_collage,4K,ingestion-only,measured,SSD,0.16,90,PostMin,PostMin,no,108.0,never,69.394,34.469,,3864.21,3723.83,
+i7_collage,4K,ingestion-only,measured,SSD,0.16,365,PostMin,PostMin,no,438.1,never,69.394,34.469,,15671.50,15102.20,
+i7_collage,4K,ingestion-only,floor 1.0,HDD,0.02,30,PostMin,PostMin,no,4.5,never,69.394,34.469,,161.01,155.16,
+i7_collage,4K,ingestion-only,floor 1.0,HDD,0.02,90,PostMin,PostMin,no,13.5,never,69.394,34.469,,483.03,465.48,
+i7_collage,4K,ingestion-only,floor 1.0,HDD,0.02,365,PostMin,PostMin,no,54.8,never,69.394,34.469,,1958.94,1887.78,
+i7_collage,4K,ingestion-only,floor 1.0,SSD,0.16,30,PostMin,PostMin,no,36.0,never,69.394,34.469,,1288.07,1241.28,
+i7_collage,4K,ingestion-only,floor 1.0,SSD,0.16,90,PostMin,PostMin,no,108.0,never,69.394,34.469,,3864.21,3723.83,
+i7_collage,4K,ingestion-only,floor 1.0,SSD,0.16,365,PostMin,PostMin,no,438.1,never,69.394,34.469,,15671.50,15102.20,
+i7_collage,4K,equal-weight,measured,HDD,0.02,30,PostMin,PostMin,no,4.0,never,89.809,39.216,,161.01,155.16,
+i7_collage,4K,equal-weight,measured,HDD,0.02,90,PostMin,PostMin,no,11.9,never,89.809,39.216,,483.03,465.48,
+i7_collage,4K,equal-weight,measured,HDD,0.02,365,PostMin,PostMin,no,48.1,never,89.809,39.216,,1958.94,1887.78,
+i7_collage,4K,equal-weight,measured,SSD,0.16,30,PostMin,PostMin,no,31.7,never,89.809,39.216,,1288.07,1241.28,
+i7_collage,4K,equal-weight,measured,SSD,0.16,90,PostMin,PostMin,no,95.0,never,89.809,39.216,,3864.21,3723.83,
+i7_collage,4K,equal-weight,measured,SSD,0.16,365,PostMin,PostMin,no,385.1,never,89.809,39.216,,15671.50,15102.20,
+i7_collage,4K,equal-weight,floor 1.0,HDD,0.02,30,PostMin,PostMin,no,4.0,never,89.809,39.216,,161.01,155.16,
+i7_collage,4K,equal-weight,floor 1.0,HDD,0.02,90,PostMin,PostMin,no,11.9,never,89.809,39.216,,483.03,465.48,
+i7_collage,4K,equal-weight,floor 1.0,HDD,0.02,365,PostMin,PostMin,no,48.1,never,89.809,39.216,,1958.94,1887.78,
+i7_collage,4K,equal-weight,floor 1.0,SSD,0.16,30,PostMin,PostMin,no,31.7,never,89.809,39.216,,1288.07,1241.28,
+i7_collage,4K,equal-weight,floor 1.0,SSD,0.16,90,PostMin,PostMin,no,95.0,never,89.809,39.216,,3864.21,3723.83,
+i7_collage,4K,equal-weight,floor 1.0,SSD,0.16,365,PostMin,PostMin,no,385.1,never,89.809,39.216,,15671.50,15102.20,
+i7_collage,5K,ingestion-only,measured,HDD,0.02,30,PostMin,PostMin,no,4.2,never,121.879,63.443,,273.58,263.69,
+i7_collage,5K,ingestion-only,measured,HDD,0.02,90,PostMin,PostMin,no,12.5,never,121.879,63.443,,820.75,791.08,
+i7_collage,5K,ingestion-only,measured,HDD,0.02,365,PostMin,PostMin,no,50.6,never,121.879,63.443,,3328.58,3208.28,
+i7_collage,5K,ingestion-only,measured,SSD,0.16,30,PostMin,PostMin,no,33.3,never,121.879,63.443,,2188.65,2109.55,
+i7_collage,5K,ingestion-only,measured,SSD,0.16,90,PostMin,PostMin,no,99.8,never,121.879,63.443,,6565.96,6328.66,
+i7_collage,5K,ingestion-only,measured,SSD,0.16,365,PostMin,PostMin,no,404.6,never,121.879,63.443,,26628.63,25666.24,
+i7_collage,5K,ingestion-only,floor 1.0,HDD,0.02,30,PostMin,PostMin,no,4.2,never,121.879,63.443,,273.58,263.69,
+i7_collage,5K,ingestion-only,floor 1.0,HDD,0.02,90,PostMin,PostMin,no,12.5,never,121.879,63.443,,820.75,791.08,
+i7_collage,5K,ingestion-only,floor 1.0,HDD,0.02,365,PostMin,PostMin,no,50.6,never,121.879,63.443,,3328.58,3208.28,
+i7_collage,5K,ingestion-only,floor 1.0,SSD,0.16,30,PostMin,PostMin,no,33.3,never,121.879,63.443,,2188.65,2109.55,
+i7_collage,5K,ingestion-only,floor 1.0,SSD,0.16,90,PostMin,PostMin,no,99.8,never,121.879,63.443,,6565.96,6328.66,
+i7_collage,5K,ingestion-only,floor 1.0,SSD,0.16,365,PostMin,PostMin,no,404.6,never,121.879,63.443,,26628.63,25666.24,
+i7_collage,5K,equal-weight,measured,HDD,0.02,30,PostMin,PostMin,no,3.5,never,160.166,74.718,,273.58,263.69,
+i7_collage,5K,equal-weight,measured,HDD,0.02,90,PostMin,PostMin,no,10.6,never,160.166,74.718,,820.75,791.08,
+i7_collage,5K,equal-weight,measured,HDD,0.02,365,PostMin,PostMin,no,42.9,never,160.166,74.718,,3328.58,3208.28,
+i7_collage,5K,equal-weight,measured,SSD,0.16,30,PostMin,PostMin,no,28.2,never,160.166,74.718,,2188.65,2109.55,
+i7_collage,5K,equal-weight,measured,SSD,0.16,90,PostMin,PostMin,no,84.7,never,160.166,74.718,,6565.96,6328.66,
+i7_collage,5K,equal-weight,measured,SSD,0.16,365,PostMin,PostMin,no,343.5,never,160.166,74.718,,26628.63,25666.24,
+i7_collage,5K,equal-weight,floor 1.0,HDD,0.02,30,PostMin,PostMin,no,3.5,never,160.166,74.718,,273.58,263.69,
+i7_collage,5K,equal-weight,floor 1.0,HDD,0.02,90,PostMin,PostMin,no,10.6,never,160.166,74.718,,820.75,791.08,
+i7_collage,5K,equal-weight,floor 1.0,HDD,0.02,365,PostMin,PostMin,no,42.9,never,160.166,74.718,,3328.58,3208.28,
+i7_collage,5K,equal-weight,floor 1.0,SSD,0.16,30,PostMin,PostMin,no,28.2,never,160.166,74.718,,2188.65,2109.55,
+i7_collage,5K,equal-weight,floor 1.0,SSD,0.16,90,PostMin,PostMin,no,84.7,never,160.166,74.718,,6565.96,6328.66,
+i7_collage,5K,equal-weight,floor 1.0,SSD,0.16,365,PostMin,PostMin,no,343.5,never,160.166,74.718,,26628.63,25666.24,
+i7_collage,6K,ingestion-only,measured,HDD,0.02,30,PostMin,PostMin,no,5.0,never,176.564,73.467,,383.67,369.73,
+i7_collage,6K,ingestion-only,measured,HDD,0.02,90,PostMin,PostMin,no,15.1,never,176.564,73.467,,1151.00,1109.18,
+i7_collage,6K,ingestion-only,measured,HDD,0.02,365,PostMin,PostMin,no,61.2,never,176.564,73.467,,4667.93,4498.35,
+i7_collage,6K,ingestion-only,measured,SSD,0.16,30,PostMin,PostMin,no,40.3,never,176.564,73.467,,3069.33,2957.82,
+i7_collage,6K,ingestion-only,measured,SSD,0.16,90,PostMin,PostMin,no,120.8,never,176.564,73.467,,9207.98,8873.45,
+i7_collage,6K,ingestion-only,measured,SSD,0.16,365,PostMin,PostMin,no,489.8,never,176.564,73.467,,37343.46,35986.76,
+i7_collage,6K,ingestion-only,floor 1.0,HDD,0.02,30,PostMin,PostMin,no,5.0,never,176.564,73.467,,383.67,369.73,
+i7_collage,6K,ingestion-only,floor 1.0,HDD,0.02,90,PostMin,PostMin,no,15.1,never,176.564,73.467,,1151.00,1109.18,
+i7_collage,6K,ingestion-only,floor 1.0,HDD,0.02,365,PostMin,PostMin,no,61.2,never,176.564,73.467,,4667.93,4498.35,
+i7_collage,6K,ingestion-only,floor 1.0,SSD,0.16,30,PostMin,PostMin,no,40.3,never,176.564,73.467,,3069.33,2957.82,
+i7_collage,6K,ingestion-only,floor 1.0,SSD,0.16,90,PostMin,PostMin,no,120.8,never,176.564,73.467,,9207.98,8873.45,
+i7_collage,6K,ingestion-only,floor 1.0,SSD,0.16,365,PostMin,PostMin,no,489.8,never,176.564,73.467,,37343.46,35986.76,
+i7_collage,6K,equal-weight,measured,HDD,0.02,30,PostMin,PostMin,no,4.1,never,230.318,89.544,,383.67,369.73,
+i7_collage,6K,equal-weight,measured,HDD,0.02,90,PostMin,PostMin,no,12.4,never,230.318,89.544,,1151.00,1109.18,
+i7_collage,6K,equal-weight,measured,HDD,0.02,365,PostMin,PostMin,no,50.2,never,230.318,89.544,,4667.93,4498.35,
+i7_collage,6K,equal-weight,measured,SSD,0.16,30,PostMin,PostMin,no,33.0,never,230.318,89.544,,3069.33,2957.82,
+i7_collage,6K,equal-weight,measured,SSD,0.16,90,PostMin,PostMin,no,99.1,never,230.318,89.544,,9207.98,8873.45,
+i7_collage,6K,equal-weight,measured,SSD,0.16,365,PostMin,PostMin,no,401.9,never,230.318,89.544,,37343.46,35986.76,
+i7_collage,6K,equal-weight,floor 1.0,HDD,0.02,30,PostMin,PostMin,no,4.1,never,230.318,89.544,,383.67,369.73,
+i7_collage,6K,equal-weight,floor 1.0,HDD,0.02,90,PostMin,PostMin,no,12.4,never,230.318,89.544,,1151.00,1109.18,
+i7_collage,6K,equal-weight,floor 1.0,HDD,0.02,365,PostMin,PostMin,no,50.2,never,230.318,89.544,,4667.93,4498.35,
+i7_collage,6K,equal-weight,floor 1.0,SSD,0.16,30,PostMin,PostMin,no,33.0,never,230.318,89.544,,3069.33,2957.82,
+i7_collage,6K,equal-weight,floor 1.0,SSD,0.16,90,PostMin,PostMin,no,99.1,never,230.318,89.544,,9207.98,8873.45,
+i7_collage,6K,equal-weight,floor 1.0,SSD,0.16,365,PostMin,PostMin,no,401.9,never,230.318,89.544,,37343.46,35986.76,
+i7_networked,360p,ingestion-only,measured,HDD,0.02,30,Mongo,Mongo,no,0.0,never,0.488,2.247,0.146,1.65,1.57,0.00
+i7_networked,360p,ingestion-only,measured,HDD,0.02,90,Mongo,Mongo,no,0.0,never,0.488,2.247,0.146,4.96,4.71,0.00
+i7_networked,360p,ingestion-only,measured,HDD,0.02,365,Mongo,Mongo,no,0.0,never,0.488,2.247,0.146,20.10,19.09,0.00
+i7_networked,360p,ingestion-only,measured,SSD,0.16,30,Mongo,Mongo,no,0.0,never,0.488,2.247,0.146,13.21,12.55,0.00
+i7_networked,360p,ingestion-only,measured,SSD,0.16,90,Mongo,Mongo,no,0.1,never,0.488,2.247,0.146,39.64,37.65,0.01
+i7_networked,360p,ingestion-only,measured,SSD,0.16,365,Mongo,Mongo,no,0.2,never,0.488,2.247,0.146,160.78,152.69,0.03
+i7_networked,360p,ingestion-only,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,10.6,never,0.488,2.247,0.146,1.65,1.57,1.55
+i7_networked,360p,ingestion-only,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,31.8,never,0.488,2.247,0.146,4.96,4.71,4.66
+i7_networked,360p,ingestion-only,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,129.2,never,0.488,2.247,0.146,20.10,19.09,18.92
+i7_networked,360p,ingestion-only,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,84.9,never,0.488,2.247,0.146,13.21,12.55,12.44
+i7_networked,360p,ingestion-only,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,254.8,never,0.488,2.247,0.146,39.64,37.65,37.32
+i7_networked,360p,ingestion-only,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,1033.3,never,0.488,2.247,0.146,160.78,152.69,151.35
+i7_networked,360p,equal-weight,measured,HDD,0.02,30,Mongo,Mongo,no,0.0,never,0.686,3.121,0.184,1.65,1.57,0.00
+i7_networked,360p,equal-weight,measured,HDD,0.02,90,Mongo,Mongo,no,0.0,never,0.686,3.121,0.184,4.96,4.71,0.00
+i7_networked,360p,equal-weight,measured,HDD,0.02,365,Mongo,Mongo,no,0.0,never,0.686,3.121,0.184,20.10,19.09,0.00
+i7_networked,360p,equal-weight,measured,SSD,0.16,30,Mongo,Mongo,no,0.0,never,0.686,3.121,0.184,13.21,12.55,0.00
+i7_networked,360p,equal-weight,measured,SSD,0.16,90,Mongo,Mongo,no,0.0,never,0.686,3.121,0.184,39.64,37.65,0.01
+i7_networked,360p,equal-weight,measured,SSD,0.16,365,Mongo,Mongo,no,0.2,never,0.686,3.121,0.184,160.78,152.69,0.03
+i7_networked,360p,equal-weight,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,8.5,never,0.686,3.121,0.184,1.65,1.57,1.55
+i7_networked,360p,equal-weight,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,25.4,never,0.686,3.121,0.184,4.96,4.71,4.66
+i7_networked,360p,equal-weight,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,102.9,never,0.686,3.121,0.184,20.10,19.09,18.92
+i7_networked,360p,equal-weight,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,67.6,never,0.686,3.121,0.184,13.21,12.55,12.44
+i7_networked,360p,equal-weight,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,202.9,never,0.686,3.121,0.184,39.64,37.65,37.32
+i7_networked,360p,equal-weight,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,822.8,never,0.686,3.121,0.184,160.78,152.69,151.35
+i7_networked,480p,ingestion-only,measured,HDD,0.02,30,Mongo,Mongo,no,0.0,never,0.722,2.441,0.271,2.67,2.50,0.00
+i7_networked,480p,ingestion-only,measured,HDD,0.02,90,Mongo,Mongo,no,0.0,never,0.722,2.441,0.271,8.02,7.49,0.00
+i7_networked,480p,ingestion-only,measured,HDD,0.02,365,Mongo,Mongo,no,0.0,never,0.722,2.441,0.271,32.53,30.39,0.00
+i7_networked,480p,ingestion-only,measured,SSD,0.16,30,Mongo,Mongo,no,0.0,never,0.722,2.441,0.271,21.39,19.98,0.00
+i7_networked,480p,ingestion-only,measured,SSD,0.16,90,Mongo,Mongo,no,0.0,never,0.722,2.441,0.271,64.17,59.95,0.01
+i7_networked,480p,ingestion-only,measured,SSD,0.16,365,Mongo,Mongo,no,0.1,never,0.722,2.441,0.271,260.26,243.14,0.02
+i7_networked,480p,ingestion-only,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,9.2,never,0.722,2.441,0.271,2.67,2.50,2.48
+i7_networked,480p,ingestion-only,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,27.5,never,0.722,2.441,0.271,8.02,7.49,7.45
+i7_networked,480p,ingestion-only,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,111.3,never,0.722,2.441,0.271,32.53,30.39,30.23
+i7_networked,480p,ingestion-only,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,73.2,never,0.722,2.441,0.271,21.39,19.98,19.88
+i7_networked,480p,ingestion-only,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,219.6,never,0.722,2.441,0.271,64.17,59.95,59.63
+i7_networked,480p,ingestion-only,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,890.8,never,0.722,2.441,0.271,260.26,243.14,241.81
+i7_networked,480p,equal-weight,measured,HDD,0.02,30,Mongo,Mongo,no,0.0,never,1.013,3.323,0.320,2.67,2.50,0.00
+i7_networked,480p,equal-weight,measured,HDD,0.02,90,Mongo,Mongo,no,0.0,never,1.013,3.323,0.320,8.02,7.49,0.00
+i7_networked,480p,equal-weight,measured,HDD,0.02,365,Mongo,Mongo,no,0.0,never,1.013,3.323,0.320,32.53,30.39,0.00
+i7_networked,480p,equal-weight,measured,SSD,0.16,30,Mongo,Mongo,no,0.0,never,1.013,3.323,0.320,21.39,19.98,0.00
+i7_networked,480p,equal-weight,measured,SSD,0.16,90,Mongo,Mongo,no,0.0,never,1.013,3.323,0.320,64.17,59.95,0.01
+i7_networked,480p,equal-weight,measured,SSD,0.16,365,Mongo,Mongo,no,0.1,never,1.013,3.323,0.320,260.26,243.14,0.02
+i7_networked,480p,equal-weight,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,7.8,never,1.013,3.323,0.320,2.67,2.50,2.48
+i7_networked,480p,equal-weight,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,23.3,never,1.013,3.323,0.320,8.02,7.49,7.45
+i7_networked,480p,equal-weight,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,94.6,never,1.013,3.323,0.320,32.53,30.39,30.23
+i7_networked,480p,equal-weight,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,62.2,never,1.013,3.323,0.320,21.39,19.98,19.88
+i7_networked,480p,equal-weight,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,186.6,never,1.013,3.323,0.320,64.17,59.95,59.63
+i7_networked,480p,equal-weight,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,756.6,never,1.013,3.323,0.320,260.26,243.14,241.81
+i7_networked,720p,ingestion-only,measured,HDD,0.02,30,Mongo,Mongo,no,1.7,never,1.110,2.654,0.751,4.78,4.57,1.25
+i7_networked,720p,ingestion-only,measured,HDD,0.02,90,Mongo,Mongo,no,5.0,never,1.110,2.654,0.751,14.35,13.72,3.75
+i7_networked,720p,ingestion-only,measured,HDD,0.02,365,Mongo,Mongo,no,20.2,never,1.110,2.654,0.751,58.19,55.66,15.21
+i7_networked,720p,ingestion-only,measured,SSD,0.16,30,Mongo,Mongo,no,13.3,never,1.110,2.654,0.751,38.26,36.60,10.00
+i7_networked,720p,ingestion-only,measured,SSD,0.16,90,Mongo,Mongo,no,39.9,never,1.110,2.654,0.751,114.79,109.79,30.00
+i7_networked,720p,ingestion-only,measured,SSD,0.16,365,Mongo,Mongo,no,161.9,never,1.110,2.654,0.751,465.55,445.26,121.68
+i7_networked,720p,ingestion-only,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,6.1,never,1.110,2.654,0.751,4.78,4.57,4.56
+i7_networked,720p,ingestion-only,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,18.2,never,1.110,2.654,0.751,14.35,13.72,13.68
+i7_networked,720p,ingestion-only,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,73.8,never,1.110,2.654,0.751,58.19,55.66,55.49
+i7_networked,720p,ingestion-only,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,48.6,never,1.110,2.654,0.751,38.26,36.60,36.49
+i7_networked,720p,ingestion-only,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,145.7,never,1.110,2.654,0.751,114.79,109.79,109.46
+i7_networked,720p,ingestion-only,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,590.7,never,1.110,2.654,0.751,465.55,445.26,443.93
+i7_networked,720p,equal-weight,measured,HDD,0.02,30,Mongo,Mongo,no,1.4,never,1.634,3.589,0.889,4.78,4.57,1.25
+i7_networked,720p,equal-weight,measured,HDD,0.02,90,Mongo,Mongo,no,4.2,never,1.634,3.589,0.889,14.35,13.72,3.75
+i7_networked,720p,equal-weight,measured,HDD,0.02,365,Mongo,Mongo,no,17.1,never,1.634,3.589,0.889,58.19,55.66,15.21
+i7_networked,720p,equal-weight,measured,SSD,0.16,30,Mongo,Mongo,no,11.2,never,1.634,3.589,0.889,38.26,36.60,10.00
+i7_networked,720p,equal-weight,measured,SSD,0.16,90,Mongo,Mongo,no,33.7,never,1.634,3.589,0.889,114.79,109.79,30.00
+i7_networked,720p,equal-weight,measured,SSD,0.16,365,Mongo,Mongo,no,136.8,never,1.634,3.589,0.889,465.55,445.26,121.68
+i7_networked,720p,equal-weight,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,5.1,never,1.634,3.589,0.889,4.78,4.57,4.56
+i7_networked,720p,equal-weight,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,15.4,never,1.634,3.589,0.889,14.35,13.72,13.68
+i7_networked,720p,equal-weight,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,62.4,never,1.634,3.589,0.889,58.19,55.66,55.49
+i7_networked,720p,equal-weight,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,41.0,never,1.634,3.589,0.889,38.26,36.60,36.49
+i7_networked,720p,equal-weight,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,123.1,never,1.634,3.589,0.889,114.79,109.79,109.46
+i7_networked,720p,equal-weight,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,499.2,never,1.634,3.589,0.889,465.55,445.26,443.93
+i7_networked,1080p,ingestion-only,measured,HDD,0.02,30,Postgre,Mongo,yes,4.6,18.5,1.732,3.597,2.239,7.94,7.72,7.12
+i7_networked,1080p,ingestion-only,measured,HDD,0.02,90,Postgre,Mongo,yes,13.8,18.5,1.732,3.597,2.239,23.83,23.17,21.37
+i7_networked,1080p,ingestion-only,measured,HDD,0.02,365,Postgre,Mongo,yes,55.8,18.5,1.732,3.597,2.239,96.65,93.96,86.68
+i7_networked,1080p,ingestion-only,measured,SSD,0.16,30,Postgre,Mongo,yes,36.7,2.3,1.732,3.597,2.239,63.55,61.78,56.99
+i7_networked,1080p,ingestion-only,measured,SSD,0.16,90,Postgre,Mongo,yes,110.1,2.3,1.732,3.597,2.239,190.64,185.35,170.98
+i7_networked,1080p,ingestion-only,measured,SSD,0.16,365,Postgre,Mongo,yes,446.4,2.3,1.732,3.597,2.239,773.17,751.71,693.41
+i7_networked,1080p,ingestion-only,floor 1.0,HDD,0.02,30,Postgre,Postgre,no,4.6,64.8,1.732,3.597,2.239,7.94,7.72,7.71
+i7_networked,1080p,ingestion-only,floor 1.0,HDD,0.02,90,Postgre,Mongo,yes,13.8,64.8,1.732,3.597,2.239,23.83,23.17,23.13
+i7_networked,1080p,ingestion-only,floor 1.0,HDD,0.02,365,Postgre,Mongo,yes,55.8,64.8,1.732,3.597,2.239,96.65,93.96,93.80
+i7_networked,1080p,ingestion-only,floor 1.0,SSD,0.16,30,Postgre,Mongo,yes,36.7,8.1,1.732,3.597,2.239,63.55,61.78,61.67
+i7_networked,1080p,ingestion-only,floor 1.0,SSD,0.16,90,Postgre,Mongo,yes,110.1,8.1,1.732,3.597,2.239,190.64,185.35,185.02
+i7_networked,1080p,ingestion-only,floor 1.0,SSD,0.16,365,Postgre,Mongo,yes,446.4,8.1,1.732,3.597,2.239,773.17,751.71,750.36
+i7_networked,1080p,equal-weight,measured,HDD,0.02,30,Mongo,Mongo,no,2.9,never,2.758,4.586,2.491,7.94,7.72,7.12
+i7_networked,1080p,equal-weight,measured,HDD,0.02,90,Mongo,Mongo,no,8.6,never,2.758,4.586,2.491,23.83,23.17,21.37
+i7_networked,1080p,equal-weight,measured,HDD,0.02,365,Mongo,Mongo,no,34.8,never,2.758,4.586,2.491,96.65,93.96,86.68
+i7_networked,1080p,equal-weight,measured,SSD,0.16,30,Mongo,Mongo,no,22.9,never,2.758,4.586,2.491,63.55,61.78,56.99
+i7_networked,1080p,equal-weight,measured,SSD,0.16,90,Mongo,Mongo,no,68.7,never,2.758,4.586,2.491,190.64,185.35,170.98
+i7_networked,1080p,equal-weight,measured,SSD,0.16,365,Mongo,Mongo,no,278.4,never,2.758,4.586,2.491,773.17,751.71,693.41
+i7_networked,1080p,equal-weight,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,3.1,never,2.758,4.586,2.491,7.94,7.72,7.71
+i7_networked,1080p,equal-weight,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,9.3,never,2.758,4.586,2.491,23.83,23.17,23.13
+i7_networked,1080p,equal-weight,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,37.7,never,2.758,4.586,2.491,96.65,93.96,93.80
+i7_networked,1080p,equal-weight,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,24.8,never,2.758,4.586,2.491,63.55,61.78,61.67
+i7_networked,1080p,equal-weight,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,74.3,never,2.758,4.586,2.491,190.64,185.35,185.02
+i7_networked,1080p,equal-weight,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,301.3,never,2.758,4.586,2.491,773.17,751.71,750.36
+i7_builtin,360p,ingestion-only,measured,HDD,0.02,30,Mongo,Mongo,no,0.0,never,0.343,3.882,0.095,0.91,0.85,0.00
+i7_builtin,360p,ingestion-only,measured,HDD,0.02,90,Mongo,Mongo,no,0.0,never,0.343,3.882,0.095,2.74,2.56,0.00
+i7_builtin,360p,ingestion-only,measured,HDD,0.02,365,Mongo,Mongo,no,0.0,never,0.343,3.882,0.095,11.09,10.39,0.00
+i7_builtin,360p,ingestion-only,measured,SSD,0.16,30,Mongo,Mongo,no,0.0,never,0.343,3.882,0.095,7.30,6.83,0.00
+i7_builtin,360p,ingestion-only,measured,SSD,0.16,90,Mongo,Mongo,no,0.1,never,0.343,3.882,0.095,21.89,20.50,0.01
+i7_builtin,360p,ingestion-only,measured,SSD,0.16,365,Mongo,Mongo,no,0.3,never,0.343,3.882,0.095,88.76,83.15,0.03
+i7_builtin,360p,ingestion-only,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,8.9,never,0.343,3.882,0.095,0.91,0.85,0.84
+i7_builtin,360p,ingestion-only,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,26.6,never,0.343,3.882,0.095,2.74,2.56,2.52
+i7_builtin,360p,ingestion-only,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,108.0,never,0.343,3.882,0.095,11.09,10.39,10.23
+i7_builtin,360p,ingestion-only,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,71.0,never,0.343,3.882,0.095,7.30,6.83,6.72
+i7_builtin,360p,ingestion-only,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,213.1,never,0.343,3.882,0.095,21.89,20.50,20.17
+i7_builtin,360p,ingestion-only,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,864.3,never,0.343,3.882,0.095,88.76,83.15,81.81
+i7_builtin,360p,equal-weight,measured,HDD,0.02,30,Mongo,Mongo,no,0.0,never,0.466,4.733,0.120,0.91,0.85,0.00
+i7_builtin,360p,equal-weight,measured,HDD,0.02,90,Mongo,Mongo,no,0.0,never,0.466,4.733,0.120,2.74,2.56,0.00
+i7_builtin,360p,equal-weight,measured,HDD,0.02,365,Mongo,Mongo,no,0.0,never,0.466,4.733,0.120,11.09,10.39,0.00
+i7_builtin,360p,equal-weight,measured,SSD,0.16,30,Mongo,Mongo,no,0.0,never,0.466,4.733,0.120,7.30,6.83,0.00
+i7_builtin,360p,equal-weight,measured,SSD,0.16,90,Mongo,Mongo,no,0.1,never,0.466,4.733,0.120,21.89,20.50,0.01
+i7_builtin,360p,equal-weight,measured,SSD,0.16,365,Mongo,Mongo,no,0.3,never,0.466,4.733,0.120,88.76,83.15,0.03
+i7_builtin,360p,equal-weight,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,7.0,never,0.466,4.733,0.120,0.91,0.85,0.84
+i7_builtin,360p,equal-weight,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,21.0,never,0.466,4.733,0.120,2.74,2.56,2.52
+i7_builtin,360p,equal-weight,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,85.2,never,0.466,4.733,0.120,11.09,10.39,10.23
+i7_builtin,360p,equal-weight,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,56.1,never,0.466,4.733,0.120,7.30,6.83,6.72
+i7_builtin,360p,equal-weight,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,168.2,never,0.466,4.733,0.120,21.89,20.50,20.17
+i7_builtin,360p,equal-weight,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,682.0,never,0.466,4.733,0.120,88.76,83.15,81.81
+i7_builtin,480p,ingestion-only,measured,HDD,0.02,30,Mongo,Mongo,no,0.0,never,0.511,3.921,0.172,1.55,1.47,0.00
+i7_builtin,480p,ingestion-only,measured,HDD,0.02,90,Mongo,Mongo,no,0.0,never,0.511,3.921,0.172,4.65,4.42,0.00
+i7_builtin,480p,ingestion-only,measured,HDD,0.02,365,Mongo,Mongo,no,0.0,never,0.511,3.921,0.172,18.88,17.93,0.00
+i7_builtin,480p,ingestion-only,measured,SSD,0.16,30,Mongo,Mongo,no,0.0,never,0.511,3.921,0.172,12.41,11.79,0.00
+i7_builtin,480p,ingestion-only,measured,SSD,0.16,90,Mongo,Mongo,no,0.0,never,0.511,3.921,0.172,37.24,35.37,0.01
+i7_builtin,480p,ingestion-only,measured,SSD,0.16,365,Mongo,Mongo,no,0.2,never,0.511,3.921,0.172,151.03,143.46,0.03
+i7_builtin,480p,ingestion-only,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,8.5,never,0.511,3.921,0.172,1.55,1.47,1.46
+i7_builtin,480p,ingestion-only,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,25.4,never,0.511,3.921,0.172,4.65,4.42,4.38
+i7_builtin,480p,ingestion-only,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,103.1,never,0.511,3.921,0.172,18.88,17.93,17.77
+i7_builtin,480p,ingestion-only,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,67.8,never,0.511,3.921,0.172,12.41,11.79,11.68
+i7_builtin,480p,ingestion-only,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,203.3,never,0.511,3.921,0.172,37.24,35.37,35.05
+i7_builtin,480p,ingestion-only,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,824.6,never,0.511,3.921,0.172,151.03,143.46,142.13
+i7_builtin,480p,equal-weight,measured,HDD,0.02,30,Mongo,Mongo,no,0.0,never,0.707,4.784,0.207,1.55,1.47,0.00
+i7_builtin,480p,equal-weight,measured,HDD,0.02,90,Mongo,Mongo,no,0.0,never,0.707,4.784,0.207,4.65,4.42,0.00
+i7_builtin,480p,equal-weight,measured,HDD,0.02,365,Mongo,Mongo,no,0.0,never,0.707,4.784,0.207,18.88,17.93,0.00
+i7_builtin,480p,equal-weight,measured,SSD,0.16,30,Mongo,Mongo,no,0.0,never,0.707,4.784,0.207,12.41,11.79,0.00
+i7_builtin,480p,equal-weight,measured,SSD,0.16,90,Mongo,Mongo,no,0.0,never,0.707,4.784,0.207,37.24,35.37,0.01
+i7_builtin,480p,equal-weight,measured,SSD,0.16,365,Mongo,Mongo,no,0.1,never,0.707,4.784,0.207,151.03,143.46,0.03
+i7_builtin,480p,equal-weight,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,7.1,never,0.707,4.784,0.207,1.55,1.47,1.46
+i7_builtin,480p,equal-weight,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,21.2,never,0.707,4.784,0.207,4.65,4.42,4.38
+i7_builtin,480p,equal-weight,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,85.9,never,0.707,4.784,0.207,18.88,17.93,17.77
+i7_builtin,480p,equal-weight,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,56.5,never,0.707,4.784,0.207,12.41,11.79,11.68
+i7_builtin,480p,equal-weight,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,169.5,never,0.707,4.784,0.207,37.24,35.37,35.05
+i7_builtin,480p,equal-weight,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,687.2,never,0.707,4.784,0.207,151.03,143.46,142.13
+i7_builtin,720p,ingestion-only,measured,HDD,0.02,30,Mongo,Mongo,no,0.2,never,0.925,4.051,0.377,3.16,3.02,0.06
+i7_builtin,720p,ingestion-only,measured,HDD,0.02,90,Mongo,Mongo,no,0.5,never,0.925,4.051,0.377,9.47,9.05,0.19
+i7_builtin,720p,ingestion-only,measured,HDD,0.02,365,Mongo,Mongo,no,2.1,never,0.925,4.051,0.377,38.40,36.71,0.77
+i7_builtin,720p,ingestion-only,measured,SSD,0.16,30,Mongo,Mongo,no,1.4,never,0.925,4.051,0.377,25.25,24.14,0.51
+i7_builtin,720p,ingestion-only,measured,SSD,0.16,90,Mongo,Mongo,no,4.1,never,0.925,4.051,0.377,75.74,72.41,1.53
+i7_builtin,720p,ingestion-only,measured,SSD,0.16,365,Mongo,Mongo,no,16.4,never,0.925,4.051,0.377,307.16,293.66,6.20
+i7_builtin,720p,ingestion-only,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,8.0,never,0.925,4.051,0.377,3.16,3.02,3.00
+i7_builtin,720p,ingestion-only,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,23.9,never,0.925,4.051,0.377,9.47,9.05,9.01
+i7_builtin,720p,ingestion-only,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,96.9,never,0.925,4.051,0.377,38.40,36.71,36.54
+i7_builtin,720p,ingestion-only,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,63.7,never,0.925,4.051,0.377,25.25,24.14,24.03
+i7_builtin,720p,ingestion-only,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,191.2,never,0.925,4.051,0.377,75.74,72.41,72.08
+i7_builtin,720p,ingestion-only,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,775.4,never,0.925,4.051,0.377,307.16,293.66,292.31
+i7_builtin,720p,equal-weight,measured,HDD,0.02,30,Mongo,Mongo,no,0.1,never,1.311,4.959,0.496,3.16,3.02,0.06
+i7_builtin,720p,equal-weight,measured,HDD,0.02,90,Mongo,Mongo,no,0.4,never,1.311,4.959,0.496,9.47,9.05,0.19
+i7_builtin,720p,equal-weight,measured,HDD,0.02,365,Mongo,Mongo,no,1.6,never,1.311,4.959,0.496,38.40,36.71,0.77
+i7_builtin,720p,equal-weight,measured,SSD,0.16,30,Mongo,Mongo,no,1.0,never,1.311,4.959,0.496,25.25,24.14,0.51
+i7_builtin,720p,equal-weight,measured,SSD,0.16,90,Mongo,Mongo,no,3.1,never,1.311,4.959,0.496,75.74,72.41,1.53
+i7_builtin,720p,equal-weight,measured,SSD,0.16,365,Mongo,Mongo,no,12.5,never,1.311,4.959,0.496,307.16,293.66,6.20
+i7_builtin,720p,equal-weight,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,6.1,never,1.311,4.959,0.496,3.16,3.02,3.00
+i7_builtin,720p,equal-weight,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,18.2,never,1.311,4.959,0.496,9.47,9.05,9.01
+i7_builtin,720p,equal-weight,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,73.7,never,1.311,4.959,0.496,38.40,36.71,36.54
+i7_builtin,720p,equal-weight,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,48.5,never,1.311,4.959,0.496,25.25,24.14,24.03
+i7_builtin,720p,equal-weight,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,145.4,never,1.311,4.959,0.496,75.74,72.41,72.08
+i7_builtin,720p,equal-weight,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,589.7,never,1.311,4.959,0.496,307.16,293.66,292.31
+i7_usb,360p,ingestion-only,measured,HDD,0.02,30,Mongo,Mongo,no,0.0,never,0.531,3.856,0.200,1.65,1.54,0.00
+i7_usb,360p,ingestion-only,measured,HDD,0.02,90,Mongo,Mongo,no,0.0,never,0.531,3.856,0.200,4.95,4.63,0.00
+i7_usb,360p,ingestion-only,measured,HDD,0.02,365,Mongo,Mongo,no,0.0,never,0.531,3.856,0.200,20.09,18.80,0.00
+i7_usb,360p,ingestion-only,measured,SSD,0.16,30,Mongo,Mongo,no,0.0,never,0.531,3.856,0.200,13.21,12.36,0.00
+i7_usb,360p,ingestion-only,measured,SSD,0.16,90,Mongo,Mongo,no,0.0,never,0.531,3.856,0.200,39.63,37.08,0.01
+i7_usb,360p,ingestion-only,measured,SSD,0.16,365,Mongo,Mongo,no,0.1,never,0.531,3.856,0.200,160.73,150.37,0.03
+i7_usb,360p,ingestion-only,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,7.7,never,0.531,3.856,0.200,1.65,1.54,1.53
+i7_usb,360p,ingestion-only,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,23.0,never,0.531,3.856,0.200,4.95,4.63,4.59
+i7_usb,360p,ingestion-only,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,93.4,never,0.531,3.856,0.200,20.09,18.80,18.63
+i7_usb,360p,ingestion-only,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,61.4,never,0.531,3.856,0.200,13.21,12.36,12.25
+i7_usb,360p,ingestion-only,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,184.2,never,0.531,3.856,0.200,39.63,37.08,36.75
+i7_usb,360p,ingestion-only,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,747.0,never,0.531,3.856,0.200,160.73,150.37,149.03
+i7_usb,360p,equal-weight,measured,HDD,0.02,30,Mongo,Mongo,no,0.0,never,0.730,4.716,0.235,1.65,1.54,0.00
+i7_usb,360p,equal-weight,measured,HDD,0.02,90,Mongo,Mongo,no,0.0,never,0.730,4.716,0.235,4.95,4.63,0.00
+i7_usb,360p,equal-weight,measured,HDD,0.02,365,Mongo,Mongo,no,0.0,never,0.730,4.716,0.235,20.09,18.80,0.00
+i7_usb,360p,equal-weight,measured,SSD,0.16,30,Mongo,Mongo,no,0.0,never,0.730,4.716,0.235,13.21,12.36,0.00
+i7_usb,360p,equal-weight,measured,SSD,0.16,90,Mongo,Mongo,no,0.0,never,0.730,4.716,0.235,39.63,37.08,0.01
+i7_usb,360p,equal-weight,measured,SSD,0.16,365,Mongo,Mongo,no,0.1,never,0.730,4.716,0.235,160.73,150.37,0.03
+i7_usb,360p,equal-weight,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,6.5,never,0.730,4.716,0.235,1.65,1.54,1.53
+i7_usb,360p,equal-weight,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,19.5,never,0.730,4.716,0.235,4.95,4.63,4.59
+i7_usb,360p,equal-weight,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,79.2,never,0.730,4.716,0.235,20.09,18.80,18.63
+i7_usb,360p,equal-weight,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,52.1,never,0.730,4.716,0.235,13.21,12.36,12.25
+i7_usb,360p,equal-weight,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,156.2,never,0.730,4.716,0.235,39.63,37.08,36.75
+i7_usb,360p,equal-weight,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,633.7,never,0.730,4.716,0.235,160.73,150.37,149.03
+i7_usb,480p,ingestion-only,measured,HDD,0.02,30,Mongo,Mongo,no,0.2,never,0.797,4.004,0.248,2.68,2.51,0.04
+i7_usb,480p,ingestion-only,measured,HDD,0.02,90,Mongo,Mongo,no,0.5,never,0.797,4.004,0.248,8.03,7.52,0.11
+i7_usb,480p,ingestion-only,measured,HDD,0.02,365,Mongo,Mongo,no,1.9,never,0.797,4.004,0.248,32.55,30.51,0.46
+i7_usb,480p,ingestion-only,measured,SSD,0.16,30,Mongo,Mongo,no,1.2,never,0.797,4.004,0.248,21.40,20.06,0.30
+i7_usb,480p,ingestion-only,measured,SSD,0.16,90,Mongo,Mongo,no,3.7,never,0.797,4.004,0.248,64.21,60.19,0.91
+i7_usb,480p,ingestion-only,measured,SSD,0.16,365,Mongo,Mongo,no,14.9,never,0.797,4.004,0.248,260.42,244.09,3.69
+i7_usb,480p,ingestion-only,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,10.0,never,0.797,4.004,0.248,2.68,2.51,2.49
+i7_usb,480p,ingestion-only,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,30.1,never,0.797,4.004,0.248,8.03,7.52,7.48
+i7_usb,480p,ingestion-only,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,122.2,never,0.797,4.004,0.248,32.55,30.51,30.34
+i7_usb,480p,ingestion-only,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,80.3,never,0.797,4.004,0.248,21.40,20.06,19.95
+i7_usb,480p,ingestion-only,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,241.0,never,0.797,4.004,0.248,64.21,60.19,59.86
+i7_usb,480p,ingestion-only,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,977.3,never,0.797,4.004,0.248,260.42,244.09,242.75
+i7_usb,480p,equal-weight,measured,HDD,0.02,30,Mongo,Mongo,no,0.1,never,1.103,4.889,0.304,2.68,2.51,0.04
+i7_usb,480p,equal-weight,measured,HDD,0.02,90,Mongo,Mongo,no,0.4,never,1.103,4.889,0.304,8.03,7.52,0.11
+i7_usb,480p,equal-weight,measured,HDD,0.02,365,Mongo,Mongo,no,1.5,never,1.103,4.889,0.304,32.55,30.51,0.46
+i7_usb,480p,equal-weight,measured,SSD,0.16,30,Mongo,Mongo,no,1.0,never,1.103,4.889,0.304,21.40,20.06,0.30
+i7_usb,480p,equal-weight,measured,SSD,0.16,90,Mongo,Mongo,no,3.0,never,1.103,4.889,0.304,64.21,60.19,0.91
+i7_usb,480p,equal-weight,measured,SSD,0.16,365,Mongo,Mongo,no,12.1,never,1.103,4.889,0.304,260.42,244.09,3.69
+i7_usb,480p,equal-weight,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,8.2,never,1.103,4.889,0.304,2.68,2.51,2.49
+i7_usb,480p,equal-weight,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,24.6,never,1.103,4.889,0.304,8.03,7.52,7.48
+i7_usb,480p,equal-weight,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,99.9,never,1.103,4.889,0.304,32.55,30.51,30.34
+i7_usb,480p,equal-weight,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,65.7,never,1.103,4.889,0.304,21.40,20.06,19.95
+i7_usb,480p,equal-weight,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,197.1,never,1.103,4.889,0.304,64.21,60.19,59.86
+i7_usb,480p,equal-weight,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,799.3,never,1.103,4.889,0.304,260.42,244.09,242.75
+i7_usb,720p,ingestion-only,measured,HDD,0.02,30,Mongo,Mongo,no,2.2,never,1.200,4.406,0.650,5.14,4.90,1.45
+i7_usb,720p,ingestion-only,measured,HDD,0.02,90,Mongo,Mongo,no,6.7,never,1.200,4.406,0.650,15.41,14.69,4.35
+i7_usb,720p,ingestion-only,measured,HDD,0.02,365,Mongo,Mongo,no,27.2,never,1.200,4.406,0.650,62.48,59.56,17.65
+i7_usb,720p,ingestion-only,measured,SSD,0.16,30,Mongo,Mongo,no,17.9,never,1.200,4.406,0.650,41.08,39.16,11.60
+i7_usb,720p,ingestion-only,measured,SSD,0.16,90,Mongo,Mongo,no,53.6,never,1.200,4.406,0.650,123.25,117.49,34.81
+i7_usb,720p,ingestion-only,measured,SSD,0.16,365,Mongo,Mongo,no,217.3,never,1.200,4.406,0.650,499.83,476.50,141.17
+i7_usb,720p,ingestion-only,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,7.5,never,1.200,4.406,0.650,5.14,4.90,4.88
+i7_usb,720p,ingestion-only,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,22.5,never,1.200,4.406,0.650,15.41,14.69,14.65
+i7_usb,720p,ingestion-only,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,91.4,never,1.200,4.406,0.650,62.48,59.56,59.40
+i7_usb,720p,ingestion-only,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,60.1,never,1.200,4.406,0.650,41.08,39.16,39.06
+i7_usb,720p,ingestion-only,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,180.3,never,1.200,4.406,0.650,123.25,117.49,117.17
+i7_usb,720p,ingestion-only,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,731.4,never,1.200,4.406,0.650,499.83,476.50,475.17
+i7_usb,720p,equal-weight,measured,HDD,0.02,30,Mongo,Mongo,no,1.8,never,1.760,5.353,0.800,5.14,4.90,1.45
+i7_usb,720p,equal-weight,measured,HDD,0.02,90,Mongo,Mongo,no,5.4,never,1.760,5.353,0.800,15.41,14.69,4.35
+i7_usb,720p,equal-weight,measured,HDD,0.02,365,Mongo,Mongo,no,22.1,never,1.760,5.353,0.800,62.48,59.56,17.65
+i7_usb,720p,equal-weight,measured,SSD,0.16,30,Mongo,Mongo,no,14.5,never,1.760,5.353,0.800,41.08,39.16,11.60
+i7_usb,720p,equal-weight,measured,SSD,0.16,90,Mongo,Mongo,no,43.5,never,1.760,5.353,0.800,123.25,117.49,34.81
+i7_usb,720p,equal-weight,measured,SSD,0.16,365,Mongo,Mongo,no,176.5,never,1.760,5.353,0.800,499.83,476.50,141.17
+i7_usb,720p,equal-weight,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,6.1,never,1.760,5.353,0.800,5.14,4.90,4.88
+i7_usb,720p,equal-weight,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,18.3,never,1.760,5.353,0.800,15.41,14.69,14.65
+i7_usb,720p,equal-weight,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,74.2,never,1.760,5.353,0.800,62.48,59.56,59.40
+i7_usb,720p,equal-weight,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,48.8,never,1.760,5.353,0.800,41.08,39.16,39.06
+i7_usb,720p,equal-weight,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,146.5,never,1.760,5.353,0.800,123.25,117.49,117.17
+i7_usb,720p,equal-weight,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,594.0,never,1.760,5.353,0.800,499.83,476.50,475.17
+i7_usb,1080p,ingestion-only,measured,HDD,0.02,30,Mongo,Mongo,no,5.7,742.7,1.587,6.188,1.227,7.14,6.83,7.03
+i7_usb,1080p,ingestion-only,measured,HDD,0.02,90,Mongo,Mongo,no,17.2,742.7,1.587,6.188,1.227,21.42,20.49,21.09
+i7_usb,1080p,ingestion-only,measured,HDD,0.02,365,Mongo,Mongo,no,69.7,742.7,1.587,6.188,1.227,86.88,83.09,85.53
+i7_usb,1080p,ingestion-only,measured,SSD,0.16,30,Mongo,Mongo,no,45.8,92.8,1.587,6.188,1.227,57.13,54.64,56.24
+i7_usb,1080p,ingestion-only,measured,SSD,0.16,90,Mongo,Mongo,no,137.5,92.8,1.587,6.188,1.227,171.39,163.91,168.72
+i7_usb,1080p,ingestion-only,measured,SSD,0.16,365,Mongo,PostMin,yes,557.5,92.8,1.587,6.188,1.227,695.08,664.76,684.26
+i7_usb,1080p,ingestion-only,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,5.7,742.7,1.587,6.188,1.227,7.14,6.83,7.03
+i7_usb,1080p,ingestion-only,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,17.2,742.7,1.587,6.188,1.227,21.42,20.49,21.09
+i7_usb,1080p,ingestion-only,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,69.7,742.7,1.587,6.188,1.227,86.88,83.09,85.53
+i7_usb,1080p,ingestion-only,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,45.8,92.8,1.587,6.188,1.227,57.13,54.64,56.24
+i7_usb,1080p,ingestion-only,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,137.5,92.8,1.587,6.188,1.227,171.39,163.91,168.72
+i7_usb,1080p,ingestion-only,floor 1.0,SSD,0.16,365,Mongo,PostMin,yes,557.5,92.8,1.587,6.188,1.227,695.08,664.76,684.26
+i7_usb,1080p,equal-weight,measured,HDD,0.02,30,Mongo,Mongo,no,4.7,845.0,2.361,7.129,1.484,7.14,6.83,7.03
+i7_usb,1080p,equal-weight,measured,HDD,0.02,90,Mongo,Mongo,no,14.2,845.0,2.361,7.129,1.484,21.42,20.49,21.09
+i7_usb,1080p,equal-weight,measured,HDD,0.02,365,Mongo,Mongo,no,57.6,845.0,2.361,7.129,1.484,86.88,83.09,85.53
+i7_usb,1080p,equal-weight,measured,SSD,0.16,30,Mongo,Mongo,no,37.9,105.6,2.361,7.129,1.484,57.13,54.64,56.24
+i7_usb,1080p,equal-weight,measured,SSD,0.16,90,Mongo,Mongo,no,113.7,105.6,2.361,7.129,1.484,171.39,163.91,168.72
+i7_usb,1080p,equal-weight,measured,SSD,0.16,365,Mongo,PostMin,yes,461.1,105.6,2.361,7.129,1.484,695.08,664.76,684.26
+i7_usb,1080p,equal-weight,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,4.7,845.0,2.361,7.129,1.484,7.14,6.83,7.03
+i7_usb,1080p,equal-weight,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,14.2,845.0,2.361,7.129,1.484,21.42,20.49,21.09
+i7_usb,1080p,equal-weight,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,57.6,845.0,2.361,7.129,1.484,86.88,83.09,85.53
+i7_usb,1080p,equal-weight,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,37.9,105.6,2.361,7.129,1.484,57.13,54.64,56.24
+i7_usb,1080p,equal-weight,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,113.7,105.6,2.361,7.129,1.484,171.39,163.91,168.72
+i7_usb,1080p,equal-weight,floor 1.0,SSD,0.16,365,Mongo,PostMin,yes,461.1,105.6,2.361,7.129,1.484,695.08,664.76,684.26
+i7_fleet,1080p,ingestion-only,measured,HDD,0.02,30,Mongo,Mongo,no,4.4,never,1.548,5.628,1.293,6.08,5.86,5.65
+i7_fleet,1080p,ingestion-only,measured,HDD,0.02,90,Mongo,Mongo,no,13.1,never,1.548,5.628,1.293,18.24,17.59,16.96
+i7_fleet,1080p,ingestion-only,measured,HDD,0.02,365,Mongo,Mongo,no,53.2,never,1.548,5.628,1.293,73.95,71.32,68.78
+i7_fleet,1080p,ingestion-only,measured,SSD,0.16,30,Mongo,Mongo,no,35.0,never,1.548,5.628,1.293,48.63,46.90,45.23
+i7_fleet,1080p,ingestion-only,measured,SSD,0.16,90,Mongo,Mongo,no,104.9,never,1.548,5.628,1.293,145.88,140.69,135.68
+i7_fleet,1080p,ingestion-only,measured,SSD,0.16,365,Mongo,Mongo,no,425.5,never,1.548,5.628,1.293,591.64,570.59,550.27
+i7_fleet,1080p,ingestion-only,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,5.3,never,1.548,5.628,1.293,6.82,6.82,6.82
+i7_fleet,1080p,ingestion-only,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,15.8,never,1.548,5.628,1.293,20.47,20.47,20.47
+i7_fleet,1080p,ingestion-only,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,64.2,never,1.548,5.628,1.293,83.00,83.00,83.00
+i7_fleet,1080p,ingestion-only,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,42.2,never,1.548,5.628,1.293,54.58,54.58,54.58
+i7_fleet,1080p,ingestion-only,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,126.6,never,1.548,5.628,1.293,163.73,163.73,163.73
+i7_fleet,1080p,ingestion-only,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,513.4,never,1.548,5.628,1.293,664.02,664.02,664.02
+i7_fleet,1080p,equal-weight,measured,HDD,0.02,30,Mongo,Mongo,no,3.7,never,2.225,6.544,1.543,6.08,5.86,5.65
+i7_fleet,1080p,equal-weight,measured,HDD,0.02,90,Mongo,Mongo,no,11.0,never,2.225,6.544,1.543,18.24,17.59,16.96
+i7_fleet,1080p,equal-weight,measured,HDD,0.02,365,Mongo,Mongo,no,44.6,never,2.225,6.544,1.543,73.95,71.32,68.78
+i7_fleet,1080p,equal-weight,measured,SSD,0.16,30,Mongo,Mongo,no,29.3,never,2.225,6.544,1.543,48.63,46.90,45.23
+i7_fleet,1080p,equal-weight,measured,SSD,0.16,90,Mongo,Mongo,no,87.9,never,2.225,6.544,1.543,145.88,140.69,135.68
+i7_fleet,1080p,equal-weight,measured,SSD,0.16,365,Mongo,Mongo,no,356.7,never,2.225,6.544,1.543,591.64,570.59,550.27
+i7_fleet,1080p,equal-weight,floor 1.0,HDD,0.02,30,Mongo,Mongo,no,4.4,never,2.225,6.544,1.543,6.82,6.82,6.82
+i7_fleet,1080p,equal-weight,floor 1.0,HDD,0.02,90,Mongo,Mongo,no,13.3,never,2.225,6.544,1.543,20.47,20.47,20.47
+i7_fleet,1080p,equal-weight,floor 1.0,HDD,0.02,365,Mongo,Mongo,no,53.8,never,2.225,6.544,1.543,83.00,83.00,83.00
+i7_fleet,1080p,equal-weight,floor 1.0,SSD,0.16,30,Mongo,Mongo,no,35.4,never,2.225,6.544,1.543,54.58,54.58,54.58
+i7_fleet,1080p,equal-weight,floor 1.0,SSD,0.16,90,Mongo,Mongo,no,106.1,never,2.225,6.544,1.543,163.73,163.73,163.73
+i7_fleet,1080p,equal-weight,floor 1.0,SSD,0.16,365,Mongo,Mongo,no,430.4,never,2.225,6.544,1.543,664.02,664.02,664.02

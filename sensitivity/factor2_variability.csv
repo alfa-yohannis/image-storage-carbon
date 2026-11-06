@@ -1,0 +1,57 @@
+dataset,profile,mix,greenest,p_greenest,closest_rival,p_rival,verdict
+i9_collage,360p,ingestion-only,Mongo,1.000,Postgre,0.000,robust
+i9_collage,360p,equal-weight,Mongo,1.000,Postgre,0.000,robust
+i9_collage,480p,ingestion-only,Mongo,1.000,Postgre,0.000,robust
+i9_collage,480p,equal-weight,Mongo,1.000,Postgre,0.000,robust
+i9_collage,720p,ingestion-only,Mongo,1.000,Postgre,0.000,robust
+i9_collage,720p,equal-weight,Mongo,1.000,Postgre,0.000,robust
+i9_collage,1080p,ingestion-only,Mongo,1.000,Postgre,0.000,robust
+i9_collage,1080p,equal-weight,Mongo,1.000,Postgre,0.000,robust
+i9_collage,1440p,ingestion-only,Mongo,1.000,Postgre,0.000,robust
+i9_collage,1440p,equal-weight,Mongo,1.000,Postgre,0.000,robust
+i9_collage,4K,ingestion-only,PostMin,1.000,Postgre,0.000,robust
+i9_collage,4K,equal-weight,PostMin,1.000,Postgre,0.000,robust
+i9_collage,5K,ingestion-only,PostMin,1.000,Postgre,0.000,robust
+i9_collage,5K,equal-weight,PostMin,1.000,Postgre,0.000,robust
+i9_collage,6K,ingestion-only,PostMin,1.000,Postgre,0.000,robust
+i9_collage,6K,equal-weight,PostMin,1.000,Postgre,0.000,robust
+i7_collage,360p,ingestion-only,Mongo,1.000,Postgre,0.000,robust
+i7_collage,360p,equal-weight,Mongo,1.000,Postgre,0.000,robust
+i7_collage,480p,ingestion-only,Mongo,1.000,Postgre,0.000,robust
+i7_collage,480p,equal-weight,Mongo,1.000,Postgre,0.000,robust
+i7_collage,720p,ingestion-only,Mongo,0.916,Postgre,0.073,within variability
+i7_collage,720p,equal-weight,Mongo,0.985,PostMin,0.008,robust
+i7_collage,1080p,ingestion-only,Mongo,0.999,PostMin,0.001,robust
+i7_collage,1080p,equal-weight,Mongo,0.999,PostMin,0.001,robust
+i7_collage,1440p,ingestion-only,PostMin,0.518,Mongo,0.482,within variability
+i7_collage,1440p,equal-weight,PostMin,0.924,Mongo,0.075,within variability
+i7_collage,4K,ingestion-only,PostMin,1.000,Postgre,0.000,robust
+i7_collage,4K,equal-weight,PostMin,1.000,Postgre,0.000,robust
+i7_collage,5K,ingestion-only,PostMin,1.000,Postgre,0.000,robust
+i7_collage,5K,equal-weight,PostMin,1.000,Postgre,0.000,robust
+i7_collage,6K,ingestion-only,PostMin,1.000,Postgre,0.000,robust
+i7_collage,6K,equal-weight,PostMin,1.000,Postgre,0.000,robust
+i7_networked,360p,ingestion-only,Mongo,1.000,Postgre,0.000,robust
+i7_networked,360p,equal-weight,Mongo,1.000,Postgre,0.000,robust
+i7_networked,480p,ingestion-only,Mongo,0.978,Postgre,0.022,robust
+i7_networked,480p,equal-weight,Mongo,0.999,Postgre,0.001,robust
+i7_networked,720p,ingestion-only,Mongo,0.782,Postgre,0.218,within variability
+i7_networked,720p,equal-weight,Mongo,0.941,Postgre,0.059,within variability
+i7_networked,1080p,ingestion-only,Postgre,0.906,Mongo,0.084,within variability
+i7_networked,1080p,equal-weight,Mongo,0.764,Postgre,0.232,within variability
+i7_builtin,360p,ingestion-only,Mongo,1.000,Postgre,0.000,robust
+i7_builtin,360p,equal-weight,Mongo,1.000,Postgre,0.000,robust
+i7_builtin,480p,ingestion-only,Mongo,1.000,Postgre,0.000,robust
+i7_builtin,480p,equal-weight,Mongo,1.000,Postgre,0.000,robust
+i7_builtin,720p,ingestion-only,Mongo,1.000,Postgre,0.000,robust
+i7_builtin,720p,equal-weight,Mongo,1.000,Postgre,0.000,robust
+i7_usb,360p,ingestion-only,Mongo,1.000,Postgre,0.000,robust
+i7_usb,360p,equal-weight,Mongo,1.000,Postgre,0.000,robust
+i7_usb,480p,ingestion-only,Mongo,1.000,Postgre,0.000,robust
+i7_usb,480p,equal-weight,Mongo,1.000,Postgre,0.000,robust
+i7_usb,720p,ingestion-only,Mongo,1.000,Postgre,0.000,robust
+i7_usb,720p,equal-weight,Mongo,1.000,Postgre,0.000,robust
+i7_usb,1080p,ingestion-only,Mongo,0.913,Postgre,0.086,within variability
+i7_usb,1080p,equal-weight,Mongo,0.999,Postgre,0.001,robust
+i7_fleet,1080p,ingestion-only,Mongo,0.836,Postgre,0.164,within variability
+i7_fleet,1080p,equal-weight,Mongo,0.992,Postgre,0.008,robust

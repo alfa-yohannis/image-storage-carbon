@@ -1,0 +1,22 @@
+region,g_per_kwh,pue,Postgre_g,PostMin_g,Mongo_g,lowest
+Sweden,41,1.0,0.252,0.190,0.256,PostMin
+Sweden,41,1.5,0.378,0.285,0.384,PostMin
+Sweden,41,2.0,0.504,0.379,0.512,PostMin
+France,53,1.0,0.326,0.245,0.331,PostMin
+France,53,1.5,0.488,0.368,0.497,PostMin
+France,53,2.0,0.651,0.491,0.662,PostMin
+EU-27 average,230,1.0,1.413,1.064,1.437,PostMin
+EU-27 average,230,1.5,2.119,1.597,2.156,PostMin
+EU-27 average,230,2.0,2.825,2.129,2.874,PostMin
+United States,360,1.0,2.211,1.666,2.249,PostMin
+United States,360,1.5,3.317,2.499,3.374,PostMin
+United States,360,2.0,4.422,3.332,4.499,PostMin
+China,550,1.0,3.378,2.545,3.436,PostMin
+China,550,1.5,5.067,3.818,5.155,PostMin
+China,550,2.0,6.756,5.090,6.873,PostMin
+Indonesia,676,1.0,4.152,3.128,4.224,PostMin
+Indonesia,676,1.5,6.228,4.692,6.336,PostMin
+Indonesia,676,2.0,8.304,6.256,8.447,PostMin
+India,713,1.0,4.379,3.299,4.455,PostMin
+India,713,1.5,6.569,4.949,6.682,PostMin
+India,713,2.0,8.758,6.599,8.910,PostMin
