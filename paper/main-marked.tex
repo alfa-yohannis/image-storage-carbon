@@ -78,11 +78,8 @@
 
 \title[Carbon-aware storage selection for image-based time-series in green IoT]{Carbon Footprint and Carbon-Aware Selection of Document-Oriented, Relational, and Hybrid Object-Relational Storage for Image-Based Time-Series Workloads in Green IoT}
 
-% Author, affiliation, and email details removed for double-anonymous review.
-% The starred forms mark a corresponding author, which makes the class emit a
-% "Corresponding author(s). E-mail(s):" line. Even with an empty \email{} that
-% line survives into the PDF, and the submission system's automated check reads
-% it as an email field. Unstarred, with no \email at all, it disappears.
+% Author and affiliation details are hidden for double-anonymous review. The unstarred
+% forms keep the class from printing a contact line under the title.
 \author[1]{\sur{[Hidden for Double-blind Review]}}
 
 \affil[1]{\orgname{[Hidden for Double-blind Review]}}
@@ -462,7 +459,7 @@ Resolution & Collage & Real & Collage & Real & Collage & Real \\
 \begin{table}[htbp]
 \color{markup}
 \caption{Carbon-aware architecture selection. The regime is set by measured payload size; the resolutions in parentheses produce that payload under the high-entropy collage and are indicative only, since a real camera at the same resolution usually produces a lighter payload. Postgre = PostgreSQL-BYTEA; Mongo = MongoDB; PostMin = PostgreSQL+MinIO.}\label{tab:decision}
-\small
+\footnotesize
 \begin{tabular}{@{}p{0.30\textwidth}p{0.12\textwidth}p{0.44\textwidth}@{}}
 \toprule
 Operating regime (payload per frame) & Choice$^{\ast}$ & Rationale \\
