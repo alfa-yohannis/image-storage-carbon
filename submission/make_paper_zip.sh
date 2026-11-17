@@ -28,7 +28,9 @@ cp "$ROOT/paper/main.bbl"       "$STAGE/paper/"
 cp "$ROOT/paper/references.bib" "$STAGE/paper/"
 cp "$ROOT/paper/sn-jnl.cls"     "$STAGE/paper/"
 cp "$ROOT/paper/sn-basic.bst"   "$STAGE/paper/"
-cp "$ROOT"/figures/*.pdf        "$STAGE/paper/figures/"
+# Only the figures main.tex includes; the others belong to the Online Resources.
+sed -n 's/.*\\includegraphics\(\[[^]]*\]\)\{0,1\}{\([^}]*\)}.*/\2/p' "$ROOT/paper/main.tex" |
+  while read -r fig; do cp "$ROOT/figures/$fig" "$STAGE/paper/figures/"; done
 
 rm -f "$OUT"
 (cd "$STAGE" && zip -q -r "$OUT" paper)

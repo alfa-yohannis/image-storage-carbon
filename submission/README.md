@@ -1,28 +1,36 @@
 # Revision upload — what goes in which slot
 
-Submission `35174617-3240-44d6-bb1c-fcc74ec1cd4f`, revision of v1.1.
+Submission `35174617-3240-44d6-bb1c-fcc74ec1cd4f`, revision requested on 3 November 2026 after
+peer review (two reviewer reports and an editor's comment).
 
 Rebuild everything here with:
 
 ```bash
-bash submission/make_paper_zip.sh                                  # -> paper.zip, and proves it compiles
-python3 zenodo/make_artifact.py --no-frames --supplementary        # -> supplementary_files.zip
+python3 paper/make_marked.py                                              # -> paper/main-marked.tex
+bash submission/make_paper_zip.sh                                         # -> paper.zip, and proves it compiles
+python3 zenodo/make_artifact.py --version 2.1 --no-frames --supplementary # -> supplementary_files.zip
 ```
 
-Drop `--no-frames` when you also need the three frame archives for the Zenodo deposit.
+Build `paper/main.tex` first: `paper.zip` and the artifact both need `paper/main.bbl`. The Online
+Resources (`paper/esm/ESM_1.tex`, `ESM_2.tex`) are built after it, because they take their section
+and table numbers from `main.aux`. `make_marked.py` diffs against the version the reviewers read
+(commit `8631822`, v1.1 of 19 August 2026), not against the original June submission.
 
-The PDFs are copied from `../paper/` and `../reviews/` by hand; both are produced by
-`latexmk` in their own folders.
+Strip the metadata from every PDF before uploading it: the journal is double-anonymous, and the
+portal asks for all final files' metadata to be anonymised.
 
 ## Portal slots
 
 | Slot | File | Notes |
 |---|---|---|
-| **Manuscript file** | `paper.zip` | LaTeX source, *not* a PDF. The portal compiles it. Clean — no highlights, no tracked changes. |
-| **Point-by-point response** | `response-letter-01.pdf` | Anonymised, 7 pp. Required to be a PDF. |
-| **Supplementary files** | `supplementary_files.zip` | The reproducibility artifact, minus the recorded frames. Same content as the Zenodo main archive; the frames are a gigabyte and live in the deposit. |
-| **Related file** | `main-marked.pdf` | Optional. Green text is new or rewritten this revision. Never upload this as the manuscript. |
-| **Related files** | the two ATIGB conference papers | Editor-facing only, per the dual-publication answer. See `../declarations/dual_publication.txt`. |
+| **Point-by-point response** | the response letter, as a PDF | Anonymised. It is kept outside this repository. |
+| **Manuscript file** | `paper.zip` | LaTeX source, *not* a PDF. The portal compiles it. Clean: no highlights, no tracked changes. |
+| **Supplementary files** | `ESM_1.pdf`, `ESM_2.pdf` | Online Resources 1 and 2, cited in the manuscript under those names. |
+| **Supplementary files** | `supplementary_files.zip` | The reproducibility artifact, minus the recorded frames. Same content as the Zenodo main archive. |
+| **Related file** | `main-marked.pdf` | Optional. Green text is new or rewritten since the reviewed version. Never upload this as the manuscript. |
+
+The two ATIGB conference papers were uploaded as editor-facing related files with the original
+submission (see `../declarations/dual_publication.txt`) and have not changed.
 
 Form fields are filled from `../declarations/*.txt`. Those are collected separately and are
 **not** shown to reviewers, so the real names in them are correct there. Do not upload the
@@ -37,11 +45,11 @@ cannot disagree. The only difference is the filename.
 
 ## Why `paper.zip` is laid out the way it is
 
-It mirrors `../upload/paper.zip`, the archive that passed the technical check for v1.1:
-everything under a top-level `paper/` folder, `figures/` beside `main.tex`, and no PDF of the
-manuscript. `main.tex` sets `\graphicspath{{figures/}{../figures/}}`, so the nested `figures/`
-resolves. `main.bbl` is included so the bibliography resolves even if the compiler does not run
-bibtex.
+It mirrors the archive that passed the technical check for v1.1: everything under a top-level
+`paper/` folder, `figures/` beside `main.tex`, and no PDF of the manuscript. `main.tex` sets
+`\graphicspath{{figures/}{../figures/}}`, so the nested `figures/` resolves. Only the figures
+`main.tex` includes go in; the rest belong to the Online Resources. `main.bbl` is included so the
+bibliography resolves even if the compiler does not run bibtex.
 
 `make_paper_zip.sh` extracts the finished archive into a temporary directory and compiles it
 there with nothing else on the path, because a zip that builds here but not on their machine is
@@ -49,13 +57,11 @@ worse than no zip at all.
 
 ## Before pressing submit
 
-- [ ] Zenodo record updated to artifact **v2.0** (four archives, see `../zenodo/`), and the
-      record's **Creators / Title / Description** checked for real names — the preview page shows
-      them even when the files inside are clean.
-- [ ] Anonymised Zenodo preview link current in `../declarations/data_availability.txt`.
-- [ ] `../declarations/author_contributions.txt` — the A.Y./A.W. split confirmed.
-- [ ] `../declarations/dual_publication.txt` — conference title, edition, year, dates confirmed.
-- [ ] The AI-use declaration read and agreed: it now covers code assistance as well as language
-      editing, so that the manuscript and the form field say the same thing.
+- [ ] The Zenodo draft carries artifact **v2.1** and the new `paper.zip` and
+      `supplementary_files.zip`, and is **not** published: the anonymised preview link in
+      `../declarations/data_availability.txt` points at the draft, and the deposit is due on
+      acceptance.
+- [ ] Every uploaded PDF has empty metadata (`pdfinfo` shows no title, author, creator, producer
+      or dates).
 - [ ] Uploaded by the **original submitting author** (the gmail account), which may differ from
       the corresponding author.

@@ -1,6 +1,6 @@
 # Carbon-Aware Storage for Image-Based Time-Series — reproduction guide
 
-**Artifact version 2.0.** This is the reproducibility artifact accompanying **"Carbon Footprint
+**Artifact version 2.1.** This is the reproducibility artifact accompanying **"Carbon Footprint
 and Carbon-Aware Selection of Document-Oriented, Relational, and Hybrid Object-Relational Storage
 for Image-Based Time-Series Workloads in Green IoT"** (target journal: *Environment Systems and
 Decisions*): the benchmark **code**, the measured **data**, the generated **figures**, the
@@ -9,9 +9,16 @@ frames** used for the real-case validation.
 
 It benchmarks three storage architectures across eight image resolutions (360p–6K), measuring
 insertion, retrieval, storage amplification, and **directly measured per-resolution carbon**
-(CodeCarbon + Intel RAPL), and converts the result into a carbon-aware decision framework.
+(CodeCarbon: Intel RAPL for the processor, an estimate for memory), and converts the result into a carbon-aware decision framework.
 
-### What changed since version 1.0
+### What changed in version 2.1
+
+Version 2.1 accompanies the revised manuscript. It adds the **sensitivity analysis** behind Online
+Resource 2 (`code/sensitivity.py` and its outputs in `sensitivity/`) and the LaTeX sources of the
+two **Online Resources** (`paper/esm/`). The measurements are unchanged, so the frame archives keep
+their v2.0 names.
+
+### What changed in version 2.0
 
 Version 1.0 contained the controlled single-image collage study only. Version 2.0 adds:
 
@@ -34,13 +41,13 @@ them on top of one another reconstitutes the full working set.
 
 | File | Size | Contents |
 |---|---|---|
-| `artifact-v2.0.zip` | ~10 MB | code, all measured data, figures, paper source. **Start here.** |
+| `artifact-v2.1.zip` | ~10 MB | code, all measured data, figures, sensitivity analysis, paper source. **Start here.** |
 | `frames-networked-v2.0.zip` | ~450 MB | 2,845 frames, networked camera (H.264/RTSP, 1920×1080) |
 | `frames-usb-external-v2.0.zip` | ~455 MB | 2,988 frames, external USB camera (MJPG, 1920×1080) |
 | `frames-usb-builtin-v2.0.zip` | ~190 MB | 2,891 frames, built-in USB camera (MJPG, 1280×720) |
 
 ```bash
-unzip artifact-v2.0.zip            # code/ code_realcase/ data*/ figures/ paper/
+unzip artifact-v2.1.zip            # code/ code_realcase/ data*/ figures/ sensitivity/ paper/
 unzip 'frames-*-v2.0.zip'          # only if you want to re-run the real-case benchmark
 ```
 
@@ -49,7 +56,7 @@ included; the four-way split above is how the public deposit is organised, and t
 are there.
 
 The frame archives are needed **only** to regenerate the real-case measurements from scratch.
-Every number and figure in the paper can be rebuilt from `artifact-v2.0.zip` alone, because the
+Every number and figure in the paper can be rebuilt from `artifact-v2.1.zip` alone, because the
 per-run CSVs it contains are the measurements themselves.
 
 All commands below run from inside the unpacked folder.
@@ -68,7 +75,8 @@ All commands below run from inside the unpacked folder.
 ├── data_frames_webcam1/   # real frames, built-in USB camera
 ├── data_fleet/            # mixed round-robin arm across all three cameras
 ├── figures/               # ten figures, PDF                             (generated)
-└── paper/                 # main.tex, references.bib, sn-jnl.cls, figures/
+├── sensitivity/           # Online Resource 2: CSVs, LaTeX tables, figure (generated)
+└── paper/                 # main.tex, references.bib, sn-jnl.cls, figures/, esm/
 ```
 
 ---
@@ -164,6 +172,7 @@ resolution*, which is why both corpora are shipped.
 | `realframes_carbon` | `code/report_realcase.py` | Identical rows beside distinct real frames, same host. |
 | `crossover_collage`, `crossover_realcase` | `code/report_realcase.py` | Where the ingestion crossover falls under each corpus. |
 | `applied_annual` | `code/report_realcase.py` | The framework applied to one camera for a year. |
+| `sensitivity/sensitivity_operation_mix` | `code/sensitivity.py` | Greenest architecture over payload and read frequency (Online Resource 2). |
 
 ---
 
@@ -182,7 +191,10 @@ No benchmark run and no Docker needed — the `data*/` folders already hold the 
 cd code
 python report.py                 # six original figures + data/threeway_summary.csv
 python report_realcase.py        # the four figures added by the revision
+python sensitivity.py            # Online Resource 2: CSVs, LaTeX tables and figure in ../sensitivity/
 ```
+
+`sensitivity.py` needs NumPy and Matplotlib.
 
 ## 3. Regenerate the measurements from scratch
 
@@ -218,6 +230,7 @@ cd code && python -m unittest discover -s tests
 cd paper
 latexmk -pdf -interaction=nonstopmode main.tex   # pdflatex + bibtex -> main.pdf
 latexmk -c                                        # remove aux files, keep main.pdf
+cd esm && latexmk -pdf ESM_1.tex ESM_2.tex       # the Online Resources, after main.tex
 ```
 
 Figures are read from `figures/`; the bibliography is `references.bib`. The Springer class and
@@ -243,7 +256,8 @@ CodeCarbon records the measuring machine's latitude, longitude, and administrati
 every `emissions.csv`; **those three columns are blanked** in the published copies. The country
 is retained, because the paper's grid-intensity factor depends on it. Camera credentials
 (`.env`), virtual environments, the downloaded face models, and any enrolled face photographs
-are excluded entirely. Recorded frames carry no EXIF metadata.
+are excluded entirely. Recorded frames carry no EXIF metadata, and the figure PDFs carry no
+document metadata.
 
 ### Ethics and the recorded corpus
 

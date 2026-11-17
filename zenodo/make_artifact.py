@@ -4,7 +4,8 @@
 The archive is split so that reviewers who only want to check the analysis do
 not have to download a gigabyte of photographs:
 
-    artifact-vX.Y.zip        code, data, figures, and paper source  (~10 MB)
+    artifact-vX.Y.zip        code, data, figures, sensitivity analysis, and paper
+                             source including the two Online Resources  (~10 MB)
     frames-<camera>-vX.Y.zip the recorded frames, one archive per camera
 
 Every archive unpacks into the same directory tree, so extracting all four on
@@ -67,6 +68,7 @@ CONTENTS = [
     ("data_frames_webcam2", "data_frames_webcam2"),
     ("data_fleet", "data_fleet"),
     ("figures", "figures"),
+    ("sensitivity", "sensitivity"),
 ]
 PAPER_FILES = ["main.tex", "references.bib", "sn-jnl.cls", "sn-basic.bst", "main.bbl"]
 
@@ -134,6 +136,12 @@ def stage(version: str) -> Path:
             print(f"  ! missing, skipped: paper/{name}")
     shutil.copytree(ROOT / "figures", paper_dir / "figures", dirs_exist_ok=True)
 
+    # The Online Resources: built after main.tex, whose .aux supplies their cross-references.
+    esm_dir = paper_dir / "esm"
+    esm_dir.mkdir(exist_ok=True)
+    for source in sorted((ROOT / "paper" / "esm").glob("ESM_*.tex")):
+        shutil.copy2(source, esm_dir / source.name)
+
     shutil.copy2(HERE / "README.md", staging / "README.md")
     return staging
 
@@ -157,7 +165,7 @@ def megabytes(path: Path) -> str:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--version", default="2.0", help="version stamped into the filenames")
+    parser.add_argument("--version", default="2.1", help="version stamped into the filenames")
     parser.add_argument("--no-frames", action="store_true",
                         help="build only the main archive, skipping the recorded frames")
     parser.add_argument("--supplementary", action="store_true",

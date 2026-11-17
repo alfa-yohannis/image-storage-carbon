@@ -4,24 +4,28 @@
 The marked-up copy shows the editor exactly what changed in this revision.
 Earlier versions of this script carried a hand-written list of added passages,
 which went stale every time the text moved. This one derives the markup from a
-real diff against ../../upload/paper/main.tex (the file that was submitted), so
-it cannot drift out of date.
+real diff against the version the reviewers read, so it cannot drift out of date.
+That is commit 8631822 (v1.1, submitted on 19 Aug 2026) unless --base names another
+git revision or a file.
 
 Granularity is the sentence for ordinary prose and the whole environment for
 floats: a table or figure that changed anywhere is coloured entirely, because
 colouring individual cells would break the alignment.
 
-Usage:  python3 make_marked.py
+Usage:  python3 make_marked.py [--base REV-or-FILE]
 """
 
 from __future__ import annotations
 
+import argparse
 import difflib
 import re
+import subprocess
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-SUBMITTED = HERE.parent / "upload" / "paper" / "main.tex"
+# The version under review when this revision was requested: v1.1, 19 Aug 2026.
+REVIEWED_REV = "8631822"
 CURRENT = HERE / "main.tex"
 OUTPUT = HERE / "main-marked.tex"
 
@@ -105,8 +109,20 @@ def normalise(unit: str) -> str:
     return " ".join(unit.split())
 
 
+def submitted_text(base: str) -> str:
+    """The baseline: a file if one exists at this path, else paper/main.tex at a git revision."""
+    if Path(base).is_file():
+        return Path(base).read_text()
+    return subprocess.run(["git", "show", f"{base}:paper/main.tex"], cwd=HERE,
+                          capture_output=True, text=True, check=True).stdout
+
+
 def main() -> None:
-    old_lines = SUBMITTED.read_text().splitlines()
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--base", default=REVIEWED_REV,
+                        help="git revision or file to diff against (default: the reviewed v1.1)")
+    args = parser.parse_args()
+    old_lines = submitted_text(args.base).splitlines()
     new_lines = CURRENT.read_text().splitlines()
 
     # Only the body is marked; preamble differences are not editorial content.
